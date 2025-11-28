@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Home, User, FolderOpen, Wrench } from "lucide-react";
+import { Home, User, FolderOpen, Wrench, Moon, Sun } from "lucide-react";
 import "../styles/App.css";
 
 const Navbar = () => {
   const [activeSection, setActiveSection] = useState("inicio");
+
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  };
 
   const sections = [
     { id: "inicio", label: "Inicio", icon: Home },
@@ -36,6 +47,7 @@ const Navbar = () => {
 
   return (
     <nav className="navbar-container">
+      {/* Botones de Navegación */}
       {sections.map((item) => (
         <a
           key={item.id}
@@ -47,6 +59,37 @@ const Navbar = () => {
           <span>{item.label}</span>
         </a>
       ))}
+
+      <div
+        style={{
+          width: "1px",
+          height: "40px",
+          background: "#ccc",
+          margin: "0 5px",
+          opacity: 0.5,
+        }}
+      />
+
+      <button
+        onClick={toggleTheme}
+        className="nav-item theme-toggle"
+        style={{
+          background: "transparent",
+          border: "none",
+          padding: "0.7rem",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+        aria-label="Cambiar tema"
+      >
+        {theme === "light" ? (
+          <Moon size={21} color="#9f9add" />
+        ) : (
+          <Sun size={21} color="#fff" />
+        )}
+      </button>
     </nav>
   );
 };

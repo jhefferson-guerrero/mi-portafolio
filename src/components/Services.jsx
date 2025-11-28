@@ -7,6 +7,9 @@ const Services = () => {
   const sectionRef = useRef(null);
 
   useEffect(() => {
+    const isMobile = window.innerWidth <= 768;
+    const thresholdValue = isMobile ? 0.3 : 0.6;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -15,7 +18,7 @@ const Services = () => {
         }
       },
       {
-        threshold: 0.2,
+        threshold: thresholdValue,
       }
     );
 
@@ -28,15 +31,21 @@ const Services = () => {
     };
   }, []);
 
+  const animations = ["slide-right", "slide-up", "slide-left"];
+
   return (
     <section id="servicios" ref={sectionRef}>
       <h2 className="section-title">Servicios</h2>
 
-      <div
-        className={`services-grid scroll-reveal ${isVisible ? "visible" : ""}`}
-      >
+      <div className="services-grid">
         {content.services.map((service, i) => (
-          <div key={i} className="service-card">
+          <div
+            key={i}
+            className={`service-card ${animations[i]} ${
+              isVisible ? "visible" : ""
+            }`}
+
+          >
             {/* Wrapper del icono */}
             <div className="service-icon-wrapper">
               <service.icon size={32} />

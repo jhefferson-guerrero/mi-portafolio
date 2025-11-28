@@ -6,6 +6,9 @@ const About = () => {
   const sectionRef = useRef(null);
 
   useEffect(() => {
+    const isMobile = window.innerWidth <= 768;
+    const thresholdValue = isMobile ? 0.2 : 0.3;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -14,7 +17,7 @@ const About = () => {
         }
       },
       {
-        threshold: 0.2,
+        threshold: thresholdValue,
       }
     );
 
@@ -27,11 +30,27 @@ const About = () => {
     };
   }, []);
 
+  const skills = [
+    "React",
+    "JavaScript",
+    "HTML5",
+    "CSS3",
+    "Tailwind CSS",
+    "Firebase",
+    "MySQL",
+    "SQL Server",
+    "Git",
+    "Figma",
+  ];
+
   return (
     <section id="about" ref={sectionRef}>
-      <div className={`about-grid scroll-reveal ${isVisible ? "visible" : ""}`}>
-        {/* Columna Izquierda: Imagen */}
-        <div className="about-image-container">
+      <div className="about-grid">
+        <div
+          className={`about-image-container slide-right ${
+            isVisible ? "visible" : ""
+          }`}
+        >
           <img
             src="/assets/projects/sobre-mi.webp"
             alt="Jhefferson Guerrero"
@@ -39,14 +58,21 @@ const About = () => {
           />
         </div>
 
-        {/* Columna Derecha: Información */}
         <div className="about-content">
-          {/* Título Principal */}
-          <h2 className="section-title">Acerca de Mí</h2>
+          <h2
+            className={`section-title ${isVisible ? "visible" : ""}`}
+            style={{ transitionDelay: "0.1s" }}
+          >
+            Acerca de Mí
+          </h2>
 
-          {/* Bio General */}
           <p
-            style={{ color: "#666", lineHeight: "1.7", marginBottom: "1.5rem" }}
+            className={`slide-up ${isVisible ? "visible" : ""}`}
+            style={{
+              lineHeight: "1.7",
+              marginBottom: "1.5rem",
+              transitionDelay: "0.2s",
+            }}
           >
             Estudiante de Ingeniería de Software (9º ciclo) especializado en
             desarrollo web front-end. Me apasiona crear soluciones digitales
@@ -54,9 +80,17 @@ const About = () => {
             el código limpio y el trabajo colaborativo.
           </p>
 
-          {/* Sección: Educación */}
-          <div className="pipe-title">Educación</div>
-          <div className="info-item">
+          <div
+            className={`pipe-title slide-up ${isVisible ? "visible" : ""}`}
+            style={{ transitionDelay: "0.3s" }}
+          >
+            Educación
+          </div>
+
+          <div
+            className={`info-item slide-up ${isVisible ? "visible" : ""}`}
+            style={{ transitionDelay: "0.4s" }}
+          >
             <div className="institution">
               Universidad Tecnológica del Perú (UTP)
             </div>
@@ -64,9 +98,17 @@ const About = () => {
             <div className="date">Actualmente estudiando</div>
           </div>
 
-          {/* Sección: Experiencia */}
-          <div className="pipe-title">Experiencia</div>
-          <div className="info-item">
+          <div
+            className={`pipe-title slide-up ${isVisible ? "visible" : ""}`}
+            style={{ transitionDelay: "0.5s" }}
+          >
+            Experiencia
+          </div>
+
+          <div
+            className={`info-item slide-up ${isVisible ? "visible" : ""}`}
+            style={{ transitionDelay: "0.6s" }}
+          >
             <div className="institution">
               Desarrollador Web & Asistente - Academia Fertex
             </div>
@@ -79,22 +121,22 @@ const About = () => {
             <div className="date">Febrero 2023 - Diciembre 2023</div>
           </div>
 
-          {/* Sección: Habilidades Técnicas */}
-          <div className="pipe-title">Habilidades Técnicas</div>
+          <div
+            className={`pipe-title slide-up ${isVisible ? "visible" : ""}`}
+            style={{ transitionDelay: "0.7s" }}
+          >
+            Habilidades Técnicas
+          </div>
+
           <div className="skills-wrapper">
-            {[
-              "React",
-              "JavaScript",
-              "HTML5",
-              "CSS3",
-              "Tailwind CSS",
-              "Firebase",
-              "MySQL",
-              "SQL Server",
-              "Git",
-              "Figma",
-            ].map((skill) => (
-              <span key={skill} className="skill-pill">
+            {skills.map((skill, index) => (
+              <span
+                key={skill}
+                className={`skill-pill slide-up ${isVisible ? "visible" : ""}`}
+                style={{
+                  transitionDelay: isVisible ? `${0.8 + index * 0.1}s` : "0s",
+                }}
+              >
                 {skill}
               </span>
             ))}

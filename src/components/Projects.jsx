@@ -8,6 +8,9 @@ const Projects = () => {
   const sectionRef = useRef(null);
 
   useEffect(() => {
+    const isMobile = window.innerWidth <= 768;
+    const thresholdValue = isMobile ? 0.2 : 0.5;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -16,7 +19,7 @@ const Projects = () => {
         }
       },
       {
-        threshold: 0.2,
+        threshold: thresholdValue,
       }
     );
 
@@ -29,15 +32,21 @@ const Projects = () => {
     };
   }, []);
 
+  const animations = ["slide-right", "slide-up", "slide-left"];
+
   return (
     <section id="proyectos" ref={sectionRef}>
       <h2 className="section-title">Mis Proyectos</h2>
 
-      <div
-        className={`projects-grid scroll-reveal ${isVisible ? "visible" : ""}`}
-      >
+      <div className="projects-grid">
         {content.projects.map((project, i) => (
-          <div key={i} className="card project-card">
+          <div
+            key={i}
+            className={`card project-card ${animations[i]} ${
+              isVisible ? "visible" : ""
+            }`}
+
+          >
             {/* Contenedor de Imagen */}
             <div className="project-img-wrapper">
               <img
@@ -55,7 +64,6 @@ const Projects = () => {
               <p
                 style={{
                   fontSize: "16px",
-                  color: "#666",
                   marginBottom: "1.5rem",
                   flexGrow: 1,
                 }}
