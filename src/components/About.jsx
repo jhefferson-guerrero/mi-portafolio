@@ -74,7 +74,7 @@ const About = () => {
               transitionDelay: "0.2s",
             }}
           >
-            Estudiante de Ingeniería de Software (9º ciclo) especializado en
+            Egresado de Ingeniería de Software especializado en
             desarrollo web front-end. Me apasiona crear soluciones digitales
             escalables y experiencias de usuario fluidas, enfocándome siempre en
             el código limpio y el trabajo colaborativo.
@@ -94,8 +94,8 @@ const About = () => {
             <div className="institution">
               Universidad Tecnológica del Perú (UTP)
             </div>
-            <div className="degree">Ingeniería de Software | 9º Ciclo</div>
-            <div className="date">Actualmente estudiando</div>
+            <div className="degree">Ingeniería de Software | Egresado</div>
+            <div className="date">Diciembre 2025</div>
           </div>
 
           <div

@@ -52,7 +52,7 @@ const Hero = () => {
             className={`hero-desc slide-up ${isLoaded ? "visible" : ""}`}
             style={{ transitionDelay: "0.3s" }}
           >
-            Estudiante de{" "}
+            Egresado de {" "}
             <span style={{ fontWeight: "700" }}>
               Ingeniería de Software
             </span>{" "}
