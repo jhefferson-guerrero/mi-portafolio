@@ -1,47 +1,71 @@
-import { Code, Layout, Server} from "lucide-react";
+import { Code, Layout, Server, Smartphone, Globe } from "lucide-react";
 
 export const content = {
   hero: {
     cvLink: "/assets/CV-Jhefferson-Guerrero.pdf",
   },
+  about: {
+    education: {
+      title: "Educación",
+      institution: "Ingeniería de Software",
+      degree: "Universidad Tecnológica del Perú (UTP)",
+      date: "2021 - 2025"
+    },
+    experience: {
+      title: "Experiencia Laboral",
+      role: "Desarrollador Web Frontend",
+      company: "Academia Fertex Artes Marciales",
+      date: "Feb 2023 – Actualidad",
+      desc: "Lideré la digitalización inicial de la academia y recientemente estuve a cargo de la renovación tecnológica completa de su plataforma web. Implementé React, Vite, Tailwind CSS v4, animaciones con Framer Motion, y optimización SEO avanzada (JSON-LD, Open Graph).",
+      linkLive: "https://www.taekwondofertex.com/",
+      linkCode: "https://github.com/jhefferson-guerrero/fertex-web"
+    },
+    stack: [
+      "React", "JavaScript", "HTML5", "CSS3", "Tailwind CSS", 
+      "Firebase", "MySQL", "Git", "Figma"
+    ]
+  },
   services: [
     {
-      title: "Desarrollo Frontend",
-      desc: "Creación de interfaces web modernas y responsivas con React, JavaScript y Tailwind CSS.",
-      icon: Layout,
+      title: "Desarrollo Web",
+      desc: "Creación de sitios web responsivos y optimizados usando las últimas tecnologías como React y Tailwind CSS.",
+      icon: Globe,
     },
     {
-      title: "Desarrollo Full Stack",
-      desc: "Aplicaciones web completas integrando frontend React con Firebase, Node.js y bases de datos SQL.",
-      icon: Server,
+      title: "Desarrollo Frontend",
+      desc: "Implementación de interfaces de usuario interactivas, accesibles y con animaciones fluidas.",
+      icon: Code,
     },
     {
       title: "Diseño UI/UX",
-      desc: "Prototipado en Figma enfocado en experiencias de usuario intuitivas y diseños funcionales.",
-      icon: Code,
+      desc: "Diseño centrado en el usuario, prototipado en Figma y creación de sistemas de diseño escalables.",
+      icon: Smartphone,
     },
   ],
   projects: [
     {
-      title: "Academia Fertex",
-      desc: "Plataforma web para digitalizar la presencia de la academia. Aumentó la visibilidad y facilitó el acceso a la información.",
-      tags: ["React", "Tailwind CSS", "UX/UI"],
-      link: "https://taekwondofertex.com",
-      image: "/assets/projects/fertex.webp",
-    },
-    {
-      title: "Mesa de Partes Virtual",
-      desc: "Sistema que automatizó el 100% de la recepción documental, eliminando el uso de papel y errores manuales.",
-      tags: ["JavaScript", "Firebase", "CSS3"],
-      link: "https://mesa-de-partes-5c6c2.web.app",
+      title: "Sistema Mesa de Partes Virtual",
+      desc: "Plataforma para digitalización de trámites con autenticación segura, notificaciones automáticas y base de datos en tiempo real.",
+      tags: ["JavaScript", "HTML5", "CSS3", "Firebase"],
+      link: "https://mesa-de-partes-5c6c2.web.app/",
+      code: "https://github.com/jhefferson-guerrero/mesa-de-partes-ccjn",
       image: "/assets/projects/mesa-partes.webp",
     },
     {
-      title: "Memory Fruit",
-      desc: "Juego interactivo de memoria con 4 niveles de dificultad. Incluye temporizador, sistema de puntuación y pixel art design.",
-      tags: ["JavaScript", "HTML5", "CSS3"],
-      link: "https://memory-fruit.netlify.app",
-      image: "/assets/projects/memory-fruit.webp",
+      title: "Pastelia Bakery - Landing Page",
+      desc: "Landing page premium de repostería con animaciones fluidas, navegación suave y un diseño UI/UX altamente atractivo.",
+      tags: ["React 19", "Vite", "Tailwind CSS v4", "Framer Motion", "Lenis", "React Router"],
+      link: "https://pasteliabakery.vercel.app/",
+      code: "https://github.com/jhefferson-guerrero/pastelia-landing",
+      image: "/assets/projects/placeholder.webp",
+    },
+    {
+      title: "Sistema de Gestión para Academia (ERP)",
+      desc: "Plataforma web integral para el control eficiente de alumnos, pagos y análisis de datos financieros mediante gráficos interactivos.",
+      tags: ["React 19", "Tailwind CSS", "Supabase", "Recharts"],
+      link: "",
+      code: "https://github.com/jhefferson-guerrero/sistema-taekwondo",
+      image: "/assets/projects/placeholder.webp",
     },
   ],
   socials: {

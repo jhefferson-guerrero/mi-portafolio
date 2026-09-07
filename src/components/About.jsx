@@ -1,147 +1,75 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
+import { Code2, Terminal } from "lucide-react";
+import { content } from "../data/content";
+import { useScrollReveal } from "../hooks/useScrollReveal";
 import "../styles/App.css";
 
 const About = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef(null);
-
-  useEffect(() => {
-    const isMobile = window.innerWidth <= 768;
-    const thresholdValue = isMobile ? 0.2 : 0.3;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      {
-        threshold: thresholdValue,
-      }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (sectionRef.current) observer.disconnect();
-    };
-  }, []);
-
-  const skills = [
-    "React",
-    "JavaScript",
-    "HTML5",
-    "CSS3",
-    "Tailwind CSS",
-    "Firebase",
-    "MySQL",
-    "SQL Server",
-    "Git",
-    "Figma",
-  ];
+  const [sectionRef, isVisible] = useScrollReveal();
+  const [eduRef, isEduVisible] = useScrollReveal();
+  const [expRef, isExpVisible] = useScrollReveal();
 
   return (
     <section id="about" ref={sectionRef}>
-      <div className="about-grid">
-        <div
-          className={`about-image-container slide-right ${
-            isVisible ? "visible" : ""
-          }`}
-        >
-          <img
-            src="/assets/projects/sobre-mi.webp"
-            alt="Jhefferson Guerrero"
-            className="about-image"
-          />
+      <h2 className="section-title">Acerca de Mí</h2>
+
+      <div className={`profile-card slide-up ${isVisible ? "visible" : ""}`} style={{ transitionDelay: "0.1s" }}>
+        
+        {/* Sidebar: Icono 3D Neumórfico en lugar de foto */}
+        <div className="profile-sidebar">
+          <div className="neu-3d-icon-container">
+            <div className="neu-3d-icon">
+              <div className="neu-icon-inner">
+                <Code2 size={72} strokeWidth={1.5} className="icon-main" />
+              </div>
+            </div>
+            
+            <div className="neu-badges">
+              <span className="neu-badge"><Terminal size={14}/> Frontend</span>
+            </div>
+          </div>
         </div>
 
-        <div className="about-content">
-          <h2
-            className={`section-title ${isVisible ? "visible" : ""}`}
-            style={{ transitionDelay: "0.1s" }}
-          >
-            Acerca de Mí
-          </h2>
-
-          <p
-            className={`slide-up ${isVisible ? "visible" : ""}`}
-            style={{
-              lineHeight: "1.7",
-              marginBottom: "1.5rem",
-              transitionDelay: "0.2s",
-            }}
-          >
-            Egresado de Ingeniería de Software especializado en
-            desarrollo web front-end. Me apasiona crear soluciones digitales
-            escalables y experiencias de usuario fluidas, enfocándome siempre en
-            el código limpio y el trabajo colaborativo.
+        {/* Content: Bio y Timeline */}
+        <div className="profile-content">
+          <p style={{ color: "var(--color-text)", fontSize: "1.1rem", lineHeight: "1.7", marginBottom: "2rem" }}>
+            Soy <strong style={{color: "var(--color-accent)"}}>Jhefferson Guerrero</strong>, desarrollador web enfocado en el ecosistema 
+            <strong style={{color: "var(--color-accent)"}}> Frontend</strong>. Me especializo en crear interfaces modernas, optimizadas 
+            y accesibles. Mi objetivo es combinar diseño técnico (UI/UX) con código limpio para ofrecer experiencias de alto nivel.
           </p>
 
-          <div
-            className={`pipe-title slide-up ${isVisible ? "visible" : ""}`}
-            style={{ transitionDelay: "0.3s" }}
-          >
-            Educación
-          </div>
-
-          <div
-            className={`info-item slide-up ${isVisible ? "visible" : ""}`}
-            style={{ transitionDelay: "0.4s" }}
-          >
-            <div className="institution">
-              Universidad Tecnológica del Perú (UTP)
+          <div className="timeline-container">
+            {/* Timeline Item: Experiencia */}
+            <div ref={expRef} className={`timeline-item slide-up ${isExpVisible ? "visible" : ""}`} style={{ transitionDelay: "0.1s" }}>
+              <div className="timeline-dot"></div>
+              <h3 style={{ marginTop: 0, marginBottom: "0.5rem", color: "var(--color-accent)", fontSize: "1.1rem" }}>{content.about.experience.title}</h3>
+              <p className="institution">{content.about.experience.role}</p>
+              <p className="degree">{content.about.experience.company}</p>
+              <p className="date">{content.about.experience.date}</p>
+              <p style={{ marginTop: "0.5rem", color: "var(--color-text)", fontSize: "0.95rem" }}>
+                {content.about.experience.desc}
+              </p>
+              <div style={{ marginTop: "1rem", display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                <a href={content.about.experience.linkLive} target="_blank" rel="noopener noreferrer" style={{ color: "var(--color-accent)", textDecoration: "none", fontSize: "0.9rem", fontWeight: "600" }}>
+                  Ver Proyecto en Vivo →
+                </a>
+                <a href={content.about.experience.linkCode} target="_blank" rel="noopener noreferrer" style={{ color: "var(--color-primary)", textDecoration: "none", fontSize: "0.9rem", fontWeight: "600" }}>
+                  Ver Código →
+                </a>
+              </div>
             </div>
-            <div className="degree">Ingeniería de Software | Egresado</div>
-            <div className="date">Diciembre 2025</div>
-          </div>
 
-          <div
-            className={`pipe-title slide-up ${isVisible ? "visible" : ""}`}
-            style={{ transitionDelay: "0.5s" }}
-          >
-            Experiencia
-          </div>
-
-          <div
-            className={`info-item slide-up ${isVisible ? "visible" : ""}`}
-            style={{ transitionDelay: "0.6s" }}
-          >
-            <div className="institution">
-              Desarrollador Web & Asistente - Academia Fertex
+            {/* Timeline Item: Educación */}
+            <div ref={eduRef} className={`timeline-item slide-up ${isEduVisible ? "visible" : ""}`} style={{ transitionDelay: "0.2s" }}>
+              <div className="timeline-dot"></div>
+              <h3 style={{ marginTop: 0, marginBottom: "0.5rem", color: "var(--color-accent)", fontSize: "1.1rem" }}>{content.about.education.title}</h3>
+              <p className="institution">{content.about.education.institution}</p>
+              <p className="degree">{content.about.education.degree}</p>
+              <p className="date" style={{ marginBottom: "0" }}>{content.about.education.date}</p>
             </div>
-            <p className="degree">
-              Diseñé y desarrollé el sitio web institucional con React y
-              Tailwind CSS. Gestioné contenido digital para 150+ familias y
-              optimicé el proceso de captación de alumnos mediante estrategia
-              digital y atención personalizada.
-            </p>
-            <div className="date">Febrero 2023 - Diciembre 2023</div>
-          </div>
-
-          <div
-            className={`pipe-title slide-up ${isVisible ? "visible" : ""}`}
-            style={{ transitionDelay: "0.7s" }}
-          >
-            Habilidades Técnicas
-          </div>
-
-          <div className="skills-wrapper">
-            {skills.map((skill, index) => (
-              <span
-                key={skill}
-                className={`skill-pill slide-up ${isVisible ? "visible" : ""}`}
-                style={{
-                  transitionDelay: isVisible ? `${0.8 + index * 0.1}s` : "0s",
-                }}
-              >
-                {skill}
-              </span>
-            ))}
           </div>
         </div>
+
       </div>
     </section>
   );

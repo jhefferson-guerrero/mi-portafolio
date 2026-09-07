@@ -9,12 +9,14 @@ const LoadingScreen = ({ onComplete }) => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
-          setTimeout(onComplete, 500);
+          setTimeout(onComplete, 600);
           return 100;
         }
-        return prev + Math.random() * 10;
+        // Animación de carga más realista (frena un poco al final)
+        const increment = prev > 80 ? Math.random() * 2 : Math.random() * 15;
+        return prev + increment;
       });
-    }, 100);
+    }, 120);
 
     return () => clearInterval(interval);
   }, [onComplete]);
@@ -22,23 +24,20 @@ const LoadingScreen = ({ onComplete }) => {
   return (
     <div className="loading-container">
       <div className="loading-content">
-        <h1 className="welcome-text">Bienvenido</h1>
+        <h1 className="welcome-text">Iniciando</h1>
 
-        {/* Contenedor de la barra y el porcentaje */}
         <div className="loader-wrapper">
-          {/* Porcentaje numérico */}
           <span className="percent-text">{Math.round(progress)}%</span>
-
-          {/* Barra */}
+          
           <div className="progress-bar-container">
             <div
               className="progress-bar-fill"
               style={{ width: `${Math.min(progress, 100)}%` }}
             ></div>
           </div>
+          
+          <p className="loading-status">Cargando sistema...</p>
         </div>
-
-        <p className="loading-status">CARGANDO...</p>
       </div>
     </div>
   );

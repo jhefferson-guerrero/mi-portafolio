@@ -2,9 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Home, User, FolderOpen, Wrench, Moon, Sun } from "lucide-react";
 import "../styles/App.css";
 
+const sectionsList = [
+  { id: "inicio", label: "Inicio", icon: Home },
+  { id: "about", label: "Acerca", icon: User },
+  { id: "proyectos", label: "Proyectos", icon: FolderOpen },
+  { id: "servicios", label: "Servicios", icon: Wrench },
+];
+
 const Navbar = () => {
   const [activeSection, setActiveSection] = useState("inicio");
-
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
   useEffect(() => {
@@ -16,39 +22,34 @@ const Navbar = () => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
 
-  const sections = [
-    { id: "inicio", label: "Inicio", icon: Home },
-    { id: "about", label: "Acerca", icon: User },
-    { id: "proyectos", label: "Proyectos", icon: FolderOpen },
-    { id: "servicios", label: "Servicios", icon: Wrench },
-  ];
-
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 400;
-
-      for (const section of sections) {
-        const element = document.getElementById(section.id);
-        if (element) {
-          const offsetTop = element.offsetTop;
-          const offsetBottom = offsetTop + element.offsetHeight;
-
-          if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
-            setActiveSection(section.id);
-          }
-        }
-      }
+    // Usando IntersectionObserver para evitar calcular el scroll en cada pixel (Performance Fix)
+    const observerOptions = {
+      root: null,
+      rootMargin: "-30% 0px -70% 0px", // Detecta cuando la sección entra en el tercio superior
+      threshold: 0
     };
 
-    window.addEventListener("scroll", handleScroll);
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    }, observerOptions);
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    sectionsList.forEach(section => {
+      const el = document.getElementById(section.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   return (
     <nav className="navbar-container">
       {/* Botones de Navegación */}
-      {sections.map((item) => (
+      {sectionsList.map((item) => (
         <a
           key={item.id}
           href={`#${item.id}`}
@@ -64,9 +65,9 @@ const Navbar = () => {
         style={{
           width: "1px",
           height: "40px",
-          background: "#ccc",
+          background: "var(--primary)",
           margin: "0 5px",
-          opacity: 0.5,
+          opacity: 0.2,
         }}
       />
 
@@ -85,7 +86,7 @@ const Navbar = () => {
         aria-label="Cambiar tema"
       >
         {theme === "light" ? (
-          <Moon size={21} color="#9f9add" />
+          <Moon size={21} color="var(--color-primary)" />
         ) : (
           <Sun size={21} color="#fff" />
         )}

@@ -1,37 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import { content } from "../data/content";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Github } from "lucide-react";
+import { useScrollReveal } from "../hooks/useScrollReveal";
 import "../styles/App.css";
 
 const Projects = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef(null);
-
-  useEffect(() => {
-    const isMobile = window.innerWidth <= 768;
-    const thresholdValue = isMobile ? 0.2 : 0.5;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      {
-        threshold: thresholdValue,
-      }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (sectionRef.current) observer.disconnect();
-    };
-  }, []);
-
+  const [sectionRef, isVisible] = useScrollReveal();
   const animations = ["slide-right", "slide-up", "slide-left"];
 
   return (
@@ -39,65 +13,70 @@ const Projects = () => {
       <h2 className="section-title">Mis Proyectos</h2>
 
       <div className="projects-grid">
-        {content.projects.map((project, i) => (
-          <div
-            key={i}
-            className={`card project-card ${animations[i]} ${
-              isVisible ? "visible" : ""
-            }`}
-
-          >
-            {/* Contenedor de Imagen */}
-            <div className="project-img-wrapper">
-              <img
-                src={project.image}
-                alt={project.title}
-                className="project-img"
-              />
-            </div>
-
-            {/* Contenido del Card */}
-            <div className="project-content">
-              <h3 style={{ marginBottom: "0.5rem", fontSize: "1.4rem" }}>
-                {project.title}
-              </h3>
-              <p
-                style={{
-                  fontSize: "16px",
-                  marginBottom: "1.5rem",
-                  flexGrow: 1,
-                }}
-              >
-                {project.desc}
-              </p>
-
-              <div
-                style={{
-                  display: "flex",
-                  gap: "8px",
-                  flexWrap: "wrap",
-                  marginBottom: "1.5rem",
-                }}
-              >
-                {project.tags.map((tag, j) => (
-                  <span key={j} className="project-tag">
-                    {tag}
-                  </span>
-                ))}
+        {content.projects.map((project, i) => {
+          const projectKey = project.id || `project-${project.title.replace(/\s+/g, '-').toLowerCase()}-${i}`;
+          
+          return (
+            <div
+              key={projectKey}
+              className={`panel project-card slide-up ${
+                isVisible ? "visible" : ""
+              }`}
+              style={{ transitionDelay: `${i * 0.15}s` }}
+            >
+              <div className="project-image-container">
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="project-img"
+                  loading="lazy"
+                />
               </div>
 
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-secondary"
-                style={{ width: "100%", justifyContent: "center" }}
-              >
-                Ver Proyecto <ExternalLink size={16} />
-              </a>
+              <div className="project-content">
+                <h3 style={{ marginBottom: "0.5rem", fontSize: "1.4rem", color: "var(--color-primary)" }}>
+                  {project.title}
+                </h3>
+                <p>
+                  {project.desc}
+                </p>
+
+                <div style={{ marginBottom: "1.5rem" }}>
+                  {project.tags.map((tag, j) => (
+                    <span key={`tag-${j}`} className="project-tag">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "auto" }}>
+                  {project.link && (
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn project-btn"
+                      aria-label={`Ver proyecto ${project.title}`}
+                    >
+                      <ExternalLink size={16} /> Ver Demo
+                    </a>
+                  )}
+                  {project.code && (
+                    <a
+                      href={project.code}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn project-btn"
+                      aria-label={`Ver código ${project.title}`}
+                    >
+                      <Github size={16} /> Ver Código
+                    </a>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
