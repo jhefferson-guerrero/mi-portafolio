@@ -1,60 +1,35 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import { content } from "../data/content";
+import { useScrollReveal } from "../hooks/useScrollReveal";
 import "../styles/App.css";
 
 const Services = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef(null);
-
-  useEffect(() => {
-    const isMobile = window.innerWidth <= 768;
-    const thresholdValue = isMobile ? 0.3 : 0.6;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      {
-        threshold: thresholdValue,
-      }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (sectionRef.current) observer.disconnect();
-    };
-  }, []);
-
+  const [sectionRef, isVisible] = useScrollReveal();
   const animations = ["slide-right", "slide-up", "slide-left"];
 
   return (
     <section id="servicios" ref={sectionRef}>
-      <h2 className="section-title">Servicios</h2>
+      <h2 className="section-title">Mis Servicios</h2>
 
       <div className="services-grid">
-        {content.services.map((service, i) => (
-          <div
-            key={i}
-            className={`service-card ${animations[i]} ${
-              isVisible ? "visible" : ""
-            }`}
-
-          >
-            {/* Wrapper del icono */}
-            <div className="service-icon-wrapper">
-              <service.icon size={32} />
+        {content.services.map((service, i) => {
+          const IconComponent = service.icon;
+          return (
+            <div
+              key={`service-${service.title.replace(/\s+/g, '-').toLowerCase()}-${i}`}
+              className={`panel service-card ${animations[i % animations.length]} ${
+                isVisible ? "visible" : ""
+              }`}
+              style={{ transitionDelay: isVisible ? `${i * 0.1}s` : "0s" }}
+            >
+              <div className="service-icon-wrapper">
+                <IconComponent size={28} />
+              </div>
+              <h3 style={{ marginBottom: "0.8rem", color: "var(--color-primary)" }}>{service.title}</h3>
+              <p style={{ color: "var(--color-text)" }}>{service.desc}</p>
             </div>
-
-            <h3>{service.title}</h3>
-            <p>{service.desc}</p>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
