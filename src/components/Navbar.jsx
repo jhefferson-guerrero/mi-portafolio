@@ -1,97 +1,65 @@
-import React, { useState, useEffect } from "react";
-import { Home, User, FolderOpen, Wrench, Moon, Sun } from "lucide-react";
-import "../styles/App.css";
+import { useState, useEffect, useRef } from "react";
+import { Moon, Sun } from "lucide-react";
+import { content } from "../data/content";
 
-const sectionsList = [
-  { id: "inicio", label: "Inicio", icon: Home },
-  { id: "about", label: "Acerca", icon: User },
-  { id: "proyectos", label: "Proyectos", icon: FolderOpen },
-  { id: "servicios", label: "Servicios", icon: Wrench },
-];
-
-const Navbar = () => {
-  const [activeSection, setActiveSection] = useState("inicio");
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+// Barra superior tipo menú de aplicación. `active` viene de useActiveSection.
+const Navbar = ({ active }) => {
+  const navRef = useRef(null);
+  // Siempre arranca en oscuro; el cambio de tema solo dura la sesión actual.
+  const [theme, setTheme] = useState(
+    () => document.documentElement.getAttribute("data-theme") || "dark"
+  );
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
-  };
-
+  // En móvil el menú se desplaza: mantiene visible el enlace activo.
   useEffect(() => {
-    // Usando IntersectionObserver para evitar calcular el scroll en cada pixel (Performance Fix)
-    const observerOptions = {
-      root: null,
-      rootMargin: "-30% 0px -70% 0px", // Detecta cuando la sección entra en el tercio superior
-      threshold: 0
-    };
+    const nav = navRef.current;
+    if (!nav || nav.scrollWidth <= nav.clientWidth) return;
+    nav
+      .querySelector('[aria-current="location"]')
+      ?.scrollIntoView({ inline: "center", block: "nearest" });
+  }, [active]);
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          setActiveSection(entry.target.id);
-        }
-      });
-    }, observerOptions);
-
-    sectionsList.forEach(section => {
-      const el = document.getElementById(section.id);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
+  const isDark = theme === "dark";
 
   return (
-    <nav className="navbar-container">
-      {/* Botones de Navegación */}
-      {sectionsList.map((item) => (
-        <a
-          key={item.id}
-          href={`#${item.id}`}
-          className={`nav-item ${activeSection === item.id ? "active" : ""}`}
-          onClick={() => setActiveSection(item.id)}
-        >
-          <item.icon size={18} />
-          <span>{item.label}</span>
+    <header className="menubar">
+      <div className="menubar-inner">
+        <a href="#inicio" className="brand" aria-label="Ir al inicio">
+          <span className="brand-mark">JG</span>
+          <span className="brand-name">portafolio</span>
         </a>
-      ))}
 
-      <div
-        style={{
-          width: "1px",
-          height: "40px",
-          background: "var(--primary)",
-          margin: "0 5px",
-          opacity: 0.2,
-        }}
-      />
+        <nav ref={navRef} className="menu" aria-label="Principal">
+          <ul>
+            {content.nav.map((item) => (
+              <li key={item.id}>
+                <a
+                  href={`#${item.id}`}
+                  className="menu-link"
+                  aria-current={active === item.id ? "location" : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-      <button
-        onClick={toggleTheme}
-        className="nav-item theme-toggle"
-        style={{
-          background: "transparent",
-          border: "none",
-          padding: "0.7rem",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-        aria-label="Cambiar tema"
-      >
-        {theme === "light" ? (
-          <Moon size={21} color="var(--color-primary)" />
-        ) : (
-          <Sun size={21} color="#fff" />
-        )}
-      </button>
-    </nav>
+        <button
+          type="button"
+          className="icon-btn"
+          onClick={() => setTheme(isDark ? "light" : "dark")}
+          aria-label={isDark ? "Activar modo claro" : "Activar modo oscuro"}
+        >
+          {isDark ? <Sun size={15} /> : <Moon size={15} />}
+          <span className="icon-btn-label">{isDark ? "claro" : "oscuro"}</span>
+        </button>
+      </div>
+    </header>
   );
 };
 

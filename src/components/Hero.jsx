@@ -1,87 +1,126 @@
-import React, { useState, useEffect } from "react";
-import { Download, ArrowRight, Linkedin, Github, Mail } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Download, Linkedin, Github, Mail } from "lucide-react";
 import { content } from "../data/content";
-import "../styles/App.css";
+
+const prefersReducedMotion = () =>
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const TypewriterText = ({ fullText }) => {
-  const [text, setText] = useState("");
+  const [reduced] = useState(prefersReducedMotion);
+  const [text, setText] = useState(() => (reduced ? fullText : ""));
 
   useEffect(() => {
+    if (reduced) return;
+
     let index = 0;
+    let typeWriter;
     const startTyping = setTimeout(() => {
-      const typeWriter = setInterval(() => {
-        if (index <= fullText.length) {
-          setText(fullText.slice(0, index));
-          index++;
-        } else {
-          clearInterval(typeWriter);
-        }
-      }, 80);
-      return () => clearInterval(typeWriter);
-    }, 800);
+      typeWriter = setInterval(() => {
+        index++;
+        setText(fullText.slice(0, index));
+        if (index >= fullText.length) clearInterval(typeWriter);
+      }, 70);
+    }, 700);
 
-    return () => clearTimeout(startTyping);
-  }, [fullText]);
+    return () => {
+      clearTimeout(startTyping);
+      clearInterval(typeWriter);
+    };
+  }, [fullText, reduced]);
 
-  return <>{text}</>;
+  return (
+    <>
+      <span aria-label={fullText}>{text}</span>
+      <span className="cursor" aria-hidden="true" />
+    </>
+  );
 };
 
 const Hero = () => {
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    const loadTimer = setTimeout(() => setIsLoaded(true), 150);
-    return () => clearTimeout(loadTimer);
-  }, []);
+  const { hero, socials, meta } = content;
 
   return (
-    <section id="inicio" className="hero-container">
-      <div className="hero-grid">
-        <div className="hero-text-content">
-          <div className={`premium-reveal ${isLoaded ? "visible" : ""}`} style={{ transitionDelay: "0.1s" }}>
-            <span className="hero-eyebrow">{'// Portafolio 2026'}</span>
-          </div>
+    <section id="inicio" className="hero" aria-label="Presentación">
+      <div className="container">
+        <div className="hero-grid">
+          <div className="hero-text">
+            <p className="eyebrow rise" style={{ "--d": "60ms" }}>
+              <span>{hero.eyebrow}</span>
+              <span className="chip chip--ok">
+                <span className="status-dot" aria-hidden="true" />
+                {meta.availability}
+              </span>
+            </p>
 
-          <h1 className={`greeting premium-reveal ${isLoaded ? "visible" : ""}`} style={{ transitionDelay: "0.2s" }}>
-            Hola, soy <br/>
-            <span className="name-highlight">Jhefferson</span>
-          </h1>
+            <h1 className="rise" style={{ "--d": "140ms" }}>
+              {hero.firstName}
+              <br />
+              <span className="h1-last">{hero.lastName}</span>
+            </h1>
 
-          <div className={`typing-wrapper premium-reveal ${isLoaded ? "visible" : ""}`} style={{ transitionDelay: "0.3s" }}>
-            <TypewriterText fullText="> Frontend Developer_" />
-          </div>
+            <p className="prompt rise" style={{ "--d": "240ms" }}>
+              <span className="prompt-sign" aria-hidden="true">&gt;</span>
+              <TypewriterText fullText={hero.role} />
+            </p>
 
-          <p className={`hero-desc premium-reveal ${isLoaded ? "visible" : ""}`} style={{ transitionDelay: "0.4s" }}>
-            Egresado de Ingeniería de Software y desarrollador web. 
-            Me apasiona crear, aprender y llevar mis ideas a la realidad a través del código y el diseño interactivo.
-          </p>
+            <p className="hero-desc rise" style={{ "--d": "320ms" }}>
+              {hero.description}
+            </p>
 
-          <div className={`hero-buttons premium-reveal ${isLoaded ? "visible" : ""}`} style={{ transitionDelay: "0.5s" }}>
-            <a href="mailto:jheffer17x@gmail.com" className="btn" aria-label="Enviar correo">
-              <Mail size={16} /> Contactar
-            </a>
-            <a href={content.hero.cvLink} download className="btn" aria-label="Descargar Curriculum">
-              <Download size={16} /> Descargar CV
-            </a>
-          </div>
-
-          <div className={`hero-socials premium-reveal ${isLoaded ? "visible" : ""}`} style={{ transitionDelay: "0.6s" }}>
-            <a href={content.socials.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><Linkedin size={20} /></a>
-            <a href={content.socials.github} target="_blank" rel="noopener noreferrer" aria-label="Github"><Github size={20} /></a>
-          </div>
-        </div>
-
-        <div className={`hero-image-container premium-reveal ${isLoaded ? "visible" : ""}`} style={{ transitionDelay: "0.3s" }}>
-          <div className="bezel-outer">
-            <div className="bezel-inner">
-              <img
-                src="/assets/projects/perfil.webp"
-                alt="Jhefferson Guerrero"
-                fetchPriority="high"
-              />
+            <div className="actions rise" style={{ "--d": "400ms" }}>
+              <a href={socials.email} className="btn btn--primary">
+                <Mail size={15} /> Contactar
+              </a>
+              <a href={hero.cvLink} download className="btn">
+                <Download size={15} /> Descargar CV
+              </a>
+              <a
+                href={socials.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-link"
+                aria-label="GitHub (se abre en otra pestaña)"
+              >
+                <Github size={15} /> GitHub
+              </a>
+              <a
+                href={socials.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-link"
+                aria-label="LinkedIn (se abre en otra pestaña)"
+              >
+                <Linkedin size={15} /> LinkedIn
+              </a>
             </div>
           </div>
+
+          <figure className="photo-panel panel rise" style={{ "--d": "260ms" }}>
+            <figcaption className="panel-head">
+              <span>~/perfil.webp</span>
+            </figcaption>
+            <div className="photo-frame">
+              <img
+                src="/assets/projects/perfil.webp"
+                alt="Retrato de Jhefferson Guerrero"
+                fetchPriority="high"
+                decoding="async"
+              />
+            </div>
+          </figure>
         </div>
+
+        <dl className="statgrid rise" style={{ "--d": "480ms" }}>
+          {hero.stats.map((stat) => (
+            <div key={stat.label} className="stat">
+              <dt className="stat-label">{stat.label}</dt>
+              <dd className={`stat-value ${stat.tone === "ok" ? "is-ok" : ""}`}>
+                {stat.tone === "ok" && <span className="status-dot" aria-hidden="true" />}
+                {stat.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   );

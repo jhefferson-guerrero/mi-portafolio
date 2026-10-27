@@ -1,38 +1,27 @@
-import React from "react";
 import { content } from "../data/content";
-import { useScrollReveal } from "../hooks/useScrollReveal";
-import "../styles/App.css";
+import Reveal from "./Reveal";
+import SectionHead from "./SectionHead";
 
-const Services = () => {
-  const [sectionRef, isVisible] = useScrollReveal();
-  const animations = ["slide-right", "slide-up", "slide-left"];
+const pad = (n) => String(n).padStart(2, "0");
 
-  return (
-    <section id="servicios" ref={sectionRef}>
-      <h2 className="section-title">Mis Servicios</h2>
+const Services = () => (
+  <section id="servicios" className="section" aria-labelledby="servicios-title">
+    <div className="container">
+      <SectionHead index="05" id="servicios-title" title="qué hago" hint="// áreas de trabajo" />
 
-      <div className="services-grid">
-        {content.services.map((service, i) => {
-          const IconComponent = service.icon;
-          return (
-            <div
-              key={`service-${service.title.replace(/\s+/g, '-').toLowerCase()}-${i}`}
-              className={`panel service-card ${animations[i % animations.length]} ${
-                isVisible ? "visible" : ""
-              }`}
-              style={{ transitionDelay: isVisible ? `${i * 0.1}s` : "0s" }}
-            >
-              <div className="service-icon-wrapper">
-                <IconComponent size={28} />
-              </div>
-              <h3 style={{ marginBottom: "0.8rem", color: "var(--color-primary)" }}>{service.title}</h3>
-              <p style={{ color: "var(--color-text)" }}>{service.desc}</p>
-            </div>
-          );
-        })}
-      </div>
-    </section>
-  );
-};
+      <Reveal>
+        <ol className="panel rows">
+          {content.services.map((service, i) => (
+            <li key={service.title} className="row">
+              <span className="row-idx" aria-hidden="true">{pad(i + 1)}</span>
+              <h3>{service.title}</h3>
+              <p>{service.desc}</p>
+            </li>
+          ))}
+        </ol>
+      </Reveal>
+    </div>
+  </section>
+);
 
 export default Services;

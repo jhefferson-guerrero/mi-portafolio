@@ -1,38 +1,43 @@
-import React from "react";
 import { content } from "../data/content";
-import { useScrollReveal } from "../hooks/useScrollReveal";
-import "../styles/App.css";
+import Reveal from "./Reveal";
+import SectionHead from "./SectionHead";
 
-const Skills = () => {
-  const [sectionRef, isVisible] = useScrollReveal();
+const Skills = () => (
+  <section id="skills" className="section" aria-labelledby="skills-title">
+    <div className="container">
+      <SectionHead index="03" id="skills-title" title="stack" hint="// con qué construyo" />
 
-  return (
-    <section id="skills" ref={sectionRef}>
-      <h2 className="section-title" style={{ marginBottom: "0.5rem" }}>Mi Stack</h2>
-      <p className={`slide-up ${isVisible ? "visible" : ""}`} style={{ color: "var(--color-text)", textAlign: "center", marginBottom: "2rem", fontSize: "1.1rem" }}>
-        Tecnologías y herramientas que utilizo para construir experiencias digitales.
-      </p>
+      <Reveal>
+        <div className="panel">
+          <div className="panel-head">
+            <span>~/stack.conf</span>
+            <span className="legend">
+              <span className="legend-dot" aria-hidden="true" /> stack principal
+            </span>
+          </div>
 
-      <div className={`skills-container slide-up ${isVisible ? "visible" : ""}`} style={{ transitionDelay: "0.1s" }}>
-        <div className="skills-grid">
-          {content.about.stack.map((skill, index) => (
-            <div 
-              key={index} 
-              className={`slide-up ${isVisible ? "visible" : ""}`}
-              style={{ 
-                transitionDelay: `${0.1 + index * 0.1}s`,
-                transitionDuration: "0.4s"
-              }}
-            >
-              <div className="neu-key">
-                <span style={{ fontWeight: 600 }}>{skill}</span>
+          <dl className="kv-list">
+            {content.stack.map((group) => (
+              <div key={group.label} className="kv">
+                <dt>{group.label}</dt>
+                <dd>
+                  <ul className="tag-row">
+                    {group.items.map((item) => (
+                      <li key={item.name} className={`tag ${item.main ? "tag--main" : ""}`}>
+                        {item.main && <span className="legend-dot" aria-hidden="true" />}
+                        {item.name}
+                        {item.main && <span className="sr-only"> (stack principal)</span>}
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
               </div>
-            </div>
-          ))}
+            ))}
+          </dl>
         </div>
-      </div>
-    </section>
-  );
-};
+      </Reveal>
+    </div>
+  </section>
+);
 
 export default Skills;

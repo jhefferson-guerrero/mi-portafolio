@@ -1,36 +1,28 @@
 import { useState, useEffect, useRef } from "react";
 
-export const useScrollReveal = (customThreshold = null) => {
+// Marca un elemento como visible la primera vez que entra al viewport.
+// Un umbral bajo evita que bloques muy altos (listas en móvil) nunca se revelen.
+export const useScrollReveal = ({ threshold = 0.15, rootMargin = "0px 0px -6% 0px" } = {}) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef(null);
 
   useEffect(() => {
-    // Si no se pasa un threshold, calcula dinámicamente si es mobile o escritorio.
-    const isMobile = window.innerWidth <= 768;
-    const thresholdValue = customThreshold !== null ? customThreshold : (isMobile ? 0.2 : 0.4);
+    const element = ref.current;
+    if (!element) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          // Desconectar el observador después de que se revela por primera vez (optimización).
-          if (ref.current) observer.unobserve(ref.current);
+          observer.disconnect();
         }
       },
-      {
-        threshold: thresholdValue,
-      }
+      { threshold, rootMargin }
     );
 
-    const currentRef = ref.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef) observer.unobserve(currentRef);
-    };
-  }, [customThreshold]);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [threshold, rootMargin]);
 
   return [ref, isVisible];
 };

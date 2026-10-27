@@ -1,43 +1,65 @@
-import React, { useState, useEffect } from "react";
-import "../styles/App.css";
+import { useState, useEffect } from "react";
+import PixelBot from "./PixelBot";
 
+const BOOT_LINES = [
+  "portafolio · jhefferson guerrero · v2026.10",
+  "Cargando tipografías ...",
+  "Montando componentes ...",
+  "Optimizando recursos ...",
+  "Listo. Bienvenido.",
+];
+
+const pad = (n, size = 2) => String(n).padStart(size, "0");
+const formatTime = (date) =>
+  `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.${pad(date.getMilliseconds(), 3)}`;
+
+// Pantalla de arranque: un log corto con marcas de tiempo reales.
 const LoadingScreen = ({ onComplete }) => {
-  const [progress, setProgress] = useState(0);
+  const [lines, setLines] = useState([]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(onComplete, 600);
-          return 100;
-        }
-        // Animación de carga más realista (frena un poco al final)
-        const increment = prev > 80 ? Math.random() * 2 : Math.random() * 15;
-        return prev + increment;
-      });
-    }, 120);
+    if (lines.length >= BOOT_LINES.length) {
+      const done = setTimeout(onComplete, 380);
+      return () => clearTimeout(done);
+    }
 
-    return () => clearInterval(interval);
-  }, [onComplete]);
+    const next = setTimeout(
+      () =>
+        setLines((prev) => [
+          ...prev,
+          { time: formatTime(new Date()), message: BOOT_LINES[prev.length] },
+        ]),
+      lines.length === 0 ? 150 : 230
+    );
+    return () => clearTimeout(next);
+  }, [lines.length, onComplete]);
+
+  const progress = lines.length / BOOT_LINES.length;
 
   return (
-    <div className="loading-container">
-      <div className="loading-content">
-        <h1 className="welcome-text">Iniciando</h1>
-
-        <div className="loader-wrapper">
-          <span className="percent-text">{Math.round(progress)}%</span>
-          
-          <div className="progress-bar-container">
-            <div
-              className="progress-bar-fill"
-              style={{ width: `${Math.min(progress, 100)}%` }}
-            ></div>
-          </div>
-          
-          <p className="loading-status">Cargando sistema...</p>
+    <div className="boot" role="status" aria-label="Cargando portafolio">
+      <div className="boot-inner">
+        <div className="boot-head">
+          <PixelBot size={56} />
+          <p className="boot-title">iniciando<span className="cursor" aria-hidden="true" /></p>
         </div>
+
+        <ol className="boot-log">
+          {lines.map((line) => (
+            <li key={line.time} className="boot-line">
+              <span className="boot-time">{line.time}</span>
+              <span>{line.message}</span>
+            </li>
+          ))}
+        </ol>
+
+        <div className="boot-bar" aria-hidden="true">
+          <div className="boot-bar-fill" style={{ transform: `scaleX(${progress})` }} />
+        </div>
+
+        <button type="button" className="boot-skip" onClick={onComplete}>
+          saltar
+        </button>
       </div>
     </div>
   );
