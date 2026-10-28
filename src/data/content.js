@@ -41,12 +41,9 @@ export const content = {
         { text: "Jhefferson Guerrero", strong: true },
         { text: ", egresado de Ingeniería de Software de la UTP y desarrollador web en Lima. Me enfoco en el " },
         { text: "front-end", strong: true },
-        { text: ": interfaces claras, rápidas y accesibles, hechas con React y JavaScript." },
-      ],
-      [
-        {
-          text: "Tengo proyectos reales en producción: el sitio de una academia con más de 200 alumnos y un sistema de trámites con autenticación y base de datos en tiempo real. Ahora busco prácticas preprofesionales para aportar en un equipo y seguir aprendiendo.",
-        },
+        { text: ": interfaces claras, rápidas y accesibles, hechas con React y JavaScript. Tengo proyectos reales en producción y ahora busco " },
+        { text: "prácticas preprofesionales", strong: true },
+        { text: " para aportar en un equipo y seguir aprendiendo." },
       ],
     ],
     metrics: [
@@ -60,10 +57,10 @@ export const content = {
         title: "Desarrollador Web",
         org: "Academia Fertex Artes Marciales",
         bullets: [
-          "Diseñé y desarrollé el sitio institucional con React y Tailwind CSS: servicios, horarios y captación de alumnos.",
-          "Optimicé la carga en móvil con lazy loading, skeleton loading e Intersection Observer.",
-          "Gestioné la comunicación digital por Facebook y WhatsApp para más de 150 familias.",
-          "Lideré la renovación completa de la plataforma: React, Vite, Tailwind CSS v4, Framer Motion y SEO con JSON-LD y Open Graph.",
+          "Sitio institucional con React y Tailwind CSS: servicios, horarios y captación de alumnos.",
+          "Carga móvil optimizada con lazy loading, skeleton loading e Intersection Observer.",
+          "Comunicación digital por Facebook y WhatsApp para más de 150 familias.",
+          "Renovación completa: React, Vite, Tailwind CSS v4, Framer Motion y SEO con JSON-LD.",
         ],
         links: [
           { label: "Sitio en vivo", href: "https://www.taekwondofertex.com/" },
