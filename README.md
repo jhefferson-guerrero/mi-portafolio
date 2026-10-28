@@ -53,10 +53,8 @@ educación, stack, servicios, proyectos y redes sociales. Los comandos de la con
 no hay que duplicar nada.
 
 Para agregar un proyecto, añade un objeto a `content.projects` y guarda su captura en
-`public/assets/projects/` (formato `.webp`). Mientras la imagen no exista, el panel muestra un
-marcador con el nombre corto del proyecto. Las capturas pendientes son:
-
-- `public/assets/projects/pastelia.webp`
-- `public/assets/projects/erp.webp`
+`public/assets/projects/` (formato `.webp`, unos 1200 px de ancho para que pese poco). Mientras la
+imagen no exista, el panel muestra un marcador con el nombre corto del proyecto. Con `focus` en el
+proyecto se elige qué parte de la captura se ve en la miniatura (por ejemplo `"left top"`).
 
 Para agregar un comando, añade un objeto a `COMMANDS` en [`src/lib/commands.js`](src/lib/commands.js).

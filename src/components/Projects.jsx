@@ -24,6 +24,7 @@ const ProjectDetail = ({ project, index, selected }) => {
             alt={`Captura del proyecto ${project.title}`}
             loading="lazy"
             decoding="async"
+            style={project.focus ? { objectPosition: project.focus } : undefined}
             onError={() => setImageFailed(true)}
           />
         )}

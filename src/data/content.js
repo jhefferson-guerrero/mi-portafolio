@@ -160,7 +160,7 @@ export const content = {
     {
       title: "Sitio web Academia Fertex",
       short: "fertex",
-      desc: "Sitio de una academia de artes marciales con 20 años de trayectoria y más de 200 alumnos activos.",
+      desc: "Sitio de una academia de Taekwondo ITF, Muay Thai y Capoeira con 24 años de trayectoria y más de 200 alumnos activos.",
       highlights: [
         "Diseño mobile-first con skeleton loading, lazy loading e Intersection Observer.",
         "Secciones de disciplinas, galería, horarios, instructores y mapa de locales.",
@@ -170,6 +170,7 @@ export const content = {
       link: "https://www.taekwondofertex.com/",
       code: "https://github.com/jhefferson-guerrero/fertex-web",
       image: "/assets/projects/fertex.webp",
+      focus: "left top",
     },
     {
       title: "Sistema Mesa de Partes Virtual",
@@ -202,6 +203,7 @@ export const content = {
       link: "",
       code: "https://github.com/jhefferson-guerrero/sistema-taekwondo",
       image: "/assets/projects/erp.webp",
+      focus: "left top",
     },
   ],
 
