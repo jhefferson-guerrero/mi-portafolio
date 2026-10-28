@@ -1,61 +1,31 @@
-// Mascota pixel-art dibujada con rects SVG.
-// o = contorno, b = cuerpo, s = pantalla, E = ojos, a = acento.
-const SPRITE = [
-  ".......aa.......",
-  ".......oo.......",
-  "..oooooooooooo..",
-  "..obbbbbbbbbbo..",
-  "..obssssssssbo..",
-  "..obsEEssEEsbo..",
-  "..obsEEssEEsbo..",
-  "..obsaasssssbo..",
-  "..obbbbbbbbbbo..",
-  "..oooooooooooo..",
-  "....oooooooo....",
-  "...obbbaabbbo...",
-  "...obbbbbbbbo...",
-  "...oo......oo...",
-  "..ooo......ooo..",
-];
+import { CREATURE_CELLS, CREATURE_COLS, CREATURE_ROWS } from "../lib/creature";
 
-const COLS = SPRITE[0].length;
-const ROWS = SPRITE.length;
-
-const cells = SPRITE.flatMap((row, y) =>
-  [...row]
-    .map((char, x) => ({ char, x, y }))
-    .filter(({ char }) => char !== ".")
+// Celdas de la criatura, para dibujarlas dentro de otro SVG (ver PixelScene).
+export const CreatureCells = () => (
+  <g className="creature">
+    {CREATURE_CELLS.filter(({ char }) => char !== "E").map(({ char, x, y }) => (
+      <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-${char}`} />
+    ))}
+    <g className="creature-eyes">
+      {CREATURE_CELLS.filter(({ char }) => char === "E").map(({ x, y }) => (
+        <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className="px px-E" />
+      ))}
+    </g>
+  </g>
 );
 
+// Mascota pixel-art sola: una criatura con cúpula, visor y collar de acento.
 const PixelBot = ({ size = 96, className = "" }) => (
   <svg
     className={`pixbot ${className}`.trim()}
-    viewBox={`0 0 ${COLS} ${ROWS}`}
+    viewBox={`0 0 ${CREATURE_COLS} ${CREATURE_ROWS}`}
     width={size}
-    height={Math.round((size * ROWS) / COLS)}
+    height={Math.round((size * CREATURE_ROWS) / CREATURE_COLS)}
     shapeRendering="crispEdges"
     aria-hidden="true"
     focusable="false"
   >
-    {cells
-      .filter(({ char }) => char !== "E")
-      .map(({ char, x, y }) => (
-        <rect
-          key={`${x}-${y}`}
-          x={x}
-          y={y}
-          width="1"
-          height="1"
-          className={`px px-${char} ${char === "a" && y === 7 ? "px-cursor" : ""}`.trim()}
-        />
-      ))}
-    <g className="pixbot-eyes">
-      {cells
-        .filter(({ char }) => char === "E")
-        .map(({ x, y }) => (
-          <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className="px px-E" />
-        ))}
-    </g>
+    <CreatureCells />
   </svg>
 );
 

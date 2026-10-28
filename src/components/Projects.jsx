@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import { content } from "../data/content";
-import Reveal from "./Reveal";
-import SectionHead from "./SectionHead";
+import Pane from "./Pane";
 
 const pad = (n) => String(n).padStart(2, "0");
 
@@ -90,13 +89,12 @@ const ProjectDetail = ({ project, index, selected }) => {
   );
 };
 
-const Projects = () => {
+const Projects = ({ active, selected, onSelect }) => {
   const { projects } = content;
-  const [selected, setSelected] = useState(0);
   const tabRefs = useRef([]);
 
   const select = (index) => {
-    setSelected(index);
+    onSelect(index);
     tabRefs.current[index]?.focus();
   };
 
@@ -115,43 +113,35 @@ const Projects = () => {
   };
 
   return (
-    <section id="proyectos" className="section" aria-labelledby="proyectos-title">
-      <div className="container">
-        <SectionHead index="04" id="proyectos-title" title="proyectos" hint="// trabajo real, en producción" />
-
-        <Reveal>
-          <div className="panel">
-            <div className="tabs" role="tablist" aria-label="Proyectos" onKeyDown={onKeyDown}>
-              {projects.map((project, i) => (
-                <button
-                  key={project.title}
-                  ref={(node) => { tabRefs.current[i] = node; }}
-                  type="button"
-                  role="tab"
-                  id={`project-tab-${i}`}
-                  aria-selected={selected === i}
-                  aria-controls={`project-panel-${i}`}
-                  tabIndex={selected === i ? 0 : -1}
-                  className="tab"
-                  onClick={() => setSelected(i)}
-                >
-                  <span className="tab-idx" aria-hidden="true">{pad(i + 1)}</span>
-                  {project.short}
-                </button>
-              ))}
-            </div>
-
-            {/* Todos los paneles comparten la misma celda: la altura es la del más alto
-                y la sección no se mueve al cambiar de pestaña. */}
-            <div className="project-stack">
-              {projects.map((project, i) => (
-                <ProjectDetail key={project.title} project={project} index={i} selected={selected === i} />
-              ))}
-            </div>
-          </div>
-        </Reveal>
+    <Pane id="proyectos" active={active} file="proyectos/" hint="// trabajo real, en producción" flush>
+      <div className="tabs" role="tablist" aria-label="Proyectos" onKeyDown={onKeyDown}>
+        {projects.map((project, i) => (
+          <button
+            key={project.title}
+            ref={(node) => { tabRefs.current[i] = node; }}
+            type="button"
+            role="tab"
+            id={`project-tab-${i}`}
+            aria-selected={selected === i}
+            aria-controls={`project-panel-${i}`}
+            tabIndex={selected === i ? 0 : -1}
+            className="tab"
+            onClick={() => onSelect(i)}
+          >
+            <span className="tab-idx" aria-hidden="true">{pad(i + 1)}</span>
+            {project.short}
+          </button>
+        ))}
       </div>
-    </section>
+
+      {/* Todos los paneles comparten la misma celda: la altura es la del más alto
+          y la vista no se mueve al cambiar de pestaña. */}
+      <div className="project-stack">
+        {projects.map((project, i) => (
+          <ProjectDetail key={project.title} project={project} index={i} selected={selected === i} />
+        ))}
+      </div>
+    </Pane>
   );
 };
 

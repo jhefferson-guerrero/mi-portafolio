@@ -1,8 +1,8 @@
 # Portafolio — Jhefferson Guerrero
 
-Portafolio personal de una sola página, hecho con React 19 y Vite. Estilo "terminal minimalista":
-fondo casi negro, bordes de 1px, tipografía monoespaciada y un único acento ámbar.
-Siempre abre en modo oscuro; el botón de la barra superior alterna el tema solo durante la sesión.
+Portafolio personal hecho con React 19 y Vite, con forma de pequeña "app" de una sola pantalla
+(`jg-shell`): perfil y navegación a la izquierda, un panel por sección y una consola donde se pueden
+escribir comandos. Tema negro con un único acento lila.
 
 Producción: https://jhefferson-guerrero.vercel.app/
 
@@ -10,7 +10,8 @@ Producción: https://jhefferson-guerrero.vercel.app/
 
 - React 19 + Vite 7
 - lucide-react (iconos)
-- CSS propio (`src/styles/App.css`), sin framework
+- CSS propio (`src/styles/shell.css`), sin framework
+- Tipografías: Space Grotesk (títulos) e IBM Plex Mono (interfaz y consola)
 
 ## Scripts
 
@@ -22,15 +23,25 @@ npm run preview  # previsualiza el build
 npm run lint     # ESLint
 ```
 
+## Cómo se usa
+
+- Navegación: menú lateral, teclas `1`–`6` o enlaces con ancla (`/#proyectos`).
+- Consola: tecla `/` para enfocarla. Escribe `help` para ver los comandos
+  (`cd`, `open`, `stack`, `projects`, `email`, `cv`, `neofetch`...). `↑ ↓` recorren el historial,
+  `Tab` completa y `Esc` cierra la salida.
+- En escritorio cada sección cabe en una sola pantalla, también en laptops de poca altura.
+  En móvil la página hace scroll normal y la consola queda fija abajo.
+
 ## Estructura
 
 ```
 src/
-  components/   Navbar, StatusBar, Hero, About, Skills, Projects, Services, Contact,
-                LoadingScreen, PixelBot, Reveal, SectionHead
+  components/   Titlebar, Sidebar, Pane, Console, Hero, About, Skills, Projects, Services,
+                Contact, LoadingScreen, PixelBot, PixelScene
   data/         content.js — textos, proyectos, enlaces y redes
-  hooks/        useScrollReveal, useActiveSection
-  styles/       App.css — tokens de diseño y estilos de todas las secciones
+  hooks/        useConsole — salida e historial de la consola
+  lib/          commands.js — registro de comandos y autocompletado; creature.js — sprite
+  styles/       shell.css — tokens de diseño y estilos de toda la interfaz
 public/
   assets/       CV y capturas de proyectos
 ```
@@ -38,16 +49,14 @@ public/
 ## Editar el contenido
 
 Casi todo el texto vive en [`src/data/content.js`](src/data/content.js): presentación, bio, experiencia,
-educación, stack, servicios, proyectos y redes sociales.
+educación, stack, servicios, proyectos y redes sociales. Los comandos de la consola leen de ahí, así que
+no hay que duplicar nada.
 
 Para agregar un proyecto, añade un objeto a `content.projects` y guarda su captura en
-`public/assets/projects/` (formato `.webp`). Mientras la imagen no exista, la tarjeta muestra un
+`public/assets/projects/` (formato `.webp`). Mientras la imagen no exista, el panel muestra un
 marcador con el nombre corto del proyecto. Las capturas pendientes son:
 
 - `public/assets/projects/pastelia.webp`
 - `public/assets/projects/erp.webp`
 
-## Tema
-
-El tema oscuro se fija en `index.html` (`data-theme="dark"`). Los colores están definidos como
-variables CSS al inicio de `App.css`, con un bloque `[data-theme='light']` para el modo claro.
+Para agregar un comando, añade un objeto a `COMMANDS` en [`src/lib/commands.js`](src/lib/commands.js).

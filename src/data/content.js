@@ -6,16 +6,18 @@ export const content = {
     location: "Lima, Perú",
     availability: "Disponible para prácticas",
     version: "v2026.10",
+    studies: "UTP · Ing. de Software (egresado)",
+    seeking: "Prácticas preprofesionales",
   },
 
-  // Orden de las secciones: lo usan el menú superior y la barra de estado.
+  // Orden de las secciones. id: ancla de la URL; cmd: nombre que se escribe en la consola.
   nav: [
-    { id: "inicio", label: "inicio" },
-    { id: "about", label: "sobre mí" },
-    { id: "skills", label: "stack" },
-    { id: "proyectos", label: "proyectos" },
-    { id: "servicios", label: "qué hago" },
-    { id: "contacto", label: "contacto" },
+    { id: "inicio", label: "inicio", cmd: "inicio" },
+    { id: "about", label: "sobre mí", cmd: "sobre-mi" },
+    { id: "skills", label: "stack", cmd: "stack" },
+    { id: "proyectos", label: "proyectos", cmd: "proyectos" },
+    { id: "servicios", label: "qué hago", cmd: "servicios" },
+    { id: "contacto", label: "contacto", cmd: "contacto" },
   ],
 
   hero: {
@@ -26,12 +28,6 @@ export const content = {
     description:
       "Egresado de Ingeniería de Software en Lima. Construyo interfaces rápidas y accesibles con React, y busco prácticas preprofesionales para aportar en un equipo de desarrollo.",
     cvLink: "/assets/CV-Jhefferson-Guerrero.pdf",
-    stats: [
-      { label: "Estado", value: "Disponible", tone: "ok" },
-      { label: "Busco", value: "Prácticas preprofesionales" },
-      { label: "Ubicación", value: "Lima, Perú" },
-      { label: "Stack principal", value: "React · Tailwind · Firebase" },
-    ],
   },
 
   about: {

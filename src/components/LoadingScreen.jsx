@@ -1,25 +1,25 @@
 import { useState, useEffect } from "react";
-import PixelBot from "./PixelBot";
+import PixelScene from "./PixelScene";
 
 const BOOT_LINES = [
-  "portafolio · jhefferson guerrero · v2026.10",
-  "Cargando tipografías ...",
-  "Montando componentes ...",
-  "Optimizando recursos ...",
-  "Listo. Bienvenido.",
+  "jg-shell v2026.10 · jhefferson guerrero",
+  "Montando sistema de archivos ...",
+  "Cargando perfil ...",
+  "Iniciando terminal ...",
+  "Listo. Escribe help para empezar.",
 ];
 
 const pad = (n, size = 2) => String(n).padStart(size, "0");
 const formatTime = (date) =>
   `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.${pad(date.getMilliseconds(), 3)}`;
 
-// Pantalla de arranque: un log corto con marcas de tiempo reales.
+// Pantalla de arranque: un log corto con marcas de tiempo reales y la mascota trabajando.
 const LoadingScreen = ({ onComplete }) => {
   const [lines, setLines] = useState([]);
 
   useEffect(() => {
     if (lines.length >= BOOT_LINES.length) {
-      const done = setTimeout(onComplete, 380);
+      const done = setTimeout(onComplete, 420);
       return () => clearTimeout(done);
     }
 
@@ -29,7 +29,7 @@ const LoadingScreen = ({ onComplete }) => {
           ...prev,
           { time: formatTime(new Date()), message: BOOT_LINES[prev.length] },
         ]),
-      lines.length === 0 ? 150 : 230
+      lines.length === 0 ? 150 : 240
     );
     return () => clearTimeout(next);
   }, [lines.length, onComplete]);
@@ -39,10 +39,9 @@ const LoadingScreen = ({ onComplete }) => {
   return (
     <div className="boot" role="status" aria-label="Cargando portafolio">
       <div className="boot-inner">
-        <div className="boot-head">
-          <PixelBot size={56} />
-          <p className="boot-title">iniciando<span className="cursor" aria-hidden="true" /></p>
-        </div>
+        <PixelScene mood="busy" className="boot-scene" />
+
+        <p className="boot-title">iniciando<span className="cursor" aria-hidden="true" /></p>
 
         <ol className="boot-log">
           {lines.map((line) => (
