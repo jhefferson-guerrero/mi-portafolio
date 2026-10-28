@@ -146,14 +146,18 @@ export const content = {
 
   // icon: clave que Interests.jsx traduce a un icono.
   hobbies: [
+    { name: "Programación", icon: "code" },
+    { name: "Diseño", icon: "palette" },
     { name: "Videojuegos", icon: "gamepad" },
     { name: "Ver series", icon: "tv" },
-    { name: "Gym", icon: "dumbbell" },
-    { name: "Música", icon: "music" },
     { name: "Anime", icon: "sparkles" },
     { name: "Cine", icon: "clapperboard" },
-    { name: "Fútbol", icon: "goal" },
-    { name: "Café", icon: "coffee" },
+    { name: "Música", icon: "music" },
+    { name: "Gym", icon: "dumbbell" },
+    { name: "UFC", icon: "swords" },
+    { name: "Animales", icon: "paw" },
+    { name: "Comida", icon: "utensils" },
+    { name: "Redes sociales", icon: "share" },
   ],
 
   projects: [

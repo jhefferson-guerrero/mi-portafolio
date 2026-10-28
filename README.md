@@ -37,10 +37,10 @@ npm run lint     # ESLint
 ```
 src/
   components/   Titlebar, Sidebar, Pane, Console, Hero, About, Skills, Projects, Services,
-                Contact, LoadingScreen, PixelBot, PixelScene
+                Contact, Interests, LevelBar, LoadingScreen, PixelScene
   data/         content.js — textos, proyectos, enlaces y redes
   hooks/        useConsole — salida e historial de la consola
-  lib/          commands.js — registro de comandos y autocompletado; creature.js — sprite
+  lib/          commands.js — comandos y autocompletado; creature.js — sprite; levels.js — escala de nivel
   styles/       shell.css — tokens de diseño y estilos de toda la interfaz
 public/
   assets/       CV y capturas de proyectos

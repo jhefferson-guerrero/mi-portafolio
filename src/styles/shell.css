@@ -34,11 +34,14 @@
   --err: #f2879f;
 
   /* Mascota */
-  --px-out: #7873a3;
-  --px-body: #3f3c5e;
-  --px-hi: #8f8abb;
-  --px-visor: #07070b;
-  --px-eye: #f3f1fb;
+  --px-rim-hi: #5a5680;
+  --px-rim: #2b2940;
+  --px-frame: #7a63c9;
+  --px-visor: #050508;
+  --px-eye: #e8e9f0;
+  --px-edge: #3a3856;
+  --px-body: #1d1c2c;
+  --px-shadow: rgba(188, 166, 255, 0.07);
 
   /* Geometría */
   --radius: 6px;
@@ -599,6 +602,14 @@ p {
 
 .pane--flush .pane-inner {
   margin-block: 0;
+}
+
+.pane--fill .pane-inner {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-block: 0;
+  min-height: 0;
 }
 
 /* ==========================================================================
@@ -1256,13 +1267,47 @@ p {
    ========================================================================== */
 .extra-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: clamp(8px, 1.6dvh, 14px);
+  flex: 1;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: clamp(8px, 1.6dvh, 16px);
+  min-height: 0;
+}
+
+.extra-col {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.6dvh, 16px);
+  min-width: 0;
+}
+
+.extra-col .box {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: min-content;
+}
+
+.extra-col .box:first-child {
+  flex: 0.8;
+}
+
+.extra-col .box:last-child {
+  flex: 1.2;
+}
+
+.extra-col .box-title {
+  padding-block: clamp(5px, 1.1dvh, 9px);
+}
+
+.extra-col .box-body {
+  flex: 1;
+  padding: clamp(10px, 2.4dvh, 24px) clamp(14px, 2vw, 22px);
 }
 
 .langs {
   display: grid;
-  gap: clamp(10px, 2.2dvh, 20px);
+  align-content: space-evenly;
+  gap: clamp(10px, 2.4dvh, 22px);
 }
 
 .lang {
@@ -1274,13 +1319,13 @@ p {
 
 .lang-name {
   font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-size: clamp(1.1rem, 3dvh, 1.6rem);
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
 .lang-label {
-  font-size: 0.74rem;
+  font-size: clamp(0.74rem, 1.8dvh, 0.9rem);
   color: var(--accent);
 }
 
@@ -1288,32 +1333,94 @@ p {
   grid-column: 1 / -1;
 }
 
+.level--lg i {
+  height: clamp(8px, 1.6dvh, 14px);
+}
+
 .hobbies {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  align-content: center;
+  gap: clamp(8px, 1.6dvh, 14px);
 }
 
 .hobby {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
+  padding: clamp(5px, 1.2dvh, 10px) clamp(10px, 1.6dvh, 16px);
   border: 1px solid var(--accent-line);
   border-radius: 3px;
   background: var(--accent-soft);
-  font-size: 0.8rem;
+  font-size: clamp(0.8rem, 1.9dvh, 1rem);
   color: var(--text);
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .hobby svg {
   flex: none;
+  width: 1.1em;
+  height: 1.1em;
   color: var(--accent);
 }
 
 .hobby:hover {
   border-color: var(--accent);
+}
+
+.mascot-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 2dvh, 18px);
+  min-width: 0;
+  padding: clamp(10px, 2dvh, 24px);
+  background: var(--bg-sunk);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.bubble {
+  position: relative;
+  max-width: 30ch;
+  padding: 8px 14px;
+  background: var(--bg-elev);
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius-sm);
+  font-size: clamp(0.8rem, 1.9dvh, 0.95rem);
+  text-align: center;
+  color: var(--text);
+}
+
+.bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: var(--bg-elev);
+  border-right: 1px solid var(--accent-line);
+  border-bottom: 1px solid var(--accent-line);
+  transform: translate(-50%, -4px) rotate(45deg);
+}
+
+.mascot-btn {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.mascot-btn:hover .scene-bot {
+  animation-duration: 0.8s;
+}
+
+.mascot-hint {
+  font-size: 0.68rem;
+  color: var(--text-3);
 }
 
 /* ==========================================================================
@@ -1401,19 +1508,19 @@ p {
 /* ==========================================================================
    MASCOTA Y ESCENA PIXEL-ART
    ========================================================================== */
-.px-o {
-  fill: var(--px-out);
-}
-
 .px-g {
-  fill: var(--px-body);
+  fill: var(--px-rim-hi);
 }
 
-.px-h {
-  fill: var(--px-hi);
+.px-r {
+  fill: var(--px-rim);
 }
 
-.px-d {
+.px-o {
+  fill: var(--px-frame);
+}
+
+.px-k {
   fill: var(--px-visor);
 }
 
@@ -1421,8 +1528,20 @@ p {
   fill: var(--px-eye);
 }
 
+.px-m {
+  fill: var(--px-edge);
+}
+
+.px-b {
+  fill: var(--px-body);
+}
+
 .px-a {
   fill: var(--accent);
+}
+
+.px-s {
+  fill: var(--px-shadow);
 }
 
 @keyframes bob {
@@ -1445,6 +1564,28 @@ p {
 
   95% {
     transform: scaleY(0.1);
+  }
+}
+
+@keyframes look {
+  0%,
+  40% {
+    transform: translateX(0);
+  }
+
+  45%,
+  60% {
+    transform: translateX(-1px);
+  }
+
+  65%,
+  85% {
+    transform: translateX(1px);
+  }
+
+  90%,
+  100% {
+    transform: translateX(0);
   }
 }
 
@@ -1484,9 +1625,8 @@ p {
   }
 }
 
-.pixbot {
-  display: block;
-  animation: bob 2.4s steps(2, end) infinite;
+.creature-look {
+  animation: look 9s steps(1) infinite;
 }
 
 .creature-eyes {
@@ -1498,7 +1638,7 @@ p {
 .scene {
   display: block;
   width: 100%;
-  max-width: 440px;
+  max-width: 560px;
   height: auto;
 }
 
@@ -1846,6 +1986,35 @@ p {
   .box-label {
     display: none;
   }
+
+  .extra-col .box-body {
+    padding: 8px 14px;
+  }
+
+  .langs {
+    gap: 8px;
+  }
+
+  .lang-name {
+    font-size: 1rem;
+  }
+
+  .level--lg i {
+    height: 7px;
+  }
+
+  .hobbies {
+    gap: 6px;
+  }
+
+  .hobby {
+    padding: 3px 9px;
+    font-size: 0.74rem;
+  }
+
+  .bubble {
+    padding: 5px 10px;
+  }
 }
 
 @media (min-width: 901px) and (max-height: 560px) {
@@ -2031,6 +2200,10 @@ p {
   .extra-grid,
   .contact-grid {
     grid-template-columns: 1fr;
+  }
+
+  .pane--fill .pane-inner {
+    display: block;
   }
 
   .project {
