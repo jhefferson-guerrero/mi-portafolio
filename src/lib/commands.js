@@ -1,4 +1,5 @@
 import { content } from "../data/content";
+import { LEVEL_LABELS } from "./levels";
 
 // Cada línea de salida: { kind, text, name?, href? }
 // kind: text | dim | ok | err | head | kv | link
@@ -25,6 +26,8 @@ const SECTION_ALIASES = {
   services: "servicios",
   hago: "servicios",
   "que-hago": "servicios",
+  intereses: "extra",
+  extra: "extra",
   contacto: "contacto",
   contact: "contacto",
 };
@@ -59,7 +62,7 @@ const COMMANDS = [
       ...COMMANDS.filter((command) => !command.hidden).map((command) =>
         kv(command.usage ?? command.name, command.desc)
       ),
-      text("Atajos: / enfoca la consola · 1-6 cambian de sección · ↑ ↓ historial · Tab completa · Esc cierra", "dim"),
+      text("Atajos: / enfoca la consola · 1-7 cambian de sección · ↑ ↓ historial · Tab completa · Esc cierra", "dim"),
     ],
   },
   {
@@ -113,7 +116,29 @@ const COMMANDS = [
   {
     name: "stack",
     desc: "tecnologías que uso",
-    run: () => content.stack.map((group) => kv(group.label, group.items.map((item) => item.name).join(", "))),
+    run: () => [
+      ...content.stack.map((group) =>
+        kv(group.label, group.items.map((item) => `${item.name} ${item.level}/5`).join(", "))
+      ),
+      text(`Nivel: 1 ${LEVEL_LABELS[0]} → 5 ${LEVEL_LABELS[4]}`, "dim"),
+    ],
+  },
+  {
+    name: "languages",
+    aliases: ["idiomas", "langs"],
+    desc: "idiomas y nivel",
+    run: (_args, ctx) => {
+      ctx.navigate("extra");
+      return content.languages.map((language) => kv(language.name, language.label.toLowerCase()));
+    },
+  },
+  {
+    name: "hobbies",
+    desc: "qué hago fuera del código",
+    run: (_args, ctx) => {
+      ctx.navigate("extra");
+      return [text(content.hobbies.map((hobby) => hobby.name.toLowerCase()).join(" · "))];
+    },
   },
   {
     name: "projects",

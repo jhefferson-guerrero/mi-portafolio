@@ -25,7 +25,7 @@ npm run lint     # ESLint
 
 ## Cómo se usa
 
-- Navegación: menú lateral, teclas `1`–`6` o enlaces con ancla (`/#proyectos`).
+- Navegación: menú lateral, teclas `1`–`7` o enlaces con ancla (`/#proyectos`).
 - Consola: tecla `/` para enfocarla. Escribe `help` para ver los comandos
   (`cd`, `open`, `stack`, `projects`, `email`, `cv`, `neofetch`...). `↑ ↓` recorren el historial,
   `Tab` completa y `Esc` cierra la salida.

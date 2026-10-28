@@ -7,6 +7,7 @@ import About from "./components/About";
 import Skills from "./components/Skills";
 import Projects from "./components/Projects";
 import Services from "./components/Services";
+import Interests from "./components/Interests";
 import Contact from "./components/Contact";
 import LoadingScreen from "./components/LoadingScreen";
 import { useConsole } from "./hooks/useConsole";
@@ -136,20 +137,23 @@ function App() {
       {!isLoading && (
         <div className="app">
           <a className="skip-link" href="#main">Saltar al contenido</a>
-          <Titlebar view={view} />
+          <div className="window">
+            <Titlebar view={view} />
 
-          <div className="shell">
-            <Sidebar view={view} />
+            <div className="shell">
+              <Sidebar view={view} />
 
-            <main id="main" className="workspace">
-              <Hero active={view === "inicio"} onRun={run} navigate={navigate} />
-              <About active={view === "about"} />
-              <Skills active={view === "skills"} />
-              <Projects active={view === "proyectos"} selected={project} onSelect={setProject} />
-              <Services active={view === "servicios"} />
-              <Contact active={view === "contacto"} onRun={run} />
-              <Console api={terminal} />
-            </main>
+              <main id="main" className="workspace">
+                <Hero active={view === "inicio"} onRun={run} navigate={navigate} />
+                <About active={view === "about"} />
+                <Skills active={view === "skills"} />
+                <Projects active={view === "proyectos"} selected={project} onSelect={setProject} />
+                <Services active={view === "servicios"} />
+                <Interests active={view === "extra"} />
+                <Contact active={view === "contacto"} onRun={run} />
+                <Console api={terminal} />
+              </main>
+            </div>
           </div>
         </div>
       )}

@@ -1,11 +1,15 @@
 import { content } from "../data/content";
 import Pane from "./Pane";
+import LevelBar from "./LevelBar";
 
 const Skills = ({ active }) => (
   <Pane id="skills" active={active} file="stack.conf" hint="// con qué construyo">
     <p className="legend-line">
       <span className="legend">
         <span className="legend-dot" aria-hidden="true" /> stack principal
+      </span>
+      <span className="legend">
+        <LevelBar level={3} /> nivel: de inicial a experto
       </span>
     </p>
 
@@ -20,6 +24,7 @@ const Skills = ({ active }) => (
                   {item.main && <span className="legend-dot" aria-hidden="true" />}
                   {item.name}
                   {item.main && <span className="sr-only"> (stack principal)</span>}
+                  <LevelBar level={item.level} />
                 </li>
               ))}
             </ul>

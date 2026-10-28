@@ -10,14 +10,16 @@ export const content = {
     seeking: "Prácticas preprofesionales",
   },
 
-  // Orden de las secciones. id: ancla de la URL; cmd: nombre que se escribe en la consola.
+  // Orden de las secciones. id: ancla de la URL; cmd: nombre que se escribe en la consola;
+  // icon: clave que los componentes traducen a un icono.
   nav: [
-    { id: "inicio", label: "inicio", cmd: "inicio" },
-    { id: "about", label: "sobre mí", cmd: "sobre-mi" },
-    { id: "skills", label: "stack", cmd: "stack" },
-    { id: "proyectos", label: "proyectos", cmd: "proyectos" },
-    { id: "servicios", label: "qué hago", cmd: "servicios" },
-    { id: "contacto", label: "contacto", cmd: "contacto" },
+    { id: "inicio", label: "inicio", cmd: "inicio", icon: "house" },
+    { id: "about", label: "sobre mí", cmd: "sobre-mi", icon: "user" },
+    { id: "skills", label: "stack", cmd: "stack", icon: "layers" },
+    { id: "proyectos", label: "proyectos", cmd: "proyectos", icon: "folder" },
+    { id: "servicios", label: "qué hago", cmd: "servicios", icon: "wrench" },
+    { id: "extra", label: "intereses", cmd: "intereses", icon: "gamepad" },
+    { id: "contacto", label: "contacto", cmd: "contacto", icon: "mail" },
   ],
 
   hero: {
@@ -72,65 +74,86 @@ export const content = {
     ],
   },
 
-  // main: true marca el stack principal.
+  // level: 1 inicial · 2 básico · 3 intermedio · 4 sólido · 5 experto. main: true marca el stack principal.
   stack: [
     {
       label: "Lenguajes",
       items: [
-        { name: "JavaScript", main: true },
-        { name: "HTML5" },
-        { name: "CSS3" },
-        { name: "Python" },
-        { name: "PHP" },
+        { name: "JavaScript", level: 4, main: true },
+        { name: "HTML5", level: 4 },
+        { name: "CSS3", level: 4 },
+        { name: "Python", level: 2 },
+        { name: "PHP", level: 2 },
       ],
     },
     {
       label: "Frameworks",
       items: [
-        { name: "React", main: true },
-        { name: "Tailwind CSS", main: true },
-        { name: "Node.js" },
+        { name: "React", level: 4, main: true },
+        { name: "Tailwind CSS", level: 4, main: true },
+        { name: "Node.js", level: 2 },
       ],
     },
     {
       label: "Bases de datos",
       items: [
-        { name: "Firebase (Firestore, Auth)", main: true },
-        { name: "MySQL" },
-        { name: "SQL Server" },
+        { name: "Firebase (Firestore, Auth)", level: 3, main: true },
+        { name: "MySQL", level: 3 },
+        { name: "SQL Server", level: 2 },
       ],
     },
     {
       label: "Versiones",
-      items: [{ name: "Git" }, { name: "GitHub" }],
+      items: [{ name: "Git", level: 3 }, { name: "GitHub", level: 3 }],
     },
     {
       label: "Herramientas",
-      items: [{ name: "VS Code" }, { name: "Figma" }, { name: "WordPress" }],
+      items: [{ name: "VS Code", level: 4 }, { name: "Figma", level: 3 }, { name: "WordPress", level: 2 }],
     },
     {
       label: "Metodología",
-      items: [{ name: "Scrum" }],
+      items: [{ name: "Scrum", level: 2 }],
     },
   ],
 
   services: [
     {
       title: "Desarrollo web",
+      icon: "code",
       desc: "Sitios y aplicaciones responsivos con React, JavaScript y Tailwind CSS, pensados primero para móvil.",
     },
     {
       title: "Interfaces y accesibilidad",
+      icon: "accessibility",
       desc: "Componentes claros, navegables con teclado y con animaciones que ayudan sin estorbar.",
     },
     {
       title: "Rendimiento y SEO",
+      icon: "gauge",
       desc: "Lazy loading, skeleton loading e Intersection Observer para cargas rápidas en celular; datos estructurados y Open Graph para los buscadores.",
     },
     {
       title: "Diseño UI/UX",
+      icon: "pen",
       desc: "Diseño centrado en el usuario, prototipos en Figma y sistemas de diseño escalables.",
     },
+  ],
+
+  languages: [
+    { name: "Español", label: "Nativo", level: 5 },
+    { name: "Inglés", label: "Intermedio", level: 3 },
+  ],
+
+  // icon: clave que Interests.jsx traduce a un icono.
+  hobbies: [
+    { name: "Videojuegos", icon: "gamepad" },
+    { name: "Ver series", icon: "tv" },
+    { name: "Gym", icon: "dumbbell" },
+    { name: "Música", icon: "music" },
+    { name: "Anime", icon: "sparkles" },
+    { name: "Cine", icon: "clapperboard" },
+    { name: "Fútbol", icon: "goal" },
+    { name: "Café", icon: "coffee" },
   ],
 
   projects: [

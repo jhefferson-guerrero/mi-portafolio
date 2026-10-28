@@ -1,8 +1,7 @@
 import { useState, useRef } from "react";
+import { FolderGit2 } from "lucide-react";
 import { content } from "../data/content";
 import Pane from "./Pane";
-
-const pad = (n) => String(n).padStart(2, "0");
 
 const ProjectDetail = ({ project, index, selected }) => {
   const [imageFailed, setImageFailed] = useState(false);
@@ -128,7 +127,7 @@ const Projects = ({ active, selected, onSelect }) => {
             className="tab"
             onClick={() => onSelect(i)}
           >
-            <span className="tab-idx" aria-hidden="true">{pad(i + 1)}</span>
+            <FolderGit2 size={14} className="tab-icon" aria-hidden="true" />
             {project.short}
           </button>
         ))}

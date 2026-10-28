@@ -1,5 +1,26 @@
-import { Download, Github, Linkedin, Mail } from "lucide-react";
+import {
+  Download,
+  Gamepad2,
+  Github,
+  House,
+  Layers,
+  Linkedin,
+  Mail,
+  Folder,
+  User,
+  Wrench,
+} from "lucide-react";
 import { content } from "../data/content";
+
+const ICONS = {
+  house: House,
+  user: User,
+  layers: Layers,
+  folder: Folder,
+  wrench: Wrench,
+  gamepad: Gamepad2,
+  mail: Mail,
+};
 
 // Columna lateral: perfil siempre visible, navegación y accesos directos.
 const Sidebar = ({ view }) => {
@@ -43,18 +64,21 @@ const Sidebar = ({ view }) => {
 
       <nav className="side-nav" aria-label="Secciones">
         <ul>
-          {nav.map((item, i) => (
+          {nav.map((item) => {
+            const Icon = ICONS[item.icon];
+            return (
             <li key={item.id}>
               <a
                 href={`#${item.id}`}
                 className="side-link"
                 aria-current={view === item.id ? "page" : undefined}
               >
-                <span className="side-key" aria-hidden="true">{i + 1}</span>
+                <Icon size={16} className="side-icon" aria-hidden="true" />
                 <span>{item.label}</span>
               </a>
             </li>
-          ))}
+            );
+          })}
         </ul>
       </nav>
 
