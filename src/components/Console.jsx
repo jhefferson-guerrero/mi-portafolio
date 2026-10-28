@@ -95,7 +95,9 @@ const Console = ({ api }) => {
 
       <form className="console-in" onSubmit={submit}>
         <label htmlFor="console-input" className="console-label">
-          <span className="prompt-user">jg@portafolio:~</span>
+          <span className="prompt-user">
+            jg@portafolio:<span className="tl">~</span>
+          </span>
           <span className="prompt-sign" aria-hidden="true">$</span>
           <span className="sr-only">Terminal. Escribe un comando y presiona Enter.</span>
         </label>

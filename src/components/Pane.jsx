@@ -9,7 +9,9 @@ const Pane = ({ id, active, file, hint, home = false, flush = false, fill = fals
   return (
     <section id={`view-${id}`} className={className} hidden={!active} aria-labelledby={`${id}-title`}>
       <header className="pane-head">
-        <Title id={`${id}-title`} className="pane-file">~/{file}</Title>
+        <Title id={`${id}-title`} className="pane-file">
+          <span className="tl">~</span>/{file}
+        </Title>
         {hint && <span className="pane-hint" aria-hidden="true">{hint}</span>}
       </header>
       <div className="pane-body">

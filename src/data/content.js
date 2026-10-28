@@ -47,7 +47,7 @@ export const content = {
     metrics: [
       { value: "200+", label: "alumnos activos en la academia que usa el sitio de Fertex" },
       { value: "100%", label: "de la recepción documental automatizada en Mesa de Partes" },
-      { value: "150+", label: "familias atendidas por Facebook y WhatsApp" },
+      { value: "3", label: "proyectos en línea: Fertex, Mesa de Partes y Pastelia" },
     ],
     history: [
       {
@@ -57,7 +57,6 @@ export const content = {
         bullets: [
           "Sitio institucional con React y Tailwind CSS: servicios, horarios y captación de alumnos.",
           "Carga móvil optimizada con lazy loading, skeleton loading e Intersection Observer.",
-          "Comunicación digital por Facebook y WhatsApp para más de 150 familias.",
           "Renovación completa: React, Vite, Tailwind CSS v4, Framer Motion y SEO con JSON-LD.",
         ],
         links: [
@@ -121,21 +120,25 @@ export const content = {
       title: "Desarrollo web",
       icon: "code",
       desc: "Sitios y aplicaciones responsivos con React, JavaScript y Tailwind CSS, pensados primero para móvil.",
+      tags: ["React", "JavaScript", "Tailwind CSS"],
     },
     {
       title: "Interfaces y accesibilidad",
       icon: "accessibility",
       desc: "Componentes claros, navegables con teclado y con animaciones que ayudan sin estorbar.",
+      tags: ["Teclado", "ARIA", "Framer Motion"],
     },
     {
       title: "Rendimiento y SEO",
       icon: "gauge",
       desc: "Lazy loading, skeleton loading e Intersection Observer para cargas rápidas en celular; datos estructurados y Open Graph para los buscadores.",
+      tags: ["Lazy loading", "Intersection Observer", "JSON-LD", "Open Graph"],
     },
     {
       title: "Diseño UI/UX",
       icon: "pen",
       desc: "Diseño centrado en el usuario, prototipos en Figma y sistemas de diseño escalables.",
+      tags: ["Figma", "Prototipos", "Sistemas de diseño"],
     },
   ],
 

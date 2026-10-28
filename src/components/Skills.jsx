@@ -3,7 +3,7 @@ import Pane from "./Pane";
 import LevelBar from "./LevelBar";
 
 const Skills = ({ active }) => (
-  <Pane id="skills" active={active} file="stack.conf" hint="// con qué construyo">
+  <Pane id="skills" active={active} file="stack.conf" hint="// con qué construyo" fill>
     <p className="legend-line">
       <span className="legend">
         <span className="legend-dot" aria-hidden="true" /> stack principal

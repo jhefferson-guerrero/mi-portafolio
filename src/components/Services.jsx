@@ -9,20 +9,32 @@ const ICONS = {
   pen: PenTool,
 };
 
+// Cuatro áreas de trabajo en tarjetas que llenan el panel.
 const Services = ({ active }) => (
-  <Pane id="servicios" active={active} file="servicios.md" hint="// áreas de trabajo">
-    <ol className="rows">
+  <Pane id="servicios" active={active} file="servicios.md" hint="// áreas de trabajo" fill>
+    <ul className="svc-grid">
       {content.services.map((service) => {
         const Icon = ICONS[service.icon] ?? Code2;
         return (
-          <li key={service.title} className="row">
-            <Icon size={18} className="row-icon" aria-hidden="true" />
-            <h3>{service.title}</h3>
+          <li key={service.title} className="svc">
+            <div className="svc-head">
+              <span className="svc-icon">
+                <Icon size={20} aria-hidden="true" />
+              </span>
+              <h3>{service.title}</h3>
+            </div>
             <p>{service.desc}</p>
+            {service.tags && (
+              <ul className="tag-row svc-tags">
+                {service.tags.map((tag) => (
+                  <li key={tag} className="tag">{tag}</li>
+                ))}
+              </ul>
+            )}
           </li>
         );
       })}
-    </ol>
+    </ul>
   </Pane>
 );
 

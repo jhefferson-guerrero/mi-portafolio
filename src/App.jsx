@@ -15,21 +15,13 @@ import { content } from "./data/content";
 import "./styles/shell.css";
 
 const VIEW_IDS = content.nav.map((item) => item.id);
-const SEEN_KEY = "boot-seen";
 const CV_NAME = "CV-Jhefferson-Guerrero.pdf";
 
-// El arranque solo se muestra en la primera visita de la sesión y se omite
-// si la persona prefiere movimiento reducido.
-const shouldShowLoader = () => {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
-  try {
-    return sessionStorage.getItem(SEEN_KEY) !== "1";
-  } catch {
-    return true;
-  }
-};
+// El arranque se muestra en cada carga de la página; solo se omite si la persona
+// prefiere movimiento reducido.
+const shouldShowLoader = () => !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-// La vista activa vive en el hash (#proyectos), así que los enlaces y el botón atrás funcionan.
+// Mientras se navega, la vista activa vive en el hash (#proyectos): los enlaces y el botón atrás funcionan.
 const readHash = () => {
   const id = window.location.hash.slice(1);
   return VIEW_IDS.includes(id) ? id : VIEW_IDS[0];
@@ -42,8 +34,15 @@ const isTyping = (target) =>
 function App() {
   const [showLoader] = useState(shouldShowLoader);
   const [isLoading, setIsLoading] = useState(showLoader);
-  const [view, setView] = useState(readHash);
+  // Cada carga empieza en inicio, aunque la URL traiga un hash.
+  const [view, setView] = useState(VIEW_IDS[0]);
   const [project, setProject] = useState(0);
+
+  useEffect(() => {
+    if (window.location.hash) {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
+  }, []);
 
   useEffect(() => {
     const onHashChange = () => setView(readHash());
@@ -118,11 +117,6 @@ function App() {
   }, [isLoading, navigate]);
 
   const handleLoadingComplete = useCallback(() => {
-    try {
-      sessionStorage.setItem(SEEN_KEY, "1");
-    } catch {
-      // Sin almacenamiento: el arranque simplemente se repite en la próxima visita.
-    }
     setIsLoading(false);
   }, []);
 

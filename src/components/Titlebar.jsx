@@ -31,7 +31,7 @@ const Titlebar = ({ view }) => {
         </span>
         <a href="#inicio" className="tb-brand" aria-label="Ir al inicio">jg-shell</a>
         <span className="tb-path">
-          ~/portafolio/<strong>{current.cmd}</strong>
+          <span className="tl">~</span>/portafolio/<strong>{current.cmd}</strong>
         </span>
 
         <span className="tb-spacer" />

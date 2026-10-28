@@ -5,7 +5,7 @@ const About = ({ active }) => {
   const { bio, metrics, history } = content.about;
 
   return (
-    <Pane id="about" active={active} file="sobre-mi.md" hint="// quién soy">
+    <Pane id="about" active={active} file="sobre-mi.md" hint="// quién soy" fill>
       <div className="about-grid">
         <article className="box">
           <div className="box-label">bio.md</div>

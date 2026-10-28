@@ -35,6 +35,20 @@ const Creature = () => (
   </g>
 );
 
+// La criatura sola, por ejemplo para el logo de la pantalla de arranque.
+export const Mascot = ({ size = 96 }) => (
+  <svg
+    viewBox={`0 0 ${CREATURE_COLS} ${CREATURE_ROWS}`}
+    width={size}
+    height={Math.round((size * CREATURE_ROWS) / CREATURE_COLS)}
+    shapeRendering="crispEdges"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <Creature />
+  </svg>
+);
+
 // Escena: sala de servidores con racks, un escritorio con monitor y la mascota en medio.
 // mood = "idle" (tranquila) o "busy" (el monitor trabaja más rápido).
 const PixelScene = ({ mood = "idle", className = "" }) => (
