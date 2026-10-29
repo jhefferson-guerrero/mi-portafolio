@@ -1948,13 +1948,9 @@ p {
   animation: bob 2.4s steps(2, end) infinite;
 }
 
-/* Caras de la mascota: sorprendida (ojos grandes encendidos y un saltito),
+/* Caras de la mascota: curiosa (ojos más abiertos al acercar el cursor), sorprendida (ojos grandes y un saltito),
    contenta (ojos en arco), dormida (visor apagado y ojos en raya, sin moverse) y mareada (ojos en
    equis y tambaleo). Con ojos de 4x4 solo hay un píxel de juego a cada lado. */
-.face-surprised .px-E {
-  fill: var(--accent);
-}
-
 .face-surprised .creature-gaze {
   transform: translate(clamp(-1px, var(--gaze-x, 0) * 1px, 1px), clamp(-1px, var(--gaze-y, 0) * 1px, 1px));
 }
