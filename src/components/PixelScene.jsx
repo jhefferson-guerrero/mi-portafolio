@@ -84,8 +84,8 @@ const Creature = ({ face = "idle" }) => {
       <g className="creature-gaze" ref={gazeRef}>
         <g className="creature-look">
           <g className="creature-eyes">
-            {(EYES[face] ?? EYES.idle).map(([x, y]) => (
-              <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className="px px-E" />
+            {(EYES[face] ?? EYES.idle).map(([x, y, tone]) => (
+              <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={tone === "h" ? "px px-E px-H" : "px px-E"} />
             ))}
           </g>
         </g>

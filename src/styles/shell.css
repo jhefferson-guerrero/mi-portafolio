@@ -1948,14 +1948,19 @@ p {
   animation: bob 2.4s steps(2, end) infinite;
 }
 
-/* Caras de la mascota: sorprendida (visor encendido, ojos cuadrados y un saltito), contenta (ojos
-   en arco), dormida (visor apagado y ojos en raya, sin moverse) y mareada (ojos en equis y tambaleo). */
-.face-surprised .px-k {
+/* Caras de la mascota: sorprendida (ojos grandes encendidos, con un píxel de brillo, y un saltito),
+   contenta (ojos en arco), dormida (visor apagado y ojos en raya, sin moverse) y mareada (ojos en
+   equis y tambaleo). Con ojos de 4x4 solo hay un píxel de juego a cada lado. */
+.face-surprised .px-E {
   fill: var(--accent);
 }
 
-.face-surprised .px-E {
-  fill: var(--px-visor);
+.face-surprised .px-E.px-H {
+  fill: var(--px-eye);
+}
+
+.face-surprised .creature-gaze {
+  transform: translate(clamp(-1px, var(--gaze-x, 0) * 1px, 1px), clamp(-1px, var(--gaze-y, 0) * 1px, 1px));
 }
 
 .face-surprised .scene-bot {
