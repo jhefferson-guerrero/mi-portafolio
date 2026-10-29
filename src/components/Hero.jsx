@@ -43,7 +43,7 @@ const Hero = ({ active, navigate }) => {
   const { hero, socials } = content;
 
   return (
-    <Pane id="inicio" active={active} file="inicio.md" hint="// bienvenido" home>
+    <Pane id="inicio" active={active} file="inicio.md" home>
       <div className="home">
         <div className="home-main">
           <p className="eyebrow">{hero.eyebrow} · {content.meta.location.toLowerCase()}</p>
