@@ -2128,6 +2128,28 @@ p {
   animation: hop 0.45s steps(3, end) 1;
 }
 
+/* La sombra se queda en el suelo y se achica mientras la mascota está en el aire. */
+.creature-shadow {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.is-hop .creature-shadow,
+.face-surprised .creature-shadow {
+  animation: shadow-hop 0.45s steps(3, end) 1;
+}
+
+@keyframes shadow-hop {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+
+  40% {
+    transform: scaleX(0.7);
+  }
+}
+
 @keyframes aura {
   0%,
   100% {

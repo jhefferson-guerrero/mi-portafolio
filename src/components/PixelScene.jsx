@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { CREATURE_CELLS, CREATURE_COLS, CREATURE_ROWS, EYES } from "../lib/creature";
+import { CREATURE_CELLS, CREATURE_COLS, CREATURE_ROWS, EYES, SHADOW_CELLS } from "../lib/creature";
 
 const WIDTH = 60;
 const HEIGHT = 30;
@@ -146,7 +146,7 @@ const Creature = ({ face = "idle" }) => {
   return (
     <g ref={bodyRef}>
       {/* Bajo los ojos hay visor: así no quedan huecos cuando los ojos cambian de forma o de sitio */}
-      {CREATURE_CELLS.map(({ char, x, y }) => (
+      {CREATURE_CELLS.filter(({ char }) => char !== "s").map(({ char, x, y }) => (
         <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-${char === "E" ? "k" : char}`} />
       ))}
       <g className="creature-gaze" ref={gazeRef}>
@@ -251,6 +251,11 @@ const PixelScene = ({ mood = "idle", face = "idle", burst = 0, hop = false, clas
 
     {/* Mascota, apoyada sobre el suelo */}
     <g transform={`translate(${(WIDTH - CREATURE_COLS) / 2 + 1} ${FLOOR - CREATURE_ROWS + 1})`}>
+      <g className="creature-shadow">
+        {SHADOW_CELLS.map(({ x, y }) => (
+          <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className="px px-s" />
+        ))}
+      </g>
       <g className="scene-bot">
         <Creature face={face} />
       </g>

@@ -43,3 +43,6 @@ export const EYES = {
   happy: [[7, 7], [8, 6], [9, 7], [12, 7], [13, 6], [14, 7]],
   dizzy: [[7, 5], [9, 5], [8, 6], [7, 7], [9, 7], [12, 5], [14, 5], [13, 6], [12, 7], [14, 7]],
 };
+
+// La sombra (última fila del sprite) va aparte del cuerpo: se queda en el suelo cuando la criatura salta.
+export const SHADOW_CELLS = CREATURE_CELLS.filter(({ char }) => char === "s");
