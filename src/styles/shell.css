@@ -467,6 +467,49 @@ p {
   color: var(--accent);
 }
 
+.log-entry + .log-entry {
+  margin-top: 4px;
+}
+
+.log-echo {
+  margin-bottom: 0;
+}
+
+.log-cmd {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  white-space: nowrap;
+  animation: log-type 0.45s steps(var(--ch)) both;
+}
+
+.log-line {
+  animation: log-in 0.3s var(--ease) both;
+  animation-delay: calc(0.45s + var(--i) * 0.14s);
+}
+
+@keyframes log-type {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: calc(var(--ch) * 1ch);
+  }
+}
+
+@keyframes log-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .side-actions {
   display: flex;
   align-items: center;
@@ -865,10 +908,8 @@ p {
    ========================================================================== */
 .about-grid {
   display: grid;
-  flex: 1;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto 1fr;
-  gap: clamp(8px, 1.6dvh, 14px);
+  gap: clamp(12px, 2.4dvh, 22px);
 }
 
 .about-grid .box-body {
@@ -879,17 +920,6 @@ p {
   .about-grid .box-body {
     padding-inline: clamp(16px, 1.8vw, 26px);
   }
-}
-
-.about-history {
-  display: flex;
-  flex-direction: column;
-  grid-column: 1 / -1;
-}
-
-.about-history .box-body {
-  flex: 1;
-  justify-content: space-evenly;
 }
 
 .prose p {
@@ -903,75 +933,124 @@ p {
   font-weight: 600;
 }
 
-.log {
+/* ---------- Línea de tiempo (Sobre mí) ---------- */
+.timeline {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: clamp(8px, 1.6dvh, 14px);
 }
 
-.log-item {
+.tl-now {
+  position: relative;
+  z-index: 1;
+  padding: 2px 12px;
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elev);
+  font-size: 0.68rem;
+  color: var(--accent);
+}
+
+.tl-list {
   position: relative;
   display: grid;
-  grid-template-columns: 9px minmax(0, 1fr);
-  gap: 18px;
-  padding-bottom: clamp(8px, 1.8dvh, 20px);
+  gap: clamp(12px, 2.4dvh, 24px);
+  width: 100%;
 }
 
-.log-item:last-child {
-  padding-bottom: 0;
-}
-
-.log-item::before {
+.tl-list::before {
   content: '';
   position: absolute;
-  left: 4px;
-  top: 16px;
-  bottom: -6px;
+  inset: calc(-1 * clamp(8px, 1.6dvh, 14px)) auto 0 50%;
   width: 1px;
   background: var(--line-strong);
 }
 
-.log-item:last-child::before {
-  display: none;
+.tl-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 72px minmax(0, 1fr);
+  align-items: start;
 }
 
-.log-dot {
+.tl-card {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.tl-item.is-right .tl-card {
+  grid-column: 3;
+}
+
+.tl-card .box-body {
+  display: grid;
+  gap: 4px;
+  padding: clamp(10px, 1.8dvh, 16px) clamp(14px, 1.4vw, 20px);
+}
+
+.tl-card h3 {
+  font-size: clamp(0.98rem, 2.3dvh, 1.2rem);
+}
+
+.tl-card .bullets {
+  margin-top: 6px;
+}
+
+.tl-mark {
   position: relative;
   z-index: 1;
-  width: 9px;
-  height: 9px;
-  margin-top: 6px;
-  border: 1.5px solid var(--text-3);
-  border-radius: 50%;
-  background: var(--bg-sunk);
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-top: 36px;
 }
 
-.is-current .log-dot {
+.tl-node {
+  width: 11px;
+  height: 11px;
+  border: 1.5px solid var(--text-3);
+  border-radius: 50%;
+  background: var(--bg-elev);
+}
+
+.is-current .tl-node {
   border-color: var(--accent);
   background: var(--accent);
 }
 
-.log-head {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: baseline;
-  gap: 4px 24px;
-  margin-bottom: clamp(6px, 1.4dvh, 12px);
+.tl-year {
+  padding: 1px 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elev);
+  font-size: 0.68rem;
+  color: var(--text-2);
 }
 
-.log-title {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 2px 14px;
-  min-width: 0;
+.is-current .tl-year {
+  border-color: var(--accent-line);
+  color: var(--accent);
 }
 
-.log-item:not(:has(.bullets)) .log-head {
-  margin-bottom: 0;
+/* Conector punteado entre la tarjeta y su nodo */
+.tl-item::before {
+  content: '';
+  position: absolute;
+  top: 41px;
+  width: 30px;
+  border-top: 1px dotted var(--text-3);
 }
 
-.log-head h3 {
-  font-size: clamp(0.95rem, 2.4dvh, 1.2rem);
+.tl-item.is-left::before {
+  left: calc(50% - 36px);
+}
+
+.tl-item.is-right::before {
+  left: calc(50% + 6px);
 }
 
 .log-org {
@@ -1914,6 +1993,61 @@ p {
   border-bottom: 1px solid var(--accent-line);
 }
 
+/* Escritorio: la terminal es un panel arriba con su registro y la línea de comandos.
+   En móvil se queda la barra fija de abajo con su salida flotante. */
+@media (min-width: 901px) {
+  .console {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-sunk);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+  }
+
+  .console:focus-within {
+    border-color: var(--accent);
+  }
+
+  .console-log {
+    position: relative;
+    height: clamp(64px, 14dvh, 170px);
+    padding: 8px 14px;
+    overflow-y: auto;
+    font-size: 0.78rem;
+    line-height: 1.55;
+    color: var(--text-2);
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+
+  .console-log-inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 100%;
+  }
+
+  .console .console-in,
+  .console .console-in:focus-within {
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .console-out {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .console-log {
+    display: none;
+  }
+}
+
 /* ==========================================================================
    ARRANQUE (LOADER) — pantallas tipo BIOS
    ========================================================================== */
@@ -2227,10 +2361,6 @@ p {
     padding-block: 6px;
   }
 
-  .log-item {
-    padding-bottom: 5px;
-  }
-
   .prose p {
     line-height: 1.5;
   }
@@ -2408,8 +2538,32 @@ p {
     grid-auto-rows: auto;
   }
 
-  .about-grid {
-    grid-template-rows: none;
+  .tl-now {
+    align-self: flex-start;
+  }
+
+  .tl-list::before {
+    inset: calc(-1 * clamp(8px, 1.6dvh, 14px)) auto 0 5px;
+  }
+
+  .tl-item {
+    grid-template-columns: 12px minmax(0, 1fr);
+    column-gap: 12px;
+  }
+
+  .tl-card,
+  .tl-item.is-right .tl-card {
+    grid-column: 2;
+  }
+
+  .tl-mark {
+    grid-column: 1;
+    padding-top: 16px;
+  }
+
+  .tl-year,
+  .tl-item::before {
+    display: none;
   }
 
   .svc {
@@ -2461,10 +2615,6 @@ p {
     gap: 8px;
   }
 
-  .log-head {
-    grid-template-columns: 1fr;
-  }
-
   .out-kv {
     grid-template-columns: 1fr;
     gap: 0;
@@ -2475,6 +2625,10 @@ p {
    ACCESIBILIDAD: MOVIMIENTO REDUCIDO
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
+  .log-line {
+    animation-delay: 0s !important;
+  }
+
   *,
   *::before,
   *::after {

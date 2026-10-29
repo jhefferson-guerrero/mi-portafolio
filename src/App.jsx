@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import Titlebar from "./components/Titlebar";
 import Sidebar from "./components/Sidebar";
 import Console from "./components/Console";
@@ -93,7 +93,23 @@ function App() {
   );
 
   const terminal = useConsole(consoleCtx);
-  const { run } = terminal;
+  const { run, log } = terminal;
+
+  // Cada vez que cambia la sección, la consola "abre" su archivo.
+  const loggedView = useRef(null);
+  useEffect(() => {
+    if (loggedView.current === view) return;
+    loggedView.current = view;
+    const section = content.nav.find((item) => item.id === view);
+    log(
+      `cd ${section.cmd}`,
+      [
+        { kind: "dim", text: `leyendo ${section.file} ...` },
+        { kind: "ok", text: "listo" },
+      ],
+      true
+    );
+  }, [view, log]);
 
   // Atajos: 1-6 cambian de vista y "/" enfoca la consola (si no se está escribiendo).
   useEffect(() => {
@@ -138,6 +154,7 @@ function App() {
               <Sidebar view={view} />
 
               <main id="main" className="workspace">
+                <Console api={terminal} />
                 <Hero active={view === "inicio"} navigate={navigate} />
                 <About active={view === "about"} />
                 <Skills active={view === "skills"} />
@@ -145,7 +162,6 @@ function App() {
                 <Services active={view === "servicios"} />
                 <Interests active={view === "extra"} />
                 <Contact active={view === "contacto"} onRun={run} />
-                <Console api={terminal} />
               </main>
             </div>
           </div>

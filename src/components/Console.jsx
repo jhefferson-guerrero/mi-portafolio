@@ -1,37 +1,23 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { X } from "lucide-react";
 import { complete } from "../lib/commands";
+import OutputLine from "./OutputLine";
 
-const OutputLine = ({ line }) => {
-  switch (line.kind) {
-    case "head":
-      return <p className="out-head">{line.text}</p>;
-    case "kv":
-      return (
-        <p className="out-kv">
-          <span className="out-key">{line.name}</span>
-          <span>{line.text}</span>
-        </p>
-      );
-    case "link":
-      return (
-        <p>
-          <a href={line.href} className="out-link" target="_blank" rel="noopener noreferrer">
-            {line.text} ↗
-          </a>
-        </p>
-      );
-    default:
-      return <p className={`out-${line.kind}`}>{line.text}</p>;
-  }
-};
-
-// Consola de comandos. `api` viene de useConsole.
+// Terminal: registro de la sesión arriba y línea de comandos abajo. `api` viene de useConsole.
+// En móvil el registro se oculta y la salida del último comando sale en un panel flotante.
 const Console = ({ api }) => {
-  const { output, run, dismiss, history } = api;
+  const { output, entries, run, dismiss, history } = api;
   const [value, setValue] = useState("");
   const position = useRef(-1);
   const draft = useRef("");
+  const logRef = useRef(null);
+
+  // Cada entrada nueva se muestra desde su primera línea (el navegador limita el scroll al final).
+  useEffect(() => {
+    const node = logRef.current;
+    const last = node?.querySelector(".log-entry:last-child");
+    if (node && last) node.scrollTop = last.offsetTop - 8;
+  }, [entries]);
 
   const submit = (event) => {
     event.preventDefault();
@@ -41,24 +27,24 @@ const Console = ({ api }) => {
   };
 
   const onKeyDown = (event) => {
-    const entries = history.current;
+    const past = history.current;
 
     if (event.key === "ArrowUp") {
-      if (!entries.length) return;
+      if (!past.length) return;
       event.preventDefault();
       if (position.current === -1) {
         draft.current = value;
-        position.current = entries.length - 1;
+        position.current = past.length - 1;
       } else {
         position.current = Math.max(0, position.current - 1);
       }
-      setValue(entries[position.current]);
+      setValue(past[position.current]);
     } else if (event.key === "ArrowDown") {
       if (position.current === -1) return;
       event.preventDefault();
-      if (position.current < entries.length - 1) {
+      if (position.current < past.length - 1) {
         position.current += 1;
-        setValue(entries[position.current]);
+        setValue(past[position.current]);
       } else {
         position.current = -1;
         setValue(draft.current);
@@ -74,6 +60,24 @@ const Console = ({ api }) => {
 
   return (
     <section className="console" aria-label="Terminal">
+      <div className="console-log" ref={logRef} role="log" aria-label="Historial de la terminal">
+        <div className="console-log-inner">
+          {entries.map((entry) => (
+            <div key={entry.id} className="log-entry" aria-hidden={entry.auto || undefined}>
+              <p className="out-echo log-echo">
+                <span className="prompt-sign" aria-hidden="true">$</span>{" "}
+                <span className="log-cmd" style={{ "--ch": entry.input.length }}>{entry.input}</span>
+              </p>
+              {entry.lines.map((line, i) => (
+                <div key={i} className="log-line" style={{ "--i": i }}>
+                  <OutputLine line={line} />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
       {output && (
         <div className="console-out" role="log">
           <div className="console-out-head">

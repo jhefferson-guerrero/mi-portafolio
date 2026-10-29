@@ -11,15 +11,15 @@ export const content = {
   },
 
   // Orden de las secciones. id: ancla de la URL; cmd: nombre que se escribe en la consola;
-  // icon: clave que los componentes traducen a un icono.
+  // file: archivo que la consola dice abrir; icon: clave que los componentes traducen a un icono.
   nav: [
-    { id: "inicio", label: "inicio", cmd: "inicio", icon: "house" },
-    { id: "about", label: "sobre mí", cmd: "sobre-mi", icon: "user" },
-    { id: "skills", label: "tecnologías", cmd: "tecnologias", icon: "layers" },
-    { id: "proyectos", label: "proyectos", cmd: "proyectos", icon: "folder" },
-    { id: "servicios", label: "servicios", cmd: "servicios", icon: "wrench" },
-    { id: "extra", label: "intereses", cmd: "intereses", icon: "gamepad" },
-    { id: "contacto", label: "contacto", cmd: "contacto", icon: "mail" },
+    { id: "inicio", label: "inicio", cmd: "inicio", file: "inicio.md", icon: "house" },
+    { id: "about", label: "sobre mí", cmd: "sobre-mi", file: "sobre-mi.md", icon: "user" },
+    { id: "skills", label: "tecnologías", cmd: "tecnologias", file: "tecnologias.conf", icon: "layers" },
+    { id: "proyectos", label: "proyectos", cmd: "proyectos", file: "proyectos/", icon: "folder" },
+    { id: "servicios", label: "servicios", cmd: "servicios", file: "servicios.md", icon: "wrench" },
+    { id: "extra", label: "intereses", cmd: "intereses", file: "intereses.md", icon: "gamepad" },
+    { id: "contacto", label: "contacto", cmd: "contacto", file: "contacto.sh", icon: "mail" },
   ],
 
   hero: {
@@ -47,6 +47,8 @@ export const content = {
     history: [
       {
         date: "jun 2026 → nov 2026",
+        year: "2026",
+        kind: "experiencia",
         title: "Practicante de TI",
         org: "CBS · Construtora Baiana de Saneamento",
         bullets: [
@@ -57,6 +59,8 @@ export const content = {
       },
       {
         date: "feb 2023 → feb 2024 · may → ago 2026",
+        year: "2023",
+        kind: "experiencia",
         title: "Desarrollador Web Frontend",
         org: "Academia Fertex Artes Marciales",
         bullets: [
@@ -66,6 +70,8 @@ export const content = {
       },
       {
         date: "2021 → 2025",
+        year: "2021",
+        kind: "educación",
         title: "Ingeniería de Software",
         org: "Universidad Tecnológica del Perú (UTP)",
         note: "Egresado",
