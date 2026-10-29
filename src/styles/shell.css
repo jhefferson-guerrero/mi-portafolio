@@ -1146,6 +1146,7 @@ p {
 .tabs {
   display: flex;
   flex: none;
+  padding: clamp(8px, 1.6dvh, 14px) clamp(14px, 2vw, 24px) 0;
   overflow-x: auto;
   scrollbar-width: none;
   background: var(--bg-sunk);
@@ -1192,24 +1193,37 @@ p {
   outline-offset: -3px;
 }
 
-.tab-icon {
-  flex: none;
+.tab-num {
+  font-size: 0.68rem;
+  color: var(--text-3);
+}
+
+.tab[aria-selected='true'] .tab-num {
   color: var(--accent);
 }
 
-/* Todos los paneles ocupan la misma celda: la altura es la del más alto. */
+/* Todos los paneles ocupan la misma celda: la altura es la del más alto.
+   En escritorio el contenedor mide el espacio libre y la vista se reorganiza para no hacer scroll. */
 .project-stack {
   display: grid;
   flex: 1;
   align-content: center;
+  min-height: 0;
   padding: clamp(10px, 2.2dvh, 22px) clamp(14px, 2vw, 24px);
+}
+
+@media (min-width: 901px) {
+  .project-stack {
+    container-type: size;
+  }
 }
 
 .project {
   grid-area: 1 / 1;
   display: grid;
-  grid-template-columns: minmax(0, 40%) minmax(0, 1fr);
-  gap: clamp(16px, 2.6vw, 32px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 52%);
+  align-items: center;
+  gap: clamp(18px, 2.6vw, 36px);
   visibility: hidden;
 }
 
@@ -1218,13 +1232,46 @@ p {
   animation: rise 0.45s var(--ease) both;
 }
 
+/* Captura dentro de un marco de ventana con la dirección del sitio */
 .project-thumb {
-  position: relative;
-  align-self: start;
-  aspect-ratio: 16 / 11;
+  order: 2;
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
   background: var(--bg-sunk);
+  overflow: hidden;
+}
+
+.thumb-bar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--line-strong);
+  background: var(--bg-elev);
+  font-size: 0.66rem;
+  color: var(--text-3);
+}
+
+.thumb-bar i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--line-strong);
+}
+
+.thumb-bar span {
+  margin-left: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.thumb-shot {
+  aspect-ratio: 1200 / 527;
   overflow: hidden;
 }
 
@@ -1276,7 +1323,12 @@ p {
 .project-desc {
   max-width: 70ch;
   margin-top: clamp(4px, 1dvh, 8px);
+  font-size: clamp(0.8rem, 1.8dvh, 0.92rem);
   color: var(--text-2);
+}
+
+.project-body .bullets li {
+  font-size: clamp(0.76rem, 1.7dvh, 0.88rem);
 }
 
 .project-body .bullets,
@@ -1289,7 +1341,13 @@ p {
   color: var(--text);
 }
 
-.arrow {
+.result-label {
+  margin-right: 8px;
+  padding: 1px 6px;
+  border: 1px solid var(--accent-line);
+  border-radius: 3px;
+  background: var(--accent-soft);
+  font-size: 0.66rem;
   color: var(--accent);
 }
 
@@ -1302,6 +1360,61 @@ p {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: clamp(12px, 2.4dvh, 22px);
+}
+
+/* Según el espacio libre del contenedor la vista se acorta: menos viñetas, sin subtítulo,
+   sin resultado y, al final, sin imagen. En contenedores angostos no hay lugar para la imagen. */
+@container (max-height: 455px) {
+  .project {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 46%);
+  }
+
+  .project-body .bullets li:nth-child(n + 3) {
+    display: none;
+  }
+
+  .project-body .bullets,
+  .project-result {
+    margin-top: 6px;
+  }
+
+  .project-body .tag-row {
+    margin-top: 8px;
+  }
+
+  .project-actions {
+    margin-top: 10px;
+  }
+}
+
+@container (max-height: 335px) {
+  .project {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 38%);
+  }
+
+  .project-desc {
+    display: none;
+  }
+}
+
+@container (max-height: 280px) {
+  .project {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 34%);
+  }
+
+  .project-result {
+    display: none;
+  }
+}
+
+@container (max-height: 240px), (max-width: 760px) {
+  .project {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .project-thumb {
+    display: none;
+  }
 }
 
 /* ==========================================================================
@@ -2602,10 +2715,6 @@ p {
 
   .project {
     grid-template-columns: 1fr;
-  }
-
-  .project-thumb {
-    aspect-ratio: 16 / 9;
   }
 
   .project-stack {

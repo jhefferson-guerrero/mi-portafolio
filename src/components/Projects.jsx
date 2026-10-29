@@ -1,7 +1,15 @@
 import { useState, useRef } from "react";
-import { FolderGit2 } from "lucide-react";
 import { content } from "../data/content";
 import Pane from "./Pane";
+
+// Dirección que se muestra en el marco de la captura: el sitio en línea o, si solo hay código, el repositorio.
+const hostOf = (project) => {
+  try {
+    return new URL(project.link || project.code).host.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+};
 
 const ProjectDetail = ({ project, index, selected }) => {
   const [imageFailed, setImageFailed] = useState(false);
@@ -14,20 +22,28 @@ const ProjectDetail = ({ project, index, selected }) => {
       className={`project ${selected ? "is-selected" : ""}`}
     >
       <div className="project-thumb">
-        {imageFailed ? (
-          <div className="thumb-fallback" role="img" aria-label={`Vista previa pendiente de ${project.title}`}>
-            <span>&lt;{project.short} /&gt;</span>
-          </div>
-        ) : (
-          <img
-            src={project.image}
-            alt={`Captura del proyecto ${project.title}`}
-            loading="lazy"
-            decoding="async"
-            style={project.focus ? { objectPosition: project.focus } : undefined}
-            onError={() => setImageFailed(true)}
-          />
-        )}
+        <div className="thumb-bar" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+          <span>{hostOf(project)}</span>
+        </div>
+        <div className="thumb-shot">
+          {imageFailed ? (
+            <div className="thumb-fallback" role="img" aria-label={`Vista previa pendiente de ${project.title}`}>
+              <span>&lt;{project.short} /&gt;</span>
+            </div>
+          ) : (
+            <img
+              src={project.image}
+              alt={`Captura del proyecto ${project.title}`}
+              loading="lazy"
+              decoding="async"
+              style={project.focus ? { objectPosition: project.focus } : undefined}
+              onError={() => setImageFailed(true)}
+            />
+          )}
+        </div>
       </div>
 
       <div className="project-body">
@@ -50,7 +66,7 @@ const ProjectDetail = ({ project, index, selected }) => {
 
         {project.result && (
           <p className="project-result">
-            <span className="arrow" aria-hidden="true">→</span> {project.result}
+            <span className="result-label">resultado</span> {project.result}
           </p>
         )}
 
@@ -128,7 +144,7 @@ const Projects = ({ active, selected, onSelect }) => {
             className="tab"
             onClick={() => onSelect(i)}
           >
-            <FolderGit2 size={14} className="tab-icon" aria-hidden="true" />
+            <span className="tab-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
             {project.short}
           </button>
         ))}

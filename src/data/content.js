@@ -64,8 +64,9 @@ export const content = {
         title: "Desarrollador Web Frontend",
         org: "Academia Fertex Artes Marciales",
         bullets: [
-          "Landing original y comunicación digital para más de 150 familias.",
-          "Rediseño con React, Vite, Tailwind CSS v4, Framer Motion y Lenis; SEO técnico.",
+          "Rediseño desde cero con React, Vite y Tailwind CSS v4, estética brutalista moderna, Framer Motion y Lenis.",
+          "SEO técnico (JSON-LD, Open Graph), Core Web Vitals optimizados y migración a Vercel.",
+          "Landing original que digitalizó servicios y horarios, y comunicación digital de más de 150 familias.",
         ],
       },
       {
@@ -178,14 +179,15 @@ export const content = {
 
   projects: [
     {
-      title: "Sitio web corporativo CBS",
+      title: "CBS Perú — Sitio web corporativo",
       short: "cbs",
-      desc: "Sitio de una constructora de infraestructura de agua y saneamiento en Perú y Brasil, desarrollado durante mis prácticas profesionales.",
+      desc: "Sitio institucional para una constructora de obras de saneamiento en Perú y Brasil.",
       highlights: [
-        "Páginas por proyecto y una para su empresa hermana, Limp City.",
-        "SEO con prerenderizado propio, cabeceras de seguridad y formulario de contacto.",
+        "Sitio multipágina con empresa, certificaciones, clientes, contacto y una página por proyecto.",
+        "Contenido separado del diseño: se agregan proyectos o textos editando un solo archivo.",
+        "SEO con prerenderizado propio y metadatos por página.",
       ],
-      tags: ["React 19", "TypeScript", "Vite", "Tailwind CSS 4", "SEO"],
+      tags: ["React 19", "TypeScript", "Vite", "Tailwind CSS 4", "Framer Motion", "Vercel"],
       link: "https://cbs-web-tan.vercel.app/",
       code: "https://github.com/jhefferson-guerrero/cbs-web",
       image: "/assets/projects/cbs.webp",
@@ -194,13 +196,14 @@ export const content = {
     {
       title: "Sitio web Academia Fertex",
       short: "fertex",
-      desc: "Plataforma de una academia de Taekwondo ITF, Muay Thai y Capoeira con 24 años de trayectoria y comunicación digital para más de 150 familias.",
+      desc: "Plataforma web de una academia de artes marciales con 24 años de trayectoria y más de 150 familias.",
       highlights: [
-        "Rediseño desde cero con React, Vite y Tailwind CSS v4, animaciones con Framer Motion y scroll suave con Lenis.",
+        "Rediseño desde cero con React, Vite y Tailwind CSS v4, estética brutalista moderna, Framer Motion y Lenis.",
         "SEO técnico (JSON-LD, Open Graph), Core Web Vitals optimizados y migración a Vercel.",
+        "Landing original que digitalizó servicios y horarios, y comunicación digital de más de 150 familias.",
       ],
       result: "Más visibilidad digital y captación de nuevos alumnos.",
-      tags: ["React", "Vite", "Tailwind CSS", "Framer Motion", "SEO"],
+      tags: ["React", "Vite", "Tailwind CSS v4", "Framer Motion", "Lenis", "SEO"],
       link: "https://www.taekwondofertex.com/",
       code: "https://github.com/jhefferson-guerrero/fertex-web",
       image: "/assets/projects/fertex.webp",
@@ -209,12 +212,13 @@ export const content = {
     {
       title: "Sistema Mesa de Partes Virtual",
       short: "mesa-de-partes",
-      desc: "Plataforma para digitalizar trámites administrativos y centralizar la gestión documental.",
+      desc: "Plataforma completa para digitalizar trámites administrativos.",
       highlights: [
-        "Autenticación completa, historial de trámites y carga de documentos PDF/Word con validación de formato.",
+        "Autenticación completa: registro, inicio de sesión y recuperación de cuenta.",
+        "Dashboard personalizado con historial de trámites y validación de carga de documentos.",
         "Notificaciones automáticas por correo y sincronización en tiempo real con Firestore.",
       ],
-      result: "Automatizó el 100 % de la recepción documental y eliminó los errores de registro manual.",
+      result: "Automaticé el 100 % de la recepción documental.",
       tags: ["JavaScript", "HTML5", "CSS3", "Firebase"],
       link: "https://mesa-de-partes-5c6c2.web.app/",
       code: "https://github.com/jhefferson-guerrero/mesa-de-partes-ccjn",
@@ -223,8 +227,14 @@ export const content = {
     {
       title: "Pastelia Bakery — Landing page",
       short: "pastelia",
-      desc: "Landing page de repostería con animaciones fluidas, navegación suave y una interfaz cuidada.",
-      tags: ["React 19", "Vite", "Tailwind CSS v4", "Framer Motion", "Lenis", "React Router"],
+      desc: "Sitio web moderno y atractivo para una repostería artesanal.",
+      highlights: [
+        "Landing mobile-first enfocada en el producto y la conversión: tortas, queques, clásicos y cuchareables.",
+        "Animaciones fluidas con Framer Motion y scroll suave con Lenis.",
+        "Componentes reutilizables (botones magnéticos, cursor personalizado, lightbox) y navegación entre inicio y catálogo.",
+      ],
+      result: "Optimizada para rendimiento, con despliegue automatizado en Vercel.",
+      tags: ["React 19", "Vite", "Tailwind CSS 4", "Framer Motion", "Lenis", "React Router"],
       link: "https://pasteliabakery.vercel.app/",
       code: "https://github.com/jhefferson-guerrero/pastelia-landing",
       image: "/assets/projects/pastelia.webp",
@@ -232,11 +242,13 @@ export const content = {
     {
       title: "Sistema de gestión para academia (ERP)",
       short: "erp-academia",
-      desc: "Panel administrativo seguro para gestionar alumnos, mensualidades, cinturones, asistencias y profesores.",
+      desc: "Plataforma web integral para administración, control de alumnos y finanzas.",
       highlights: [
-        "Autenticación y protección anti-bots con Cloudflare Turnstile.",
+        "Panel administrativo seguro con autenticación y protección anti-bots (Cloudflare Turnstile).",
+        "Módulos de alumnos, mensualidades, promoción de cinturones, asistencias y profesores.",
         "Gráficos interactivos en tiempo real y reportes financieros exportables a PDF.",
       ],
+      result: "Digitalicé y automaticé la carga administrativa y operativa interna del dojang.",
       tags: ["React 19", "Tailwind CSS", "Supabase", "Recharts", "Cloudflare Turnstile"],
       link: "",
       code: "https://github.com/jhefferson-guerrero/sistema-taekwondo",
