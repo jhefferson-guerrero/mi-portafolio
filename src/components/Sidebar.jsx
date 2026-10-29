@@ -37,14 +37,10 @@ const Sidebar = ({ view }) => {
             decoding="async"
           />
         </div>
-        <div className="profile-id">
-          <p className="profile-name">{meta.name}</p>
-          <p className="profile-role">{hero.role}</p>
-          <span className="chip chip--ok">
-            <span className="status-dot" aria-hidden="true" />
-            disponible
-          </span>
-        </div>
+        <span className="chip chip--ok">
+          <span className="status-dot" aria-hidden="true" />
+          disponible
+        </span>
       </div>
 
       <nav className="side-nav" aria-label="Secciones">
