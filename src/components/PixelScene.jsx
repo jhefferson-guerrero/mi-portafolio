@@ -37,17 +37,15 @@ const onArc = (degrees, band = 1) => [
   Math.round(CENTER_Y + Math.sin(rad(degrees)) * ARC_RY * band),
 ];
 
-// Partículas fijas: seis sobre el arco y cuatro en los costados. [x, y, empuje en x, empuje en y].
+// Partículas fijas: cuatro sobre el arco y dos en los costados. [x, y, empuje en x, empuje en y].
 const AURA_SPOTS = [
-  ...[200, 225, 250, 290, 315, 340].map((degrees) => [
+  ...[215, 250, 290, 325].map((degrees) => [
     ...onArc(degrees),
     Math.sign(Math.round(Math.cos(rad(degrees)) * 1.4)),
     Math.sign(Math.round(Math.sin(rad(degrees)) * 1.4)),
   ]),
-  [CENTER_X - 12, 19, -1, 0],
-  [CENTER_X - 12, 23, -1, 0],
-  [CENTER_X + 12, 19, 1, 0],
-  [CENTER_X + 12, 23, 1, 0],
+  [CENTER_X - 12, 21, -1, 0],
+  [CENTER_X + 12, 21, 1, 0],
 ];
 
 // Con duración, retardo y tono distintos para que no titilen todas a la vez.
@@ -64,7 +62,7 @@ const seeded = (seed) => () => {
 
 const sparkle = (seed) => {
   const next = seeded(seed * 97 + 13);
-  return Array.from({ length: 8 }, () => {
+  return Array.from({ length: 5 }, () => {
     const tone = ["a", "b", "c"][Math.floor(next() * 3)];
     const delay = `${(next() * 0.45).toFixed(2)}s`;
 
