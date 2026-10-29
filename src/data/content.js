@@ -105,7 +105,7 @@ export const content = {
       ],
     },
     {
-      label: "Versiones y deploy",
+      label: "Git y deploy",
       items: [{ name: "Git", level: 3 }, { name: "GitHub", level: 3 }, { name: "Vercel", level: 3 }],
     },
     {
