@@ -2,7 +2,7 @@ import { content } from "../data/content";
 import Pane from "./Pane";
 
 const About = ({ active }) => {
-  const { bio, metrics, history } = content.about;
+  const { bio, history } = content.about;
 
   return (
     <Pane id="about" active={active} file="sobre-mi.md" hint="// quién soy" fill>
@@ -20,15 +20,6 @@ const About = ({ active }) => {
           </div>
         </article>
 
-        <ul className="box metrics">
-          {metrics.map((metric) => (
-            <li key={metric.value} className="metric">
-              <span className="metric-num">{metric.value}</span>
-              <span className="metric-label">{metric.label}</span>
-            </li>
-          ))}
-        </ul>
-
         <div className="box about-history">
           <div className="box-label">historial.log</div>
           <ol className="box-body log">
@@ -44,18 +35,7 @@ const About = ({ active }) => {
                         {entry.note && <span className="badge">{entry.note}</span>}
                       </p>
                     </div>
-                    <div className="log-side">
-                      <p className="log-date">{entry.date}</p>
-                      {entry.links && (
-                        <p className="inline-links">
-                          {entry.links.map((link) => (
-                            <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer">
-                              {link.label} ↗
-                            </a>
-                          ))}
-                        </p>
-                      )}
-                    </div>
+                    <p className="log-date">{entry.date}</p>
                   </div>
 
                   {entry.bullets && (

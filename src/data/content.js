@@ -4,10 +4,10 @@ export const content = {
   meta: {
     name: "Jhefferson Guerrero",
     location: "Lima, Perú",
-    availability: "Disponible para prácticas",
+    availability: "Abierto a oportunidades",
     version: "v2026.10",
     studies: "UTP · Ing. de Software (egresado)",
-    seeking: "Prácticas preprofesionales",
+    seeking: "Primera oportunidad como Desarrollador Frontend",
   },
 
   // Orden de las secciones. id: ancla de la URL; cmd: nombre que se escribe en la consola;
@@ -28,7 +28,7 @@ export const content = {
     lastName: "Guerrero",
     role: "Frontend Developer",
     description:
-      "Egresado de Ingeniería de Software en Lima. Construyo interfaces rápidas y accesibles con React, y busco prácticas preprofesionales para aportar en un equipo de desarrollo.",
+      "Egresado de Ingeniería de Software en Lima. Construyo interfaces rápidas y accesibles con React y TypeScript. Hoy practico en el área de TI de CBS y busco mi primera oportunidad como desarrollador frontend.",
     cvLink: "/assets/CV-Jhefferson-Guerrero.pdf",
   },
 
@@ -37,31 +37,31 @@ export const content = {
       [
         { text: "Soy " },
         { text: "Jhefferson Guerrero", strong: true },
-        { text: ", egresado de Ingeniería de Software de la UTP y desarrollador web en Lima. Me enfoco en el " },
+        { text: ", egresado de Ingeniería de Software de la UTP y desarrollador " },
         { text: "front-end", strong: true },
-        { text: ": interfaces claras, rápidas y accesibles, hechas con React y JavaScript. Tengo proyectos reales en producción y ahora busco " },
-        { text: "prácticas preprofesionales", strong: true },
-        { text: " para aportar en un equipo y seguir aprendiendo." },
+        { text: " en Lima. Trabajo con React, TypeScript y Tailwind CSS, y hago mis prácticas en el área de TI de CBS, donde desarrollé su sitio web corporativo. Busco mi " },
+        { text: "primera oportunidad como Desarrollador Frontend", strong: true },
+        { text: "." },
       ],
-    ],
-    metrics: [
-      { value: "200+", label: "alumnos activos en la academia que usa el sitio de Fertex" },
-      { value: "100%", label: "de la recepción documental automatizada en Mesa de Partes" },
-      { value: "3", label: "proyectos en línea: Fertex, Mesa de Partes y Pastelia" },
     ],
     history: [
       {
-        date: "feb 2023 → actualidad",
-        title: "Desarrollador Web",
+        date: "jun 2026 → nov 2026",
+        title: "Practicante de TI",
+        org: "CBS · Construtora Baiana de Saneamento",
+        bullets: [
+          "Soporte técnico a usuarios y apoyo en los requerimientos del área de TI.",
+          "Sitio web corporativo con React 19, TypeScript, Vite y Tailwind CSS 4.",
+          "SEO con prerenderizado propio, publicado en Vercel con cabeceras de seguridad.",
+        ],
+      },
+      {
+        date: "feb 2023 → feb 2024 · may → ago 2026",
+        title: "Desarrollador Web Frontend",
         org: "Academia Fertex Artes Marciales",
         bullets: [
-          "Sitio institucional con React y Tailwind CSS: servicios, horarios y captación de alumnos.",
-          "Carga móvil optimizada con lazy loading, skeleton loading e Intersection Observer.",
-          "Renovación completa: React, Vite, Tailwind CSS v4, Framer Motion y SEO con JSON-LD.",
-        ],
-        links: [
-          { label: "Sitio en vivo", href: "https://www.taekwondofertex.com/" },
-          { label: "Código", href: "https://github.com/jhefferson-guerrero/fertex-web" },
+          "Landing original y comunicación digital para más de 150 familias.",
+          "Rediseño con React, Vite, Tailwind CSS v4, Framer Motion y Lenis; SEO técnico.",
         ],
       },
       {
@@ -79,9 +79,9 @@ export const content = {
       label: "Lenguajes",
       items: [
         { name: "JavaScript", level: 4, main: true },
+        { name: "TypeScript", level: 3, main: true },
         { name: "HTML5", level: 4 },
         { name: "CSS3", level: 4 },
-        { name: "Python", level: 2 },
         { name: "PHP", level: 2 },
       ],
     },
@@ -90,28 +90,32 @@ export const content = {
       items: [
         { name: "React", level: 4, main: true },
         { name: "Tailwind CSS", level: 4, main: true },
+        { name: "Vite", level: 4 },
+        { name: "Framer Motion", level: 3 },
         { name: "Node.js", level: 2 },
       ],
     },
     {
       label: "Bases de datos",
       items: [
-        { name: "Firebase (Firestore, Auth)", level: 3, main: true },
+        { name: "Supabase", level: 3 },
+        { name: "Firebase (Firestore, Auth)", level: 3 },
         { name: "MySQL", level: 3 },
         { name: "SQL Server", level: 2 },
       ],
     },
     {
-      label: "Versiones",
-      items: [{ name: "Git", level: 3 }, { name: "GitHub", level: 3 }],
+      label: "Versiones y deploy",
+      items: [{ name: "Git", level: 3 }, { name: "GitHub", level: 3 }, { name: "Vercel", level: 3 }],
     },
     {
       label: "Herramientas",
-      items: [{ name: "VS Code", level: 4 }, { name: "Figma", level: 3 }, { name: "WordPress", level: 2 }],
-    },
-    {
-      label: "Metodología",
-      items: [{ name: "Scrum", level: 2 }],
+      items: [
+        { name: "VS Code", level: 4 },
+        { name: "Figma", level: 3 },
+        { name: "WordPress", level: 2 },
+        { name: "Scrum", level: 2 },
+      ],
     },
   ],
 
@@ -119,8 +123,8 @@ export const content = {
     {
       title: "Desarrollo web",
       icon: "code",
-      desc: "Sitios y aplicaciones responsivos con React, JavaScript y Tailwind CSS, pensados primero para móvil.",
-      tags: ["React", "JavaScript", "Tailwind CSS"],
+      desc: "Sitios y aplicaciones responsivos con React, TypeScript y Tailwind CSS, pensados primero para móvil.",
+      tags: ["React", "TypeScript", "Tailwind CSS"],
     },
     {
       title: "Interfaces y accesibilidad",
@@ -131,8 +135,8 @@ export const content = {
     {
       title: "Rendimiento y SEO",
       icon: "gauge",
-      desc: "Lazy loading, skeleton loading e Intersection Observer para cargas rápidas en celular; datos estructurados y Open Graph para los buscadores.",
-      tags: ["Lazy loading", "Intersection Observer", "JSON-LD", "Open Graph"],
+      desc: "Core Web Vitals, lazy loading y skeleton loading para cargas rápidas en celular; SEO técnico con JSON-LD, Open Graph y prerenderizado.",
+      tags: ["Core Web Vitals", "Lazy loading", "JSON-LD", "Prerenderizado"],
     },
     {
       title: "Diseño UI/UX",
@@ -165,14 +169,28 @@ export const content = {
 
   projects: [
     {
+      title: "Sitio web corporativo CBS",
+      short: "cbs",
+      desc: "Sitio de una constructora de infraestructura de agua y saneamiento en Perú y Brasil, desarrollado durante mis prácticas profesionales.",
+      highlights: [
+        "Páginas por proyecto y una para su empresa hermana, Limp City.",
+        "SEO con prerenderizado propio, cabeceras de seguridad y formulario de contacto.",
+      ],
+      tags: ["React 19", "TypeScript", "Vite", "Tailwind CSS 4", "SEO"],
+      link: "https://cbs-web-tan.vercel.app/",
+      code: "https://github.com/jhefferson-guerrero/cbs-web",
+      image: "/assets/projects/cbs.webp",
+      focus: "left top",
+    },
+    {
       title: "Sitio web Academia Fertex",
       short: "fertex",
-      desc: "Sitio de una academia de Taekwondo ITF, Muay Thai y Capoeira con 24 años de trayectoria y más de 200 alumnos activos.",
+      desc: "Plataforma de una academia de Taekwondo ITF, Muay Thai y Capoeira con 24 años de trayectoria y comunicación digital para más de 150 familias.",
       highlights: [
-        "Diseño mobile-first con skeleton loading, lazy loading e Intersection Observer.",
-        "Secciones de disciplinas, galería, horarios, instructores y mapa de locales.",
+        "Rediseño desde cero con React, Vite y Tailwind CSS v4, animaciones con Framer Motion y scroll suave con Lenis.",
+        "SEO técnico (JSON-LD, Open Graph), Core Web Vitals optimizados y migración a Vercel.",
       ],
-      result: "Más visibilidad digital y captación de alumnos, con la información disponible 24/7.",
+      result: "Más visibilidad digital y captación de nuevos alumnos.",
       tags: ["React", "Vite", "Tailwind CSS", "Framer Motion", "SEO"],
       link: "https://www.taekwondofertex.com/",
       code: "https://github.com/jhefferson-guerrero/fertex-web",
@@ -205,8 +223,12 @@ export const content = {
     {
       title: "Sistema de gestión para academia (ERP)",
       short: "erp-academia",
-      desc: "Plataforma web para controlar alumnos y pagos, con gráficos interactivos para analizar los datos financieros.",
-      tags: ["React 19", "Tailwind CSS", "Supabase", "Recharts"],
+      desc: "Panel administrativo seguro para gestionar alumnos, mensualidades, cinturones, asistencias y profesores.",
+      highlights: [
+        "Autenticación y protección anti-bots con Cloudflare Turnstile.",
+        "Gráficos interactivos en tiempo real y reportes financieros exportables a PDF.",
+      ],
+      tags: ["React 19", "Tailwind CSS", "Supabase", "Recharts", "Cloudflare Turnstile"],
       link: "",
       code: "https://github.com/jhefferson-guerrero/sistema-taekwondo",
       image: "/assets/projects/erp.webp",

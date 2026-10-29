@@ -192,7 +192,7 @@ const COMMANDS = [
       kv("rol", content.hero.role),
       kv("ubicación", content.meta.location),
       kv("estudios", content.meta.studies),
-      kv("stack", "React · Tailwind CSS · Firebase"),
+      kv("stack", "React · TypeScript · Tailwind CSS"),
       kv("shell", `jg-shell ${content.meta.version}`),
       kv("estado", content.meta.availability.toLowerCase()),
     ],

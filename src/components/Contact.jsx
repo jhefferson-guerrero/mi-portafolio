@@ -19,7 +19,7 @@ const Contact = ({ active, onRun }) => {
     <Pane id="contacto" active={active} file="contacto.sh" hint="// hablemos" fill>
       <div className="contact-wrap">
         <div className="contact-intro">
-          <h3 className="contact-title">Busco prácticas preprofesionales en desarrollo front-end.</h3>
+          <h3 className="contact-title">Busco mi primera oportunidad como desarrollador front-end.</h3>
           <p className="contact-lead">
             Si tienes una vacante o un proyecto, escríbeme. Respondo por correo.
           </p>
