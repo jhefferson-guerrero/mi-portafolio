@@ -1,7 +1,11 @@
 import { useEffect, useRef } from "react";
 import { CREATURE_CELLS, CREATURE_COLS, CREATURE_ROWS, EYES, SHADOW_CELLS } from "../lib/creature";
 
-const WIDTH = 60;
+// El cuarto se dibujó primero con 60 de ancho; se ensanchó para dejar aire entre la mascota y los muebles.
+// Lo que va a la derecha (monitor y escritorio) se corre SHIFT píxeles; la mascota queda centrada.
+const BASE_WIDTH = 60;
+const WIDTH = 70;
+const SHIFT = WIDTH - BASE_WIDTH;
 const HEIGHT = 30;
 const FLOOR = 26;
 
@@ -22,7 +26,7 @@ const Px = ({ x, y, w = 1, h = 1, className }) => (
 
 // Aura: partículas alrededor del cuerpo, nunca por debajo de los pies. El cuerpo ocupa x 20-41 e y 10-26
 // (el suelo está en y=26); el aura es un arco por encima de la cabeza y dos costados que bajan hasta los pies.
-const CENTER_X = 31;
+const CENTER_X = (WIDTH - CREATURE_COLS) / 2 + 1 + CREATURE_COLS / 2; // centro de la criatura
 const CENTER_Y = 17;
 const FEET_Y = 25; // ninguna partícula pasa de aquí hacia abajo
 const ARC_RX = 13;
@@ -40,10 +44,10 @@ const AURA_SPOTS = [
     Math.sign(Math.round(Math.cos(rad(degrees)) * 1.4)),
     Math.sign(Math.round(Math.sin(rad(degrees)) * 1.4)),
   ]),
-  [19, 19, -1, 0],
-  [19, 23, -1, 0],
-  [43, 19, 1, 0],
-  [43, 23, 1, 0],
+  [CENTER_X - 12, 19, -1, 0],
+  [CENTER_X - 12, 23, -1, 0],
+  [CENTER_X + 12, 19, 1, 0],
+  [CENTER_X + 12, 23, 1, 0],
 ];
 
 // Con duración, retardo y tono distintos para que no titilen todas a la vez.
@@ -69,7 +73,7 @@ const sparkle = (seed) => {
       const left = next() < 0.5;
       const out = Math.floor(next() * 2);
       const y = Math.round(16 + next() * (FEET_Y - 16));
-      return { x: left ? 19 - out : 43 + out, y, dx: left ? -1 : 1, dy: 0, tone, delay };
+      return { x: left ? CENTER_X - 12 - out : CENTER_X + 12 + out, y, dx: left ? -1 : 1, dy: 0, tone, delay };
     }
 
     const degrees = 190 + next() * 160;
@@ -194,8 +198,8 @@ const PixelScene = ({ mood = "idle", face = "idle", burst = 0, hop = false, clas
     focusable="false"
   >
     {/* Ventanas de la pared, a la misma distancia (14) del centro de la mascota y sin tocar el rack ni el monitor */}
-    <Window x={13} stars={[[2, 3], [6, 5]]} />
-    <Window x={41} stars={[[3, 2], [7, 6]]} />
+    <Window x={CENTER_X - 18} stars={[[2, 3], [6, 5]]} />
+    <Window x={CENTER_X + 10} stars={[[3, 2], [7, 6]]} />
 
     {/* Rack alto */}
     <Box x={1} y={8} w={10} h={FLOOR - 8} />
@@ -215,18 +219,20 @@ const PixelScene = ({ mood = "idle", face = "idle", burst = 0, hop = false, clas
     <Px x={16} y={19} className="sc-led sc-led--b" />
     <Px x={16} y={22} className="sc-led sc-led--ok" />
 
-    {/* Escritorio y monitor */}
-    <Box x={44} y={10} w={14} h={11} />
-    <Px x={45} y={11} w={12} h={9} className="sc-screen" />
-    <Px x={46} y={12} w={5} className="sc-line sc-line--a l1" />
-    <Px x={46} y={14} w={9} className="sc-line l2" />
-    <Px x={46} y={16} w={6} className="sc-line l3" />
-    <Px x={46} y={18} w={4} className="sc-line sc-line--a l4" />
-    <Px x={51} y={18} className="sc-cursor" />
-    <Px x={50} y={21} w={2} h={1} className="sc-slot" />
-    <Px x={43} y={22} w={17} h={1} className="sc-desk" />
-    <Px x={44} y={23} w={1} h={FLOOR - 23} className="sc-desk" />
-    <Px x={58} y={23} w={1} h={FLOOR - 23} className="sc-desk" />
+    {/* Escritorio y monitor, corridos a la derecha para dejar sitio a la mascota */}
+    <g transform={`translate(${SHIFT} 0)`}>
+      <Box x={44} y={10} w={14} h={11} />
+      <Px x={45} y={11} w={12} h={9} className="sc-screen" />
+      <Px x={46} y={12} w={5} className="sc-line sc-line--a l1" />
+      <Px x={46} y={14} w={9} className="sc-line l2" />
+      <Px x={46} y={16} w={6} className="sc-line l3" />
+      <Px x={46} y={18} w={4} className="sc-line sc-line--a l4" />
+      <Px x={51} y={18} className="sc-cursor" />
+      <Px x={50} y={21} w={2} h={1} className="sc-slot" />
+      <Px x={43} y={22} w={17} h={1} className="sc-desk" />
+      <Px x={44} y={23} w={1} h={FLOOR - 23} className="sc-desk" />
+      <Px x={58} y={23} w={1} h={FLOOR - 23} className="sc-desk" />
+    </g>
 
     {/* Polvo flotando */}
     <Px x={24} y={6} className="sc-dust" />

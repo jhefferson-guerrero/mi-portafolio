@@ -836,7 +836,7 @@ p {
    ========================================================================== */
 .home {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) clamp(260px, 40%, 520px);
+  grid-template-columns: minmax(0, 1fr) clamp(260px, 46%, 600px);
   align-items: center;
   gap: clamp(16px, 3vw, 44px);
 }
@@ -1624,7 +1624,7 @@ p {
 .mascot-btn {
   display: block;
   width: 100%;
-  max-width: 560px;
+  max-width: 650px;
   border-radius: var(--radius-sm);
   cursor: pointer;
 }
@@ -1940,7 +1940,7 @@ p {
 .scene {
   display: block;
   width: 100%;
-  max-width: 560px;
+  max-width: 650px;
   height: auto;
 }
 
