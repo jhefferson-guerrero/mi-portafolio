@@ -20,6 +20,50 @@ const Px = ({ x, y, w = 1, h = 1, className }) => (
   <rect x={x} y={y} width={w} height={h} className={className} />
 );
 
+// Aura: un anillo de partículas alrededor del cuerpo (centro en la criatura), también bajo los pies.
+// El suelo está en y=26 y el dibujo mide 30 de alto, así que abajo el anillo se queda en y<=28.
+const CENTER_X = 31;
+const CENTER_Y = 17;
+const toward = (angle, rx, ryUp, ryDown) => {
+  const ry = Math.sin(angle) > 0 ? ryDown : ryUp;
+  return [Math.round(CENTER_X + Math.cos(angle) * rx), Math.round(CENTER_Y + Math.sin(angle) * ry)];
+};
+
+// Partículas fijas del aura: [x, y, empuje en x, empuje en y, duración, retardo, tono].
+const AURA = Array.from({ length: 10 }, (_, i) => {
+  const angle = (i / 10) * Math.PI * 2 + (i % 2) * 0.18;
+  const jitter = 1 + (((i * 7) % 5) - 2) * 0.06;
+  const [x, y] = toward(angle, 12 * jitter, 10 * jitter, 10.5 * jitter);
+  return [x, Math.min(y, 28), Math.sign(Math.round(Math.cos(angle) * 1.4)), Math.sign(Math.round(Math.sin(angle) * 1.4)), 2.8 + (i % 4) * 0.5, -((i * 0.37) % 3), ["a", "b", "c"][i % 3]];
+});
+
+// Destello del clic: unos pocos píxeles aparecen al azar en la franja que rodea el cuerpo, titilan y se
+// apagan. La semilla es el número de clic: cada clic dibuja un destello distinto pero estable.
+const seeded = (seed) => () => {
+  seed = (seed + 0x6d2b79f5) | 0;
+  let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+};
+
+const sparkle = (seed) => {
+  const next = seeded(seed * 97 + 13);
+  return Array.from({ length: 8 }, () => {
+    const angle = next() * Math.PI * 2;
+    const band = 1 + next() * 0.5;
+    const [x, y] = toward(angle, 11 * band, 9.5 * band, 9.5 * band);
+    const top = Math.min(y, 28);
+    return {
+      x,
+      y: top,
+      dx: Math.round(Math.cos(angle) * 2),
+      dy: Math.sin(angle) > 0 ? Math.min(Math.round(Math.sin(angle) * 2), 28 - top) : Math.round(Math.sin(angle) * 2),
+      tone: ["a", "b", "c"][Math.floor(next() * 3)],
+      delay: `${(next() * 0.45).toFixed(2)}s`,
+    };
+  });
+};
+
 // Cuánto se pueden mover los ojos dentro del visor, en píxeles del dibujo, y a qué distancia
 // del cursor (en píxeles de pantalla) llegan al máximo.
 const GAZE_X = 2;
@@ -96,10 +140,11 @@ const Creature = ({ face = "idle" }) => {
 
 // Escena: sala de servidores con racks, un escritorio con monitor y la mascota en medio.
 // mood = "idle" (tranquila) o "busy" (el monitor trabaja más rápido).
-// face = la cara de la mascota: "idle", "surprised", "sleeping", "happy" o "dizzy".
-const PixelScene = ({ mood = "idle", face = "idle", className = "" }) => (
+// face = la cara de la mascota: "idle", "curious", "surprised", "sleeping", "happy" o "dizzy".
+// burst = cuenta de clics: cada vez que sube, aparecen píxeles al azar alrededor del cuerpo. hop = salta un poco.
+const PixelScene = ({ mood = "idle", face = "idle", burst = 0, hop = false, className = "" }) => (
   <svg
-    className={`scene scene--${mood} face-${face} ${className}`.trim()}
+    className={`scene scene--${mood} face-${face}${hop ? " is-hop" : ""} ${className}`.trim()}
     viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
     shapeRendering="crispEdges"
     aria-hidden="true"
@@ -146,6 +191,38 @@ const PixelScene = ({ mood = "idle", face = "idle", className = "" }) => (
     <Px x={24} y={6} className="sc-dust" />
     <Px x={40} y={8} className="sc-dust sc-dust--b" />
     <Px x={19} y={12} className="sc-dust sc-dust--c" />
+
+    {/* Aura: partículas que envuelven el cuerpo. Van detrás de la mascota, así solo asoman por fuera. */}
+    <g className="sc-aura-ring">
+      {AURA.map(([x, y, pushX, pushY, seconds, delay, tone]) => (
+        <rect
+          key={`${x}-${y}`}
+          x={x}
+          y={y}
+          width="1"
+          height="1"
+          className={`sc-aura sc-aura--${tone}`}
+          style={{ "--ox": pushX, "--oy": pushY, animationDuration: `${seconds}s`, animationDelay: `${delay}s` }}
+        />
+      ))}
+    </g>
+
+    {/* Destello del clic: píxeles al azar junto al cuerpo; la clave cambia con cada clic y la animación vuelve a empezar */}
+    {burst > 0 && (
+      <g key={burst} className="sc-flare">
+        {sparkle(burst).map((bit, i) => (
+          <rect
+            key={i}
+            x={bit.x}
+            y={bit.y}
+            width="1"
+            height="1"
+            className={`sc-bit sc-bit--${bit.tone}`}
+            style={{ "--dx": bit.dx, "--dy": bit.dy, animationDelay: bit.delay }}
+          />
+        ))}
+      </g>
+    )}
 
     {/* Mascota, apoyada sobre el suelo */}
     <g transform={`translate(${(WIDTH - CREATURE_COLS) / 2 + 1} ${FLOOR - CREATURE_ROWS + 1})`}>

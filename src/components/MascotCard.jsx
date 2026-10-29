@@ -19,7 +19,8 @@ const ACTIVITY_EVENTS = ["pointermove", "pointerdown", "keydown", "wheel", "touc
 // La cara de reposo: dormida, contenta (mouse sobre un botón), curiosa (cursor cerca) o normal.
 const restFace = (m) => (m.asleep ? "sleeping" : m.hover ? "happy" : m.near ? "curious" : "idle");
 
-// La mascota con su globo de texto, en el cuarto de servidores. Su cara cambia: se sorprende al clic,
+// La mascota con su globo de texto, en el cuarto de servidores. Un aura de partículas la envuelve y da
+// un destello al clic. Su cara cambia:
 // abre más los ojos cuando el cursor se acerca, se alegra con Contactar y CV (los elementos con
 // data-mascot="happy"), se marea si la tocan sin parar y se duerme si nadie hace nada; al moverse el
 // mouse despierta.
@@ -27,8 +28,10 @@ const MascotCard = () => {
   const [phrase, setPhrase] = useState(0);
   const [face, setFace] = useState("idle");
   const [line, setLine] = useState(null);
+  const [burst, setBurst] = useState(0);
+  const [hop, setHop] = useState(false);
   const buttonRef = useRef(null);
-  const mood = useRef({ asleep: false, busy: false, dizzy: false, hover: false, near: false, clicks: [], reactTimer: 0, sleepTimer: 0 });
+  const mood = useRef({ asleep: false, busy: false, dizzy: false, hover: false, near: false, clicks: [], reactTimer: 0, sleepTimer: 0, hopTimer: 0 });
 
   // Vuelve a la cara de reposo: dormida, contenta (con el mouse sobre un botón) o normal.
   const settle = useCallback(() => {
@@ -112,6 +115,7 @@ const MascotCard = () => {
     return () => {
       clearTimeout(m.reactTimer);
       clearTimeout(m.sleepTimer);
+      clearTimeout(m.hopTimer);
       ACTIVITY_EVENTS.forEach((name) => window.removeEventListener(name, onActivity));
       window.removeEventListener("pointerover", onOver);
       window.removeEventListener("pointermove", onMove);
@@ -125,12 +129,16 @@ const MascotCard = () => {
     m.clicks = [...m.clicks.filter((time) => now - time < CLICK_WINDOW), now];
     setPhrase((current) => (current + 1) % PHRASES.length);
 
-    // Mareada, más clics solo alargan el mareo; si no, el número de clics seguidos decide la cara.
+    // Cada clic hace que el aura dé un destello; mareada, más clics solo alargan el mareo y, si no,
+    // cinco clics seguidos la marean. Un clic normal no cambia la cara: solo salta un poco.
+    setBurst((current) => current + 1);
     if (m.dizzy || m.clicks.length >= DIZZY_CLICKS) {
       m.clicks = [];
       react("dizzy", 1800, "¡ya, ya!");
     } else {
-      react("surprised", 800);
+      setHop(true);
+      clearTimeout(m.hopTimer);
+      m.hopTimer = setTimeout(() => setHop(false), 450);
     }
   };
 
@@ -144,7 +152,7 @@ const MascotCard = () => {
         onClick={onClick}
         aria-label="Hacer que la mascota diga otra frase"
       >
-        <PixelScene face={face} />
+        <PixelScene face={face} burst={burst} hop={hop} />
       </button>
       <figcaption className="mascot-hint" aria-hidden="true">haz clic en la mascota</figcaption>
     </figure>

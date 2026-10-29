@@ -2085,6 +2085,86 @@ p {
   animation-delay: -4s;
 }
 
+/* Aura: partículas que titilan alrededor del cuerpo, en pasos de píxel; se apagan cuando duerme. */
+.sc-aura {
+  opacity: 0.2;
+  animation: aura 3.2s steps(4, end) infinite;
+}
+
+.sc-aura--a {
+  fill: var(--accent);
+}
+
+.sc-aura--b {
+  fill: var(--px-eye);
+}
+
+.sc-aura--c {
+  fill: var(--px-rim-hi);
+}
+
+.face-sleeping .sc-aura-ring {
+  display: none;
+}
+
+/* Destello del clic: píxeles al azar junto al cuerpo que titilan y se apagan. */
+.sc-bit {
+  animation: twinkle 0.9s steps(5, end) both;
+}
+
+.sc-bit--a {
+  fill: var(--accent);
+}
+
+.sc-bit--b {
+  fill: var(--px-eye);
+}
+
+.sc-bit--c {
+  fill: var(--px-rim-hi);
+}
+
+.is-hop .scene-bot {
+  animation: hop 0.45s steps(3, end) 1;
+}
+
+@keyframes aura {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: translate(0, 0);
+  }
+
+  50% {
+    opacity: 0.85;
+    transform: translate(calc(var(--ox) * 1px), calc(var(--oy) * 1px));
+  }
+}
+
+@keyframes twinkle {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+
+  25%,
+  55% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--dx) * 1px), calc(var(--dy) * 1px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-aura,
+  .sc-bit {
+    display: none;
+  }
+}
+
 /* ==========================================================================
    CONSOLA
    ========================================================================== */
