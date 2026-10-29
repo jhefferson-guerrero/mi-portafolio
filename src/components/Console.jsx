@@ -112,7 +112,7 @@ const Console = ({ api }) => {
           value={value}
           onChange={(event) => setValue(event.target.value)}
           onKeyDown={onKeyDown}
-          placeholder='escribe "help" y presiona Enter'
+          placeholder='escribe "help"'
           autoComplete="off"
           autoCapitalize="none"
           autoCorrect="off"
