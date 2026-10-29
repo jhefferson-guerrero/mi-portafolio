@@ -1959,10 +1959,6 @@ p {
   animation: hop 0.45s steps(3, end) 1;
 }
 
-.face-happy .px-E {
-  fill: var(--accent);
-}
-
 .face-sleeping .px-o {
   fill: var(--px-rim);
 }
@@ -2365,22 +2361,6 @@ p {
   color: var(--text-2);
 }
 
-.bios-logo {
-  position: absolute;
-  top: clamp(12px, 3dvh, 28px);
-  right: clamp(16px, 3vw, 36px);
-  display: grid;
-  justify-items: center;
-  gap: 4px;
-  font-size: 0.62rem;
-  color: var(--accent);
-}
-
-.bios-logo p {
-  padding-top: 4px;
-  border-top: 1px solid var(--accent-line);
-}
-
 .bios-box {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -2482,10 +2462,6 @@ p {
 @media (max-width: 720px) {
   .bios-box {
     grid-template-columns: 1fr;
-  }
-
-  .bios-logo {
-    display: none;
   }
 }
 

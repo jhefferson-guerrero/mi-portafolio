@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { content } from "../data/content";
-import PixelScene, { Mascot } from "./PixelScene";
+import PixelScene from "./PixelScene";
 
 // Arranque tipo BIOS en tres pantallas. Todo se deriva del tiempo transcurrido (ms),
 // así que el orden y la duración se ajustan cambiando estas constantes.
@@ -70,11 +70,6 @@ const PostScreen = ({ t, stamp }) => {
 
   return (
     <div className="bios">
-      <div className="bios-logo">
-        <Mascot size={84} />
-        <p>JG PORTFOLIO READY</p>
-      </div>
-
       <At t={t} at={0} className="bios-head">JG Modular BIOS v1.0, Edición Portafolio</At>
       <At t={t} at={150}>Copyright (C) 2026 {meta.name}</At>
       <At t={t} at={300}>Versión {meta.version}</At>
