@@ -1181,12 +1181,24 @@ p {
   color: var(--text);
 }
 
-.tab[aria-selected='true']::after {
+.tab::after {
   content: '';
   position: absolute;
-  inset: 0 0 auto 0;
+  inset: auto 0 0 0;
   height: 2px;
   background: var(--accent);
+  opacity: 0.45;
+  transform: scaleX(0);
+  transition: transform 0.25s var(--ease), opacity 0.25s ease;
+}
+
+.tab:hover::after {
+  transform: scaleX(1);
+}
+
+.tab[aria-selected='true']::after {
+  opacity: 1;
+  transform: scaleX(1);
 }
 
 .tab:focus-visible {
@@ -1221,7 +1233,7 @@ p {
 .project {
   grid-area: 1 / 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 52%);
+  grid-template-columns: minmax(0, 54%) minmax(0, 1fr);
   align-items: center;
   gap: clamp(18px, 2.6vw, 36px);
   visibility: hidden;
@@ -1234,7 +1246,6 @@ p {
 
 /* Captura dentro de un marco de ventana con la dirección del sitio */
 .project-thumb {
-  order: 2;
   display: flex;
   flex-direction: column;
   border: 1px solid var(--line-strong);
@@ -1366,7 +1377,7 @@ p {
    sin resultado y, al final, sin imagen. En contenedores angostos no hay lugar para la imagen. */
 @container (max-height: 455px) {
   .project {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 46%);
+    grid-template-columns: minmax(0, 46%) minmax(0, 1fr);
   }
 
   .project-body .bullets li:nth-child(n + 3) {
@@ -1389,7 +1400,7 @@ p {
 
 @container (max-height: 335px) {
   .project {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 38%);
+    grid-template-columns: minmax(0, 38%) minmax(0, 1fr);
   }
 
   .project-desc {
@@ -1399,7 +1410,7 @@ p {
 
 @container (max-height: 280px) {
   .project {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 34%);
+    grid-template-columns: minmax(0, 34%) minmax(0, 1fr);
   }
 
   .project-result {
