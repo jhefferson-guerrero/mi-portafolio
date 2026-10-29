@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { CREATURE_CELLS, CREATURE_COLS, CREATURE_ROWS } from "../lib/creature";
 
 const WIDTH = 60;
@@ -19,21 +20,78 @@ const Px = ({ x, y, w = 1, h = 1, className }) => (
   <rect x={x} y={y} width={w} height={h} className={className} />
 );
 
-// La criatura: cuerpo fijo y ojos que parpadean y miran a los lados.
-const Creature = () => (
-  <g>
-    {CREATURE_CELLS.filter(({ char }) => char !== "E").map(({ char, x, y }) => (
-      <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-${char}`} />
-    ))}
-    <g className="creature-look">
-      <g className="creature-eyes">
-        {CREATURE_CELLS.filter(({ char }) => char === "E").map(({ x, y }) => (
-          <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className="px px-E" />
-        ))}
+// Cuánto se pueden mover los ojos dentro del visor, en píxeles del dibujo, y a qué distancia
+// del cursor (en píxeles de pantalla) llegan al máximo.
+const GAZE_X = 2;
+const GAZE_Y = 1;
+const GAZE_REACH_X = 260;
+const GAZE_REACH_Y = 160;
+const clamp = (value) => Math.max(-1, Math.min(1, value));
+
+// La criatura: cuerpo fijo y ojos que parpadean y miran a los lados. Mientras el cursor está
+// en la ventana los ojos lo siguen de a un píxel; si sale, vuelven a mirar a los lados solos.
+const Creature = () => {
+  const bodyRef = useRef(null);
+  const gazeRef = useRef(null);
+
+  useEffect(() => {
+    const body = bodyRef.current;
+    const gaze = gazeRef.current;
+    if (!body || !gaze || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
+
+    let frame = 0;
+
+    const look = (x, y) => {
+      gaze.style.setProperty("--gaze-x", x);
+      gaze.style.setProperty("--gaze-y", y);
+    };
+
+    const onMove = (event) => {
+      if (frame) return;
+      const { clientX, clientY } = event;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const rect = body.getBoundingClientRect();
+        const dx = (clientX - (rect.left + rect.width / 2)) / GAZE_REACH_X;
+        const dy = (clientY - (rect.top + rect.height / 2)) / GAZE_REACH_Y;
+        gaze.dataset.tracking = "true";
+        look(Math.round(clamp(dx) * GAZE_X), Math.round(clamp(dy) * GAZE_Y));
+      });
+    };
+
+    const onLeave = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      delete gaze.dataset.tracking;
+      look(0, 0);
+    };
+
+    window.addEventListener("pointermove", onMove, { passive: true });
+    document.documentElement.addEventListener("mouseleave", onLeave);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("pointermove", onMove);
+      document.documentElement.removeEventListener("mouseleave", onLeave);
+    };
+  }, []);
+
+  return (
+    <g ref={bodyRef}>
+      {CREATURE_CELLS.filter(({ char }) => char !== "E").map(({ char, x, y }) => (
+        <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-${char}`} />
+      ))}
+      <g className="creature-gaze" ref={gazeRef}>
+        <g className="creature-look">
+          <g className="creature-eyes">
+            {CREATURE_CELLS.filter(({ char }) => char === "E").map(({ x, y }) => (
+              <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className="px px-E" />
+            ))}
+          </g>
+        </g>
       </g>
     </g>
-  </g>
-);
+  );
+};
 
 // La criatura sola, por ejemplo para el logo de la pantalla de arranque.
 export const Mascot = ({ size = 96 }) => (

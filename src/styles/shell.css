@@ -1592,12 +1592,18 @@ p {
 
 .bubble {
   position: relative;
-  max-width: 30ch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: min(30ch, 100%);
+  min-height: calc(2 * 1.45em + 18px);
   padding: 8px 14px;
   background: var(--bg-elev);
   border: 1px solid var(--accent-line);
   border-radius: var(--radius-sm);
   font-size: clamp(0.8rem, 1.9dvh, 0.95rem);
+  line-height: 1.45;
   text-align: center;
   color: var(--text);
 }
@@ -1913,8 +1919,16 @@ p {
   }
 }
 
+.creature-gaze {
+  transform: translate(calc(var(--gaze-x, 0) * 1px), calc(var(--gaze-y, 0) * 1px));
+}
+
 .creature-look {
   animation: look 9s steps(1) infinite;
+}
+
+.creature-gaze[data-tracking='true'] .creature-look {
+  animation: none;
 }
 
 .creature-eyes {
