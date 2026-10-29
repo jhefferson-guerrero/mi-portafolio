@@ -47,21 +47,6 @@ const Sidebar = ({ view }) => {
         </div>
       </div>
 
-      <dl className="profile-kv">
-        <div>
-          <dt>ubicación</dt>
-          <dd>{meta.location}</dd>
-        </div>
-        <div>
-          <dt>estudios</dt>
-          <dd>{meta.studies}</dd>
-        </div>
-        <div>
-          <dt>busco</dt>
-          <dd>{meta.seeking}</dd>
-        </div>
-      </dl>
-
       <nav className="side-nav" aria-label="Secciones">
         <ul>
           {nav.map((item) => {

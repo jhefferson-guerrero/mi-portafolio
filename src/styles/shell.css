@@ -49,8 +49,10 @@
   --maxw: 1480px;
   --bar-h: 34px;
   --gap: clamp(8px, 1.6dvh, 16px);
-  --frame-y: clamp(5px, 1.2dvh, 14px);
-  --frame-x: clamp(6px, 1vw, 20px);
+  --frame-y: clamp(6px, 1.7dvh, 18px);
+  --frame-x: clamp(10px, 1.6vw, 28px);
+  --pad-x: clamp(16px, 2.4vw, 44px);
+  --ui-zoom: 1;
   --side-w: clamp(208px, 19vw, 264px);
 
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -232,8 +234,11 @@ p {
 /* ==========================================================================
    CARCASA: barra de título + columna lateral + espacio de trabajo
    ========================================================================== */
+/* En pantallas grandes toda la interfaz se amplía (--ui-zoom) para que no quede
+   una ventana pequeña flotando en un monitor enorme */
 .app {
-  height: 100dvh;
+  zoom: var(--ui-zoom);
+  height: calc(100dvh / var(--ui-zoom));
   padding: var(--frame-y) var(--frame-x);
 }
 
@@ -329,9 +334,9 @@ p {
 .shell {
   display: grid;
   grid-template-columns: var(--side-w) minmax(0, 1fr);
-  gap: var(--gap);
+  gap: var(--gap) clamp(10px, 1.4vw, 22px);
   min-height: 0;
-  padding: var(--gap);
+  padding: var(--gap) clamp(10px, 1.4vw, 22px);
 }
 
 /* ---------- Columna lateral ---------- */
@@ -341,7 +346,7 @@ p {
   gap: clamp(8px, 1.6dvh, 14px);
   min-height: 0;
   overflow-y: auto;
-  padding: clamp(10px, 1.8dvh, 16px);
+  padding: clamp(10px, 1.8dvh, 16px) clamp(14px, 1.3vw, 20px);
   background: var(--bg-elev);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -353,6 +358,8 @@ p {
   display: flex;
   align-items: center;
   gap: 12px;
+  padding-bottom: clamp(10px, 1.8dvh, 16px);
+  border-bottom: 1px solid var(--line);
 }
 
 .avatar {
@@ -440,23 +447,6 @@ p {
 .chip--ok {
   border-color: color-mix(in srgb, var(--ok) 40%, transparent);
   color: var(--ok);
-}
-
-.profile-kv {
-  display: grid;
-  gap: 8px;
-  padding-block: 10px;
-  border-block: 1px solid var(--line);
-}
-
-.profile-kv dt {
-  font-size: 0.66rem;
-  color: var(--text-3);
-}
-
-.profile-kv dd {
-  font-size: 0.78rem;
-  color: var(--text-2);
 }
 
 .side-nav ul {
@@ -564,7 +554,7 @@ p {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  padding: clamp(5px, 1.1dvh, 9px) 16px;
+  padding: clamp(5px, 1.1dvh, 9px) var(--pad-x);
   background: var(--bg-sunk);
   border-bottom: 1px solid var(--line);
   font-size: 0.72rem;
@@ -585,7 +575,7 @@ p {
   flex-direction: column;
   min-height: 0;
   overflow: auto;
-  padding: clamp(10px, 2.2dvh, 24px) clamp(14px, 2vw, 24px);
+  padding: clamp(10px, 2.2dvh, 24px) var(--pad-x);
   scrollbar-width: thin;
   scrollbar-color: var(--line-strong) transparent;
 }
@@ -2223,25 +2213,45 @@ p {
 }
 
 /* ==========================================================================
-   LAPTOPS DE POCA ALTURA (p. ej. 1366×768 con escala 125 %)
+   PANTALLAS GRANDES: la interfaz se amplía por escalones. Cada escalón exige
+   también altura para que el contenido (alto en px CSS = alto real / zoom) siga
+   cabiendo en una vista.
    ========================================================================== */
-@media (min-width: 901px) and (min-height: 900px) {
-  .profile {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .avatar {
-    width: min(100%, 24dvh);
+@media (min-width: 1600px) and (min-height: 814px) {
+  :root {
+    --ui-zoom: 1.1;
   }
 }
 
-@media (min-width: 901px) and (max-height: 640px) {
-  .profile-kv {
-    display: none;
+@media (min-width: 1800px) and (min-height: 890px) {
+  :root {
+    --ui-zoom: 1.2;
   }
+}
 
-  .btn {
+@media (min-width: 2100px) and (min-height: 1000px) {
+  :root {
+    --ui-zoom: 1.35;
+  }
+}
+
+@media (min-width: 2500px) and (min-height: 1180px) {
+  :root {
+    --ui-zoom: 1.6;
+  }
+}
+
+@media (min-width: 3200px) and (min-height: 1480px) {
+  :root {
+    --ui-zoom: 2;
+  }
+}
+
+/* ==========================================================================
+   LAPTOPS DE POCA ALTURA (p. ej. 1366×768 con escala 125 %)
+   ========================================================================== */
+@media (min-width: 901px) and (max-height: 640px) {
+    .btn {
     min-height: 34px;
   }
 
@@ -2404,11 +2414,7 @@ p {
     border-radius: var(--radius);
   }
 
-  .profile-kv {
-    display: none;
-  }
-
-  .side-nav {
+    .side-nav {
     position: sticky;
     top: 44px;
     z-index: calc(var(--z-bar) - 1);
@@ -2482,6 +2488,10 @@ p {
 
   .home h1 {
     font-size: clamp(2.4rem, 13vw, 3.8rem);
+  }
+
+  :root {
+    --pad-x: 16px;
   }
 
   .home {
