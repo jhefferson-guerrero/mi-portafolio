@@ -7,7 +7,7 @@ export const SPRITE = [
   "....ggroooooooorgg....",
   "...grrrkkkkkkkkrrrg...",
   "...gokkkkkkkkkkkkog...",
-  "...gokkkkEkkEkkkkog...",
+  "...gokkkkkkkkkkkkog...",
   "...gokkkkEkkEkkkkog...",
   "...gokkEEEkkEEEkkog...",
   "...gokkkkkkkkkkkkog...",
