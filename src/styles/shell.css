@@ -1537,6 +1537,34 @@ p {
   border-color: var(--accent);
 }
 
+/* Con espacio de sobra los intereses van en filas por categoría; con poco espacio las etiquetas
+   fluyen juntas, sin títulos ni líneas divisorias, para que respiren. */
+@media (min-width: 901px) {
+  .extra-col .box:last-child {
+    container-type: size;
+  }
+}
+
+@container (max-height: 300px) {
+  .extra-col .box .kv-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    align-items: flex-start;
+    gap: clamp(10px, 2dvh, 18px) clamp(8px, 0.9vw, 14px);
+  }
+
+  .extra-col .box .kv,
+  .extra-col .box .kv dd,
+  .extra-col .box .hobbies {
+    display: contents;
+  }
+
+  .extra-col .box .kv dt {
+    display: none;
+  }
+}
+
 /* Cada fila mide lo que miden sus etiquetas y reparte el espacio que sobra */
 .extra-col .kv-list {
   display: flex;
