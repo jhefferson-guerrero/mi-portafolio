@@ -37,21 +37,25 @@ const About = ({ active }) => {
                 <span className="log-dot" aria-hidden="true" />
                 <div className="log-body">
                   <div className="log-head">
-                    <h3>{entry.title}</h3>
-                    <p className="log-org">
-                      {entry.org}
-                      {entry.note && <span className="badge">{entry.note}</span>}
-                    </p>
-                    {entry.links && (
-                      <p className="inline-links">
-                        {entry.links.map((link) => (
-                          <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer">
-                            {link.label} ↗
-                          </a>
-                        ))}
+                    <div className="log-title">
+                      <h3>{entry.title}</h3>
+                      <p className="log-org">
+                        {entry.org}
+                        {entry.note && <span className="badge">{entry.note}</span>}
                       </p>
-                    )}
-                    <p className="log-date">{entry.date}</p>
+                    </div>
+                    <div className="log-side">
+                      <p className="log-date">{entry.date}</p>
+                      {entry.links && (
+                        <p className="inline-links">
+                          {entry.links.map((link) => (
+                            <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer">
+                              {link.label} ↗
+                            </a>
+                          ))}
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   {entry.bullets && (
