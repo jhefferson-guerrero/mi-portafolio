@@ -2018,6 +2018,25 @@ p {
   fill: var(--line-strong);
 }
 
+/* Ventanas: vidrios con un tono de cielo nocturno, estrellas que titilan y un reflejo. */
+.sc-pane {
+  fill: var(--accent-soft);
+}
+
+.sc-star {
+  fill: var(--px-eye);
+  animation: led 4s steps(2) infinite;
+}
+
+.sc-star--b {
+  animation-delay: -2s;
+}
+
+.sc-glint {
+  fill: var(--text-3);
+  opacity: 0.7;
+}
+
 .sc-screen {
   fill: var(--bg);
 }

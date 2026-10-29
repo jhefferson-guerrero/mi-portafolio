@@ -88,6 +88,25 @@ const sparkle = (seed) => {
 // Cuántos clics seguidos pueden tener su destello a la vez; los más viejos ya se apagaron.
 const MAX_FLARES = 6;
 
+// Ventana de la pared (9 de ancho por 7 de alto, desde y=1): marco, cruz de cuatro vidrios con tono de
+// cielo nocturno, un par de estrellas que titilan y un reflejo en diagonal.
+const WINDOW_PANES = [[0, 0], [4, 0], [0, 3], [4, 3]];
+const Window = ({ x, stars }) => (
+  <g>
+    <Box x={x} y={1} w={9} h={7} />
+    {WINDOW_PANES.map(([dx, dy]) => (
+      <Px key={`${dx}-${dy}`} x={x + 1 + dx} y={2 + dy} w={3} h={2} className="sc-pane" />
+    ))}
+    <Px x={x + 4} y={2} w={1} h={5} className="sc-slot" />
+    <Px x={x + 1} y={4} w={7} h={1} className="sc-slot" />
+    {stars.map(([dx, dy], i) => (
+      <Px key={`s${i}`} x={x + dx} y={dy} className={i ? "sc-star sc-star--b" : "sc-star"} />
+    ))}
+    <Px x={x + 7} y={2} className="sc-glint" />
+    <Px x={x + 6} y={3} className="sc-glint" />
+  </g>
+);
+
 // Cuánto se pueden mover los ojos dentro del visor, en píxeles del dibujo, y a qué distancia
 // del cursor (en píxeles de pantalla) llegan al máximo.
 const GAZE_X = 2;
@@ -174,11 +193,9 @@ const PixelScene = ({ mood = "idle", face = "idle", burst = 0, hop = false, clas
     aria-hidden="true"
     focusable="false"
   >
-    {/* Marcos en la pared */}
-    <Box x={9} y={2} w={9} h={5} />
-    <Box x={42} y={2} w={11} h={5} />
-    <Px x={11} y={4} w={4} className="sc-line" />
-    <Px x={44} y={4} w={7} className="sc-line" />
+    {/* Ventanas de la pared, a la misma distancia (14) del centro de la mascota y sin tocar el rack ni el monitor */}
+    <Window x={13} stars={[[2, 3], [6, 5]]} />
+    <Window x={41} stars={[[3, 2], [7, 6]]} />
 
     {/* Rack alto */}
     <Box x={1} y={8} w={10} h={FLOOR - 8} />
