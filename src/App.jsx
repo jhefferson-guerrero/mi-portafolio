@@ -138,7 +138,7 @@ function App() {
               <Sidebar view={view} />
 
               <main id="main" className="workspace">
-                <Hero active={view === "inicio"} onRun={run} navigate={navigate} openProject={openProject} />
+                <Hero active={view === "inicio"} navigate={navigate} />
                 <About active={view === "about"} />
                 <Skills active={view === "skills"} />
                 <Projects active={view === "proyectos"} selected={project} onSelect={setProject} />

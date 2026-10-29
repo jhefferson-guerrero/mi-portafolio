@@ -10,7 +10,7 @@ const limaClock = new Intl.DateTimeFormat("es-PE", {
 
 const getLimaTime = () => limaClock.format(new Date());
 
-// Barra superior de la "ventana": ruta actual, disponibilidad y hora de Lima.
+// Barra superior de la "ventana": ruta actual, hora de Lima y versión.
 const Titlebar = ({ view }) => {
   const [time, setTime] = useState(getLimaTime);
 
@@ -36,10 +36,6 @@ const Titlebar = ({ view }) => {
 
         <span className="tb-spacer" />
 
-        <span className="tb-item tb-live">
-          <span className="status-dot" aria-hidden="true" />
-          {content.meta.availability}
-        </span>
         <span className="tb-item tb-extra">
           <time>{time}</time> Lima
         </span>
