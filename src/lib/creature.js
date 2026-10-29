@@ -17,7 +17,7 @@ export const SPRITE = [
   ".mbbbbbbbbaabbbbbbbbm.",
   "mbbbbbbbbbbbbbbbbbbbbm",
   "bbbb.bbbb.bb.bbbb.bbbb",
-  "..b....b......b....b..",
+  ".......b......b.......",
   "...ssssssssssssssss...",
 ];
 
