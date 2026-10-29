@@ -467,18 +467,15 @@ p {
   color: var(--accent);
 }
 
-.log-entry + .log-entry {
-  margin-top: 4px;
-}
-
 .log-echo {
   margin-bottom: 0;
 }
 
 .log-cmd {
   display: inline-block;
+  height: 1lh;
   overflow: hidden;
-  vertical-align: bottom;
+  vertical-align: top;
   white-space: nowrap;
   animation: log-type 0.45s steps(var(--ch)) both;
 }
@@ -501,12 +498,10 @@ p {
 @keyframes log-in {
   from {
     opacity: 0;
-    transform: translateY(3px);
   }
 
   to {
     opacity: 1;
-    transform: none;
   }
 }
 
@@ -923,7 +918,7 @@ p {
 }
 
 .prose p {
-  max-width: 100ch;
+  max-width: none;
   font-size: clamp(0.84rem, 1.9dvh, 1rem);
   color: var(--text-2);
 }
@@ -955,7 +950,7 @@ p {
 .tl-list {
   position: relative;
   display: grid;
-  gap: clamp(12px, 2.4dvh, 24px);
+  gap: clamp(10px, 2dvh, 20px);
   width: 100%;
 }
 
@@ -985,8 +980,8 @@ p {
 
 .tl-card .box-body {
   display: grid;
-  gap: 4px;
-  padding: clamp(10px, 1.8dvh, 16px) clamp(14px, 1.4vw, 20px);
+  gap: 3px;
+  padding: clamp(8px, 1.4dvh, 13px) clamp(12px, 1.2vw, 18px);
 }
 
 .tl-card h3 {
@@ -994,7 +989,15 @@ p {
 }
 
 .tl-card .bullets {
-  margin-top: 6px;
+  margin-top: 4px;
+}
+
+.tl-card .bullets li {
+  font-size: clamp(0.78rem, 1.75dvh, 0.9rem);
+}
+
+.tl-card .bullets li + li {
+  margin-top: clamp(2px, 0.6dvh, 6px);
 }
 
 .tl-mark {
@@ -1006,7 +1009,7 @@ p {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  padding-top: 36px;
+  padding-top: 26px;
 }
 
 .tl-node {
@@ -1040,7 +1043,7 @@ p {
 .tl-item::before {
   content: '';
   position: absolute;
-  top: 41px;
+  top: 31px;
   width: 30px;
   border-top: 1px dotted var(--text-3);
 }
@@ -1999,6 +2002,7 @@ p {
   .console {
     display: flex;
     flex-direction: column;
+    padding-top: 8px;
     background: var(--bg-sunk);
     border: 1px solid var(--line-strong);
     border-radius: var(--radius);
@@ -2012,11 +2016,11 @@ p {
 
   .console-log {
     position: relative;
-    height: clamp(64px, 14dvh, 170px);
-    padding: 8px 14px;
+    height: calc(var(--log-lines, 4) * 1lh);
+    padding: 0 14px;
     overflow-y: auto;
     font-size: 0.78rem;
-    line-height: 1.55;
+    line-height: 20px;
     color: var(--text-2);
     scrollbar-width: thin;
     scrollbar-color: var(--line-strong) transparent;
@@ -2039,6 +2043,30 @@ p {
 
   .console-out {
     display: none;
+  }
+
+  /* Cada línea mide exactamente 1lh, así el panel nunca corta una a medias */
+  .console-log p,
+  .console-log .out-head {
+    margin: 0;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 700px) {
+  .console {
+    --log-lines: 3;
+  }
+}
+
+@media (min-width: 901px) and (min-height: 900px) {
+  .console {
+    --log-lines: 5;
+  }
+}
+
+@media (min-width: 901px) and (min-height: 1100px) {
+  .console {
+    --log-lines: 6;
   }
 }
 

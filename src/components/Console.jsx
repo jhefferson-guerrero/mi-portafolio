@@ -16,7 +16,7 @@ const Console = ({ api }) => {
   useEffect(() => {
     const node = logRef.current;
     const last = node?.querySelector(".log-entry:last-child");
-    if (node && last) node.scrollTop = last.offsetTop - 8;
+    if (node && last) node.scrollTop = last.offsetTop;
   }, [entries]);
 
   const submit = (event) => {
