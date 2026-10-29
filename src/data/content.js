@@ -191,7 +191,6 @@ export const content = {
       link: "https://cbs-web-tan.vercel.app/",
       code: "https://github.com/jhefferson-guerrero/cbs-web",
       image: "/assets/projects/cbs.webp",
-      focus: "left top",
     },
     {
       title: "Sitio web Academia Fertex",
@@ -207,7 +206,6 @@ export const content = {
       link: "https://www.taekwondofertex.com/",
       code: "https://github.com/jhefferson-guerrero/fertex-web",
       image: "/assets/projects/fertex.webp",
-      focus: "left top",
     },
     {
       title: "Sistema Mesa de Partes Virtual",
@@ -253,7 +251,7 @@ export const content = {
       link: "",
       code: "https://github.com/jhefferson-guerrero/sistema-taekwondo",
       image: "/assets/projects/erp.webp",
-      focus: "left top",
+      ratio: 1.96,
     },
   ],
 

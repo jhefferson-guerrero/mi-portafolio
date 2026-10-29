@@ -21,7 +21,7 @@ const ProjectDetail = ({ project, index, selected }) => {
       aria-labelledby={`project-tab-${index}`}
       className={`project ${selected ? "is-selected" : ""}`}
     >
-      <div className="project-thumb">
+      <div className="project-thumb" style={project.ratio ? { "--ratio": project.ratio } : undefined}>
         <div className="thumb-bar" aria-hidden="true">
           <i />
           <i />
@@ -39,7 +39,6 @@ const ProjectDetail = ({ project, index, selected }) => {
               alt={`Captura del proyecto ${project.title}`}
               loading="lazy"
               decoding="async"
-              style={project.focus ? { objectPosition: project.focus } : undefined}
               onError={() => setImageFailed(true)}
             />
           )}
