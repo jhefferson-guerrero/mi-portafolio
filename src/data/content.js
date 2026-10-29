@@ -15,9 +15,9 @@ export const content = {
   nav: [
     { id: "inicio", label: "inicio", cmd: "inicio", icon: "house" },
     { id: "about", label: "sobre mí", cmd: "sobre-mi", icon: "user" },
-    { id: "skills", label: "stack", cmd: "stack", icon: "layers" },
+    { id: "skills", label: "tecnologías", cmd: "tecnologias", icon: "layers" },
     { id: "proyectos", label: "proyectos", cmd: "proyectos", icon: "folder" },
-    { id: "servicios", label: "qué hago", cmd: "servicios", icon: "wrench" },
+    { id: "servicios", label: "servicios", cmd: "servicios", icon: "wrench" },
     { id: "extra", label: "intereses", cmd: "intereses", icon: "gamepad" },
     { id: "contacto", label: "contacto", cmd: "contacto", icon: "mail" },
   ],
@@ -151,20 +151,23 @@ export const content = {
     { name: "Inglés", label: "Intermedio", level: 3 },
   ],
 
-  // icon: clave que Interests.jsx traduce a un icono.
+  // icon: clave que Interests.jsx traduce a un icono. group: fila en la que se agrupa.
   hobbies: [
-    { name: "Programación", icon: "code" },
-    { name: "Diseño", icon: "palette" },
-    { name: "Videojuegos", icon: "gamepad" },
-    { name: "Ver series", icon: "tv" },
-    { name: "Anime", icon: "sparkles" },
-    { name: "Cine", icon: "clapperboard" },
-    { name: "Música", icon: "music" },
-    { name: "Gym", icon: "dumbbell" },
-    { name: "UFC", icon: "swords" },
-    { name: "Animales", icon: "paw" },
-    { name: "Comida", icon: "utensils" },
-    { name: "Redes sociales", icon: "share" },
+    { name: "Programación", icon: "code", group: "Tecnología" },
+    { name: "Diseño", icon: "palette", group: "Tecnología" },
+    { name: "IA", icon: "bot", group: "Tecnología" },
+    { name: "Animación web", icon: "wand", group: "Tecnología" },
+    { name: "Videojuegos", icon: "gamepad", group: "Entretenimiento" },
+    { name: "Ver series", icon: "tv", group: "Entretenimiento" },
+    { name: "Anime", icon: "sparkles", group: "Entretenimiento" },
+    { name: "Cine", icon: "clapperboard", group: "Entretenimiento" },
+    { name: "Música", icon: "music", group: "Entretenimiento" },
+    { name: "Gym", icon: "dumbbell", group: "Deporte" },
+    { name: "Artes marciales", icon: "medal", group: "Deporte" },
+    { name: "UFC", icon: "swords", group: "Deporte" },
+    { name: "Animales", icon: "paw", group: "Día a día" },
+    { name: "Comida", icon: "utensils", group: "Día a día" },
+    { name: "Redes sociales", icon: "share", group: "Día a día" },
   ],
 
   projects: [

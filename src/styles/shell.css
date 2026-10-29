@@ -53,7 +53,7 @@
   --frame-x: clamp(10px, 1.6vw, 28px);
   --pad-x: clamp(16px, 2.4vw, 44px);
   --ui-zoom: 1;
-  --side-w: clamp(208px, 19vw, 264px);
+  --side-w: clamp(188px, 16.5vw, 236px);
 
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -422,8 +422,7 @@ p {
 }
 
 .chip--ok {
-  border-color: color-mix(in srgb, var(--ok) 40%, transparent);
-  color: var(--ok);
+  color: var(--text-2);
 }
 
 .side-nav ul {
@@ -1263,14 +1262,14 @@ p {
 
 .extra-col .box-body {
   flex: 1;
-  padding: clamp(10px, 2.4dvh, 24px) clamp(14px, 2vw, 22px);
+  padding: clamp(14px, 3dvh, 30px) clamp(18px, 2.2vw, 30px);
 }
 
 .langs {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-content: space-evenly;
-  gap: clamp(10px, 2.4dvh, 22px) clamp(24px, 5vw, 64px);
+  gap: clamp(12px, 2.4dvh, 22px) clamp(32px, 5vw, 72px);
 }
 
 .lang {
@@ -1300,30 +1299,30 @@ p {
   height: clamp(8px, 1.6dvh, 14px);
 }
 
+/* Etiquetas de ancho propio dentro de cada fila de categoría */
 .hobbies {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-auto-rows: 1fr;
-  gap: clamp(8px, 1.6dvh, 14px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(8px, 1.5dvh, 14px) clamp(8px, 0.75vw, 14px);
 }
 
 .hobby {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: clamp(5px, 1.2dvh, 10px) clamp(10px, 1.6dvh, 16px);
+  padding: clamp(6px, 1.3dvh, 11px) clamp(10px, 1vw, 16px);
   border: 1px solid var(--accent-line);
   border-radius: 3px;
   background: var(--accent-soft);
-  font-size: clamp(0.8rem, 1.9dvh, 1rem);
+  font-size: clamp(0.82rem, 1.85dvh, 1.05rem);
   color: var(--text);
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .hobby svg {
   flex: none;
-  width: 1.25em;
-  height: 1.25em;
+  width: 1.2em;
+  height: 1.2em;
   color: var(--accent);
 }
 
@@ -1331,10 +1330,16 @@ p {
   border-color: var(--accent);
 }
 
-@media (max-width: 1150px) {
-  .hobbies {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+/* Cada fila mide lo que miden sus etiquetas y reparte el espacio que sobra */
+.extra-col .kv-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.extra-col .kv {
+  flex: 1 1 auto;
+  grid-template-columns: clamp(124px, 11.5vw, 190px) minmax(0, 1fr);
+  padding-block: clamp(4px, 1dvh, 12px);
 }
 
 .mascot-card {
@@ -2157,11 +2162,7 @@ p {
 
 
   .extra-col .box-body {
-    padding: 8px 14px;
-  }
-
-  .langs {
-    gap: 8px;
+    padding: 12px 18px;
   }
 
   .lang-name {
@@ -2170,15 +2171,6 @@ p {
 
   .level--lg i {
     height: 7px;
-  }
-
-  .hobbies {
-    gap: 6px;
-  }
-
-  .hobby {
-    padding: 3px 9px;
-    font-size: 0.74rem;
   }
 
   .bubble {
@@ -2279,8 +2271,7 @@ p {
   }
 
   .tb-extra,
-  .tb-path,
-  .pane-hint {
+  .tb-path {
     display: none;
   }
 
@@ -2403,11 +2394,6 @@ p {
 
   .langs {
     grid-template-columns: 1fr;
-  }
-
-  .hobbies {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-auto-rows: auto;
   }
 
   .pane--fill .pane-inner,

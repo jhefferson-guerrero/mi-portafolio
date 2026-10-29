@@ -11,7 +11,7 @@ const ICONS = {
 
 // Cuatro áreas de trabajo en tarjetas que llenan el panel.
 const Services = ({ active }) => (
-  <Pane id="servicios" active={active} file="servicios.md" hint="// áreas de trabajo" fill>
+  <Pane id="servicios" active={active} file="servicios.md" fill>
     <ul className="svc-grid">
       {content.services.map((service) => {
         const Icon = ICONS[service.icon] ?? Code2;

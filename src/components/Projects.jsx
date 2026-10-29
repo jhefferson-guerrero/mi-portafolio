@@ -113,7 +113,7 @@ const Projects = ({ active, selected, onSelect }) => {
   };
 
   return (
-    <Pane id="proyectos" active={active} file="proyectos/" hint="// trabajo real, en producción" flush>
+    <Pane id="proyectos" active={active} file="proyectos/" flush>
       <div className="tabs" role="tablist" aria-label="Proyectos" onKeyDown={onKeyDown}>
         {projects.map((project, i) => (
           <button

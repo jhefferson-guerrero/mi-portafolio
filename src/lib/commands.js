@@ -20,6 +20,7 @@ const SECTION_ALIASES = {
   sobremi: "about",
   skills: "skills",
   stack: "skills",
+  tecnologias: "skills",
   proyectos: "proyectos",
   projects: "proyectos",
   servicios: "servicios",
@@ -134,7 +135,7 @@ const COMMANDS = [
   },
   {
     name: "hobbies",
-    desc: "qué hago fuera del código",
+    desc: "mis intereses fuera del código",
     run: (_args, ctx) => {
       ctx.navigate("extra");
       return [text(content.hobbies.map((hobby) => hobby.name.toLowerCase()).join(" · "))];
