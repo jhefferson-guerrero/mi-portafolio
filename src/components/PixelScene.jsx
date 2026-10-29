@@ -20,24 +20,36 @@ const Px = ({ x, y, w = 1, h = 1, className }) => (
   <rect x={x} y={y} width={w} height={h} className={className} />
 );
 
-// Aura: un anillo de partículas alrededor del cuerpo (centro en la criatura), también bajo los pies.
-// El suelo está en y=26 y el dibujo mide 30 de alto, así que abajo el anillo se queda en y<=28.
+// Aura: partículas alrededor del cuerpo, nunca por debajo de los pies. El cuerpo ocupa x 20-41 e y 10-26
+// (el suelo está en y=26); el aura es un arco por encima de la cabeza y dos costados que bajan hasta los pies.
 const CENTER_X = 31;
 const CENTER_Y = 17;
-const toward = (angle, rx, ryUp, ryDown) => {
-  const ry = Math.sin(angle) > 0 ? ryDown : ryUp;
-  return [Math.round(CENTER_X + Math.cos(angle) * rx), Math.round(CENTER_Y + Math.sin(angle) * ry)];
-};
+const FEET_Y = 25; // ninguna partícula pasa de aquí hacia abajo
+const ARC_RX = 13;
+const ARC_RY = 9.5;
+const rad = (degrees) => (degrees * Math.PI) / 180;
+const onArc = (degrees, band = 1) => [
+  Math.round(CENTER_X + Math.cos(rad(degrees)) * ARC_RX * band),
+  Math.round(CENTER_Y + Math.sin(rad(degrees)) * ARC_RY * band),
+];
 
-// Partículas fijas del aura: [x, y, empuje en x, empuje en y, duración, retardo, tono].
-const AURA = Array.from({ length: 10 }, (_, i) => {
-  const angle = (i / 10) * Math.PI * 2 + (i % 2) * 0.18;
-  const jitter = 1 + (((i * 7) % 5) - 2) * 0.06;
-  const [x, y] = toward(angle, 12 * jitter, 10 * jitter, 10.5 * jitter);
-  return [x, Math.min(y, 28), Math.sign(Math.round(Math.cos(angle) * 1.4)), Math.sign(Math.round(Math.sin(angle) * 1.4)), 2.8 + (i % 4) * 0.5, -((i * 0.37) % 3), ["a", "b", "c"][i % 3]];
-});
+// Partículas fijas: seis sobre el arco y cuatro en los costados. [x, y, empuje en x, empuje en y].
+const AURA_SPOTS = [
+  ...[200, 225, 250, 290, 315, 340].map((degrees) => [
+    ...onArc(degrees),
+    Math.sign(Math.round(Math.cos(rad(degrees)) * 1.4)),
+    Math.sign(Math.round(Math.sin(rad(degrees)) * 1.4)),
+  ]),
+  [19, 19, -1, 0],
+  [19, 23, -1, 0],
+  [43, 19, 1, 0],
+  [43, 23, 1, 0],
+];
 
-// Destello del clic: unos pocos píxeles aparecen al azar en la franja que rodea el cuerpo, titilan y se
+// Con duración, retardo y tono distintos para que no titilen todas a la vez.
+const AURA = AURA_SPOTS.map(([x, y, pushX, pushY], i) => [x, y, pushX, pushY, 2.8 + (i % 4) * 0.5, -((i * 0.37) % 3), ["a", "b", "c"][i % 3]]);
+
+// Destello del clic: unos pocos píxeles aparecen al azar sobre el arco o en los costados, titilan y se
 // apagan. La semilla es el número de clic: cada clic dibuja un destello distinto pero estable.
 const seeded = (seed) => () => {
   seed = (seed + 0x6d2b79f5) | 0;
@@ -49,20 +61,32 @@ const seeded = (seed) => () => {
 const sparkle = (seed) => {
   const next = seeded(seed * 97 + 13);
   return Array.from({ length: 8 }, () => {
-    const angle = next() * Math.PI * 2;
-    const band = 1 + next() * 0.5;
-    const [x, y] = toward(angle, 11 * band, 9.5 * band, 9.5 * band);
-    const top = Math.min(y, 28);
+    const tone = ["a", "b", "c"][Math.floor(next() * 3)];
+    const delay = `${(next() * 0.45).toFixed(2)}s`;
+
+    if (next() < 0.3) {
+      // costado: pegado a la pared del cuerpo, de la altura de los ojos a los pies
+      const left = next() < 0.5;
+      const out = Math.floor(next() * 2);
+      const y = Math.round(16 + next() * (FEET_Y - 16));
+      return { x: left ? 19 - out : 43 + out, y, dx: left ? -1 : 1, dy: 0, tone, delay };
+    }
+
+    const degrees = 190 + next() * 160;
+    const [x, y] = onArc(degrees, 1 + next() * 0.35);
     return {
       x,
-      y: top,
-      dx: Math.round(Math.cos(angle) * 2),
-      dy: Math.sin(angle) > 0 ? Math.min(Math.round(Math.sin(angle) * 2), 28 - top) : Math.round(Math.sin(angle) * 2),
-      tone: ["a", "b", "c"][Math.floor(next() * 3)],
-      delay: `${(next() * 0.45).toFixed(2)}s`,
+      y: Math.min(y, FEET_Y),
+      dx: Math.round(Math.cos(rad(degrees)) * 2),
+      dy: Math.round(Math.sin(rad(degrees)) * 2),
+      tone,
+      delay,
     };
   });
 };
+
+// Cuántos clics seguidos pueden tener su destello a la vez; los más viejos ya se apagaron.
+const MAX_FLARES = 6;
 
 // Cuánto se pueden mover los ojos dentro del visor, en píxeles del dibujo, y a qué distancia
 // del cursor (en píxeles de pantalla) llegan al máximo.
@@ -141,7 +165,7 @@ const Creature = ({ face = "idle" }) => {
 // Escena: sala de servidores con racks, un escritorio con monitor y la mascota en medio.
 // mood = "idle" (tranquila) o "busy" (el monitor trabaja más rápido).
 // face = la cara de la mascota: "idle", "curious", "surprised", "sleeping", "happy" o "dizzy".
-// burst = cuenta de clics: cada vez que sube, aparecen píxeles al azar alrededor del cuerpo. hop = salta un poco.
+// burst = cuenta de clics: con cada clic aparecen píxeles al azar alrededor del cuerpo y se acumulan. hop = salta un poco.
 const PixelScene = ({ mood = "idle", face = "idle", burst = 0, hop = false, className = "" }) => (
   <svg
     className={`scene scene--${mood} face-${face}${hop ? " is-hop" : ""} ${className}`.trim()}
@@ -207,10 +231,11 @@ const PixelScene = ({ mood = "idle", face = "idle", burst = 0, hop = false, clas
       ))}
     </g>
 
-    {/* Destello del clic: píxeles al azar junto al cuerpo; la clave cambia con cada clic y la animación vuelve a empezar */}
-    {burst > 0 && (
-      <g key={burst} className="sc-flare">
-        {sparkle(burst).map((bit, i) => (
+    {/* Destello del clic: cada clic tiene su propio grupo (clave = número de clic), así los anteriores
+        siguen su animación y los nuevos se acumulan en lugar de reiniciarse. */}
+    {Array.from({ length: Math.min(burst, MAX_FLARES) }, (_, k) => burst - k).map((clic) => (
+      <g key={clic} className="sc-flare">
+        {sparkle(clic).map((bit, i) => (
           <rect
             key={i}
             x={bit.x}
@@ -222,7 +247,7 @@ const PixelScene = ({ mood = "idle", face = "idle", burst = 0, hop = false, clas
           />
         ))}
       </g>
-    )}
+    ))}
 
     {/* Mascota, apoyada sobre el suelo */}
     <g transform={`translate(${(WIDTH - CREATURE_COLS) / 2 + 1} ${FLOOR - CREATURE_ROWS + 1})`}>
