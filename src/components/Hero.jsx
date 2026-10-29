@@ -39,13 +39,22 @@ const TypewriterText = ({ fullText }) => {
 
 const SUGGESTED = ["help", "projects", "neofetch", "sudo hire me"];
 
-// Vista de inicio. `onRun` ejecuta un comando en la consola; `navigate` cambia de vista.
-const Hero = ({ active, onRun, navigate }) => {
-  const { hero, socials } = content;
+// Vista de inicio. `onRun` ejecuta un comando en la consola; `navigate` cambia de vista;
+// `openProject` abre un proyecto concreto.
+const Hero = ({ active, onRun, navigate, openProject }) => {
+  const { hero, socials, meta, projects } = content;
+
+  const facts = [
+    ["ubicación", meta.location],
+    ["estudios", "UTP · Ing. Software"],
+    ["stack", "React · Tailwind"],
+    ["shell", `jg-shell ${meta.version}`],
+  ];
 
   return (
     <Pane id="inicio" active={active} file="inicio.md" hint="// bienvenido" home>
       <div className="home">
+        <div className="home-main">
         <p className="eyebrow">{hero.eyebrow} · {content.meta.location.toLowerCase()}</p>
 
         <h1>
@@ -81,6 +90,42 @@ const Hero = ({ active, onRun, navigate }) => {
             </button>
           ))}
         </div>
+        </div>
+
+        <aside className="home-side" aria-label="Resumen">
+          <div className="box">
+            <div className="box-label">neofetch</div>
+            <dl className="box-body side-facts">
+              {facts.map(([key, value]) => (
+                <div key={key} className="side-fact">
+                  <dt>{key}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+              <div className="side-fact">
+                <dt>estado</dt>
+                <dd className="side-ok">
+                  <span className="legend-dot legend-dot--ok" aria-hidden="true" />
+                  disponible
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <div className="box side-projects-box">
+            <div className="box-label">ls proyectos/</div>
+            <ul className="box-body side-projects">
+              {projects.map((project, index) => (
+                <li key={project.short}>
+                  <button type="button" className="side-project" onClick={() => openProject(index)}>
+                    <span className="side-project-name">{project.short}/</span>
+                    <span className="side-project-tag">{project.tags[0]}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
       </div>
     </Pane>
   );
