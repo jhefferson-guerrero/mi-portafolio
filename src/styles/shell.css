@@ -1948,6 +1948,71 @@ p {
   animation: bob 2.4s steps(2, end) infinite;
 }
 
+/* Caras de la mascota: sorprendida (visor encendido, ojos cuadrados y un saltito), contenta (ojos
+   en arco), dormida (visor apagado y ojos en raya, sin moverse) y mareada (ojos en equis y tambaleo). */
+.face-surprised .px-k {
+  fill: var(--accent);
+}
+
+.face-surprised .px-E {
+  fill: var(--px-visor);
+}
+
+.face-surprised .scene-bot {
+  animation: hop 0.45s steps(3, end) 1;
+}
+
+.face-happy .px-E {
+  fill: var(--accent);
+}
+
+.face-sleeping .px-o {
+  fill: var(--px-rim);
+}
+
+.face-sleeping .px-E {
+  fill: var(--text-3);
+}
+
+.face-sleeping .scene-bot,
+.face-sleeping .creature-eyes {
+  animation: none;
+}
+
+.face-sleeping .creature-gaze {
+  transform: none;
+}
+
+.face-dizzy .scene-bot {
+  animation: wobble 0.25s steps(2, end) infinite;
+}
+
+.face-dizzy .creature-look {
+  animation: none;
+}
+
+@keyframes hop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  40% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes wobble {
+  0%,
+  100% {
+    transform: translateX(-1px);
+  }
+
+  50% {
+    transform: translateX(1px);
+  }
+}
+
 .sc-box {
   fill: var(--bg-elev);
   stroke: var(--line-strong);

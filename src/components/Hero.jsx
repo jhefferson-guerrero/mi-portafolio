@@ -65,10 +65,10 @@ const Hero = ({ active, navigate }) => {
             <button type="button" className="btn btn--primary" onClick={() => navigate("proyectos")}>
               Ver proyectos
             </button>
-            <a href={socials.email} className="btn">
+            <a href={socials.email} className="btn" data-mascot="happy">
               <Mail size={15} /> Contactar
             </a>
-            <a href={hero.cvLink} download className="btn">
+            <a href={hero.cvLink} download className="btn" data-mascot="happy">
               <Download size={15} /> CV
             </a>
           </div>

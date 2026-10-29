@@ -29,3 +29,13 @@ export const CREATURE_CELLS = SPRITE.flatMap((row, y) =>
     .map((char, x) => ({ char, x, y }))
     .filter(({ char }) => char !== ".")
 );
+
+// Ojos de cada cara, como [x, y] sobre la cuadrícula del sprite (el visor ocupa x 5-16, y 4-9).
+// idle: los del sprite; surprised: cuadrados; sleeping: rayas; happy: arcos; dizzy: equis.
+export const EYES = {
+  idle: CREATURE_CELLS.filter(({ char }) => char === "E").map(({ x, y }) => [x, y]),
+  surprised: [[8, 6], [9, 6], [8, 7], [9, 7], [12, 6], [13, 6], [12, 7], [13, 7]],
+  sleeping: [[7, 7], [8, 7], [9, 7], [12, 7], [13, 7], [14, 7]],
+  happy: [[7, 7], [8, 6], [9, 7], [12, 7], [13, 6], [14, 7]],
+  dizzy: [[7, 5], [9, 5], [8, 6], [7, 7], [9, 7], [12, 5], [14, 5], [13, 6], [12, 7], [14, 7]],
+};

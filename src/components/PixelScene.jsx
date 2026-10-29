@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { CREATURE_CELLS, CREATURE_COLS, CREATURE_ROWS } from "../lib/creature";
+import { CREATURE_CELLS, CREATURE_COLS, CREATURE_ROWS, EYES } from "../lib/creature";
 
 const WIDTH = 60;
 const HEIGHT = 30;
@@ -30,7 +30,7 @@ const clamp = (value) => Math.max(-1, Math.min(1, value));
 
 // La criatura: cuerpo fijo y ojos que parpadean y miran a los lados. Mientras el cursor está
 // en la ventana los ojos lo siguen de a un píxel; si sale, vuelven a mirar a los lados solos.
-const Creature = () => {
+const Creature = ({ face = "idle" }) => {
   const bodyRef = useRef(null);
   const gazeRef = useRef(null);
 
@@ -77,13 +77,14 @@ const Creature = () => {
 
   return (
     <g ref={bodyRef}>
-      {CREATURE_CELLS.filter(({ char }) => char !== "E").map(({ char, x, y }) => (
-        <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-${char}`} />
+      {/* Bajo los ojos hay visor: así no quedan huecos cuando los ojos cambian de forma o de sitio */}
+      {CREATURE_CELLS.map(({ char, x, y }) => (
+        <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-${char === "E" ? "k" : char}`} />
       ))}
       <g className="creature-gaze" ref={gazeRef}>
         <g className="creature-look">
           <g className="creature-eyes">
-            {CREATURE_CELLS.filter(({ char }) => char === "E").map(({ x, y }) => (
+            {(EYES[face] ?? EYES.idle).map(([x, y]) => (
               <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className="px px-E" />
             ))}
           </g>
@@ -109,9 +110,10 @@ export const Mascot = ({ size = 96 }) => (
 
 // Escena: sala de servidores con racks, un escritorio con monitor y la mascota en medio.
 // mood = "idle" (tranquila) o "busy" (el monitor trabaja más rápido).
-const PixelScene = ({ mood = "idle", className = "" }) => (
+// face = la cara de la mascota: "idle", "surprised", "sleeping", "happy" o "dizzy".
+const PixelScene = ({ mood = "idle", face = "idle", className = "" }) => (
   <svg
-    className={`scene scene--${mood} ${className}`.trim()}
+    className={`scene scene--${mood} face-${face} ${className}`.trim()}
     viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
     shapeRendering="crispEdges"
     aria-hidden="true"
@@ -162,7 +164,7 @@ const PixelScene = ({ mood = "idle", className = "" }) => (
     {/* Mascota, apoyada sobre el suelo */}
     <g transform={`translate(${(WIDTH - CREATURE_COLS) / 2 + 1} ${FLOOR - CREATURE_ROWS + 1})`}>
       <g className="scene-bot">
-        <Creature />
+        <Creature face={face} />
       </g>
     </g>
 
