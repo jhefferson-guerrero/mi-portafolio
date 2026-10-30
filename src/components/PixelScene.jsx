@@ -141,6 +141,7 @@ export const Creature = ({ face = "idle" }) => {
       frame = requestAnimationFrame(() => {
         frame = 0;
         const rect = body.getBoundingClientRect();
+        if (!rect.width) return; // la escena está en un panel oculto
         const dx = (clientX - (rect.left + rect.width / 2)) / GAZE_REACH_X;
         const dy = (clientY - (rect.top + rect.height / 2)) / GAZE_REACH_Y;
         gaze.dataset.tracking = "true";

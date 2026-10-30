@@ -94,14 +94,24 @@ const MascotCard = () => {
       if (!m.busy && !m.asleep && !m.hover) setFace(restFace(m));
     };
 
-    const onMove = (event) => {
+    // Se mide una vez por cuadro, no en cada evento del mouse.
+    let frame = 0;
+    let pointer = null;
+    const measure = () => {
+      frame = 0;
       const node = buttonRef.current;
-      if (calm || !node || event.pointerType === "touch") return;
+      if (!node || !pointer) return;
       const rect = node.getBoundingClientRect();
       if (!rect.width) return;
-      const dx = Math.max(rect.left - event.clientX, 0, event.clientX - rect.right);
-      const dy = Math.max(rect.top - event.clientY, 0, event.clientY - rect.bottom);
+      const dx = Math.max(rect.left - pointer.x, 0, pointer.x - rect.right);
+      const dy = Math.max(rect.top - pointer.y, 0, pointer.y - rect.bottom);
       setNear(Math.hypot(dx, dy) < NEAR_DISTANCE);
+    };
+
+    const onMove = (event) => {
+      if (calm || event.pointerType === "touch") return;
+      pointer = { x: event.clientX, y: event.clientY };
+      if (!frame) frame = requestAnimationFrame(measure);
     };
 
     const onLeave = () => setNear(false);
@@ -113,6 +123,7 @@ const MascotCard = () => {
     arm();
 
     return () => {
+      cancelAnimationFrame(frame);
       clearTimeout(m.reactTimer);
       clearTimeout(m.sleepTimer);
       clearTimeout(m.hopTimer);
