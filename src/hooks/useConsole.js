@@ -29,6 +29,7 @@ export const useConsole = (ctx) => {
       if (!input) return;
 
       history.current.push(input);
+      window.dispatchEvent(new Event("jg:command")); // la mascota reacciona al comando
       const lines = await runCommand(input, { ...ctxRef.current, history: history.current });
       setOutput(lines && lines.length ? { input, lines } : null);
 

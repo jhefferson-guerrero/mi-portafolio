@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { content } from "../data/content";
 import PixelScene from "./PixelScene";
+import MascotPicker from "./MascotPicker";
 
 // Arranque tipo BIOS en tres pantallas. Todo se deriva del tiempo transcurrido (ms),
 // así que el orden y la duración se ajustan cambiando estas constantes.
@@ -221,6 +222,8 @@ const LoadingScreen = ({ onComplete, ready }) => {
         {elapsed >= POST_END && elapsed < INFO_END && <InfoScreen t={elapsed} />}
         {elapsed >= INFO_END && <LoadScreen t={elapsed} total={total} ready={ready} />}
       </div>
+
+      <MascotPicker />
     </div>
   );
 };

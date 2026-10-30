@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import {
   Download,
   Gamepad2,
@@ -11,6 +12,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { content } from "../data/content";
+import NavMascot from "./NavMascot";
 
 const ICONS = {
   house: House,
@@ -25,6 +27,7 @@ const ICONS = {
 // Columna lateral: perfil siempre visible, navegación y accesos directos.
 const Sidebar = ({ view }) => {
   const { meta, hero, socials, nav } = content;
+  const navRef = useRef(null);
 
   return (
     <aside className="sidebar" aria-label="Perfil y navegación">
@@ -43,7 +46,7 @@ const Sidebar = ({ view }) => {
         </span>
       </div>
 
-      <nav className="side-nav" aria-label="Secciones">
+      <nav ref={navRef} className="side-nav" aria-label="Secciones">
         <ul>
           {nav.map((item) => {
             const Icon = ICONS[item.icon];
@@ -61,6 +64,7 @@ const Sidebar = ({ view }) => {
             );
           })}
         </ul>
+        <NavMascot nav={navRef} view={view} />
       </nav>
 
       <div className="side-actions">

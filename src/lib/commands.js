@@ -1,6 +1,7 @@
 import { content } from "../data/content";
 import { LEVEL_LABELS } from "./levels";
 import { CLOSED_VIEW } from "./paneClose";
+import { getMascotName, mascotNames, setMascot } from "./mascot";
 
 // Cada línea de salida: { kind, text, name?, href? }
 // kind: text | dim | ok | err | head | kv | link
@@ -115,6 +116,20 @@ const COMMANDS = [
         return null;
       }
       return [text(`open: no encontré "${target}".`, "err")];
+    },
+  },
+  {
+    name: "mascota",
+    aliases: ["mascot"],
+    usage: "mascota [nombre]",
+    desc: "cambia la mascota: campana o encapuchado",
+    run: ([target]) => {
+      const names = mascotNames();
+      if (!target) return [kv("actual", getMascotName()), kv("opciones", names.join(", ")), text("mascota <nombre> para cambiarla", "dim")];
+      const name = names.find((entry) => entry.startsWith(normalize(target)));
+      if (!name) return [text(`mascota: no existe "${target}". Opciones: ${names.join(", ")}.`, "err")];
+      setMascot(name);
+      return [text(`Mascota: ${name}`, "ok")];
     },
   },
   {
@@ -307,6 +322,8 @@ export const complete = (value) => {
     ];
   } else if (["cd", "open"].includes(parts[0])) {
     pool = [...SECTIONS.map((section) => section.cmd), ...PROJECTS.map((project) => project.short)];
+  } else if (["mascota", "mascot"].includes(parts[0])) {
+    pool = mascotNames();
   } else {
     return value;
   }

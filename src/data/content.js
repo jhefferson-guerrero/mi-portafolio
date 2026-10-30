@@ -9,6 +9,9 @@ export const content = {
     studies: "UTP · Ing. de Software (egresado)",
     seeking: "Primera oportunidad como Desarrollador Frontend",
     photo: "/assets/projects/perfil.webp",
+    // Mascota con la que empieza el sitio: "campana" o "encapuchado". Quien visita puede cambiarla con
+    // el comando "mascota" y su elección se recuerda en su navegador.
+    mascot: "encapuchado",
   },
 
   // Orden de las secciones. id: ancla de la URL; cmd: nombre que se escribe en la consola;

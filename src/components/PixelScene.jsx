@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { CREATURE_CELLS, CREATURE_COLS, CREATURE_ROWS, EYES, SHADOW_CELLS } from "../lib/creature";
+import { useMascot } from "../lib/mascot";
 
 // El cuarto se dibujó primero con 60 de ancho; se ensanchó para dejar aire entre la mascota y los muebles.
 // Lo que va a la derecha (monitor y escritorio) se corre SHIFT píxeles; la mascota queda centrada.
@@ -24,32 +24,42 @@ const Px = ({ x, y, w = 1, h = 1, className }) => (
   <rect x={x} y={y} width={w} height={h} className={className} />
 );
 
-// Aura: partículas alrededor del cuerpo, nunca por debajo de los pies. El cuerpo ocupa x 20-41 e y 10-26
-// (el suelo está en y=26); el aura es un arco por encima de la cabeza y dos costados que bajan hasta los pies.
-const CENTER_X = (WIDTH - CREATURE_COLS) / 2 + 1 + CREATURE_COLS / 2; // centro de la criatura
-const CENTER_Y = 17;
+// Aura: partículas alrededor del cuerpo, nunca por debajo de los pies (el suelo está en y=26). Es un arco por
+// encima de la cabeza y dos costados que bajan hasta los pies. Su tamaño sale de la mascota (`aura` en creature.js).
 const FEET_Y = 25; // ninguna partícula pasa de aquí hacia abajo
-const ARC_RX = 13;
-const ARC_RY = 9.5;
 const rad = (degrees) => (degrees * Math.PI) / 180;
-const onArc = (degrees, band = 1) => [
-  Math.round(CENTER_X + Math.cos(rad(degrees)) * ARC_RX * band),
-  Math.round(CENTER_Y + Math.sin(rad(degrees)) * ARC_RY * band),
+const shapeOf = (mascot) => ({
+  cx: (WIDTH - mascot.cols) / 2 + 1 + mascot.cols / 2, // centro de la criatura
+  half: mascot.cols / 2 + 1, // los costados quedan justo fuera del cuerpo
+  ...mascot.aura,
+});
+const onArc = (shape, degrees, band = 1) => [
+  Math.round(shape.cx + Math.cos(rad(degrees)) * shape.rx * band),
+  Math.round(shape.cy + Math.sin(rad(degrees)) * shape.ry * band),
 ];
 
-// Partículas fijas: cuatro sobre el arco y dos en los costados. [x, y, empuje en x, empuje en y].
-const AURA_SPOTS = [
-  ...[215, 250, 290, 325].map((degrees) => [
-    ...onArc(degrees),
-    Math.sign(Math.round(Math.cos(rad(degrees)) * 1.4)),
-    Math.sign(Math.round(Math.sin(rad(degrees)) * 1.4)),
-  ]),
-  [CENTER_X - 12, 21, -1, 0],
-  [CENTER_X + 12, 21, 1, 0],
-];
-
-// Con duración, retardo y tono distintos para que no titilen todas a la vez.
-const AURA = AURA_SPOTS.map(([x, y, pushX, pushY], i) => [x, y, pushX, pushY, 2.8 + (i % 4) * 0.5, -((i * 0.37) % 3), ["a", "b", "c"][i % 3]]);
+// Partículas fijas: cuatro sobre el arco y dos en los costados. [x, y, empuje en x, empuje en y]; con duración,
+// retardo y tono distintos para que no titilen todas a la vez. Se calculan una vez por mascota.
+const auraCache = new Map();
+const auraOf = (mascot) => {
+  if (!auraCache.has(mascot.name)) {
+    const shape = shapeOf(mascot);
+    const spots = [
+      ...[215, 250, 290, 325].map((degrees) => [
+        ...onArc(shape, degrees),
+        Math.sign(Math.round(Math.cos(rad(degrees)) * 1.4)),
+        Math.sign(Math.round(Math.sin(rad(degrees)) * 1.4)),
+      ]),
+      [shape.cx - shape.half, 21, -1, 0],
+      [shape.cx + shape.half, 21, 1, 0],
+    ];
+    auraCache.set(
+      mascot.name,
+      spots.map(([x, y, pushX, pushY], i) => [x, y, pushX, pushY, 2.8 + (i % 4) * 0.5, -((i * 0.37) % 3), ["a", "b", "c"][i % 3]])
+    );
+  }
+  return auraCache.get(mascot.name);
+};
 
 // Destello del clic: unos pocos píxeles aparecen al azar sobre el arco o en los costados, titilan y se
 // apagan. La semilla es el número de clic: cada clic dibuja un destello distinto pero estable.
@@ -60,7 +70,7 @@ const seeded = (seed) => () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 };
 
-const sparkle = (seed) => {
+const sparkle = (seed, shape) => {
   const next = seeded(seed * 97 + 13);
   return Array.from({ length: 5 }, () => {
     const tone = ["a", "b", "c"][Math.floor(next() * 3)];
@@ -71,11 +81,11 @@ const sparkle = (seed) => {
       const left = next() < 0.5;
       const out = Math.floor(next() * 2);
       const y = Math.round(16 + next() * (FEET_Y - 16));
-      return { x: left ? CENTER_X - 12 - out : CENTER_X + 12 + out, y, dx: left ? -1 : 1, dy: 0, tone, delay };
+      return { x: left ? shape.cx - shape.half - out : shape.cx + shape.half + out, y, dx: left ? -1 : 1, dy: 0, tone, delay };
     }
 
     const degrees = 190 + next() * 160;
-    const [x, y] = onArc(degrees, 1 + next() * 0.35);
+    const [x, y] = onArc(shape, degrees, 1 + next() * 0.35);
     return {
       x,
       y: Math.min(y, FEET_Y),
@@ -120,6 +130,7 @@ const clamp = (value) => Math.max(-1, Math.min(1, value));
 // La criatura: cuerpo fijo y ojos que parpadean y miran a los lados. Mientras el cursor está
 // en la ventana los ojos lo siguen de a un píxel; si sale, vuelven a mirar a los lados solos.
 export const Creature = ({ face = "idle" }) => {
+  const mascot = useMascot();
   const bodyRef = useRef(null);
   const gazeRef = useRef(null);
 
@@ -166,16 +177,16 @@ export const Creature = ({ face = "idle" }) => {
   }, []);
 
   return (
-    <g ref={bodyRef}>
+    <g ref={bodyRef} className={`mascot--${mascot.name}`}>
       {/* Bajo los ojos hay visor: así no quedan huecos cuando los ojos cambian de forma o de sitio */}
-      {CREATURE_CELLS.filter(({ char }) => char !== "s").map(({ char, x, y }) => (
+      {mascot.cells.filter(({ char }) => char !== "s").map(({ char, x, y }) => (
         <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-${char === "E" ? "k" : char}`} />
       ))}
       <g className="creature-gaze" ref={gazeRef}>
         <g className="creature-look">
           <g className="creature-eyes">
-            {(EYES[face] ?? EYES.idle).map(([x, y]) => (
-              <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className="px px-E" />
+            {(mascot.eyes[face] ?? mascot.eyes.idle).map(([x, y, tone]) => (
+              <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-E${tone ? ` eye-${tone}` : ""}`} />
             ))}
           </g>
         </g>
@@ -186,7 +197,7 @@ export const Creature = ({ face = "idle" }) => {
 
 // Escena: sala de servidores con racks, un escritorio con monitor y la mascota en medio.
 // mood = "idle" (tranquila) o "busy" (el monitor trabaja más rápido).
-// face = la cara de la mascota: "idle", "curious", "surprised", "sleeping", "happy" o "dizzy".
+// face = la cara de la mascota: "idle", "curious", "surprised", "sleeping", "happy", "dizzy", "angry" o "console".
 // burst = cuenta de clics: con cada clic aparecen píxeles al azar alrededor del cuerpo y se acumulan. hop = salta un poco.
 const PixelScene = ({ mood = "idle", face = "idle", burst = 0, hop = false, className = "" }) => {
   const mascot = useMascot();
@@ -205,82 +216,93 @@ const PixelScene = ({ mood = "idle", face = "idle", burst = 0, hop = false, clas
       <Window x={shape.cx - 18} stars={[[2, 3], [6, 5]]} />
       <Window x={shape.cx + 10} stars={[[3, 2], [7, 6]]} />
 
-    {/* Rack bajo */}
-    <Box x={11} y={16} w={7} h={FLOOR - 16} />
-    {[19, 22].map((y) => (
-      <Px key={y} x={13} y={y} w={3} className="sc-slot" />
-    ))}
-    <Px x={16} y={19} className="sc-led sc-led--b" />
-    <Px x={16} y={22} className="sc-led sc-led--ok" />
-
-    {/* Escritorio y monitor, corridos a la derecha para dejar sitio a la mascota */}
-    <g transform={`translate(${SHIFT} 0)`}>
-      <Box x={44} y={10} w={14} h={11} />
-      <Px x={45} y={11} w={12} h={9} className="sc-screen" />
-      <Px x={46} y={12} w={5} className="sc-line sc-line--a l1" />
-      <Px x={46} y={14} w={9} className="sc-line l2" />
-      <Px x={46} y={16} w={6} className="sc-line l3" />
-      <Px x={46} y={18} w={4} className="sc-line sc-line--a l4" />
-      <Px x={51} y={18} className="sc-cursor" />
-      <Px x={50} y={21} w={2} h={1} className="sc-slot" />
-      <Px x={43} y={22} w={17} h={1} className="sc-desk" />
-      <Px x={44} y={23} w={1} h={FLOOR - 23} className="sc-desk" />
-      <Px x={58} y={23} w={1} h={FLOOR - 23} className="sc-desk" />
-    </g>
-
-    {/* Polvo flotando */}
-    <Px x={24} y={6} className="sc-dust" />
-    <Px x={40} y={8} className="sc-dust sc-dust--b" />
-    <Px x={19} y={12} className="sc-dust sc-dust--c" />
-
-    {/* Aura: partículas que envuelven el cuerpo. Van detrás de la mascota, así solo asoman por fuera. */}
-    <g className="sc-aura-ring">
-      {AURA.map(([x, y, pushX, pushY, seconds, delay, tone]) => (
-        <rect
-          key={`${x}-${y}`}
-          x={x}
-          y={y}
-          width="1"
-          height="1"
-          className={`sc-aura sc-aura--${tone}`}
-          style={{ "--ox": pushX, "--oy": pushY, animationDuration: `${seconds}s`, animationDelay: `${delay}s` }}
-        />
+      {/* Rack alto */}
+      <Box x={1} y={8} w={10} h={FLOOR - 8} />
+      {[11, 14, 17, 20, 23].map((y) => (
+        <Px key={y} x={3} y={y} w={4} className="sc-slot" />
       ))}
-    </g>
+      <Px x={8} y={11} className="sc-led" />
+      <Px x={8} y={14} className="sc-led sc-led--b" />
+      <Px x={8} y={17} className="sc-led sc-led--ok" />
+      <Px x={8} y={20} className="sc-led sc-led--c" />
 
-    {/* Destello del clic: cada clic tiene su propio grupo (clave = número de clic), así los anteriores
-        siguen su animación y los nuevos se acumulan en lugar de reiniciarse. */}
-    {Array.from({ length: Math.min(burst, MAX_FLARES) }, (_, k) => burst - k).map((clic) => (
-      <g key={clic} className="sc-flare">
-        {sparkle(clic).map((bit, i) => (
+      {/* Rack bajo */}
+      <Box x={11} y={16} w={7} h={FLOOR - 16} />
+      {[19, 22].map((y) => (
+        <Px key={y} x={13} y={y} w={3} className="sc-slot" />
+      ))}
+      <Px x={16} y={19} className="sc-led sc-led--b" />
+      <Px x={16} y={22} className="sc-led sc-led--ok" />
+
+      {/* Escritorio y monitor, corridos a la derecha para dejar sitio a la mascota */}
+      <g transform={`translate(${SHIFT} 0)`}>
+        <Box x={44} y={10} w={14} h={11} />
+        <Px x={45} y={11} w={12} h={9} className="sc-screen" />
+        <Px x={46} y={12} w={5} className="sc-line sc-line--a l1" />
+        <Px x={46} y={14} w={9} className="sc-line l2" />
+        <Px x={46} y={16} w={6} className="sc-line l3" />
+        <Px x={46} y={18} w={4} className="sc-line sc-line--a l4" />
+        <Px x={51} y={18} className="sc-cursor" />
+        <Px x={50} y={21} w={2} h={1} className="sc-slot" />
+        <Px x={43} y={22} w={17} h={1} className="sc-desk" />
+        <Px x={44} y={23} w={1} h={FLOOR - 23} className="sc-desk" />
+        <Px x={58} y={23} w={1} h={FLOOR - 23} className="sc-desk" />
+      </g>
+
+      {/* Polvo flotando */}
+      <Px x={24} y={6} className="sc-dust" />
+      <Px x={40} y={8} className="sc-dust sc-dust--b" />
+      <Px x={19} y={12} className="sc-dust sc-dust--c" />
+
+      {/* Aura: partículas que envuelven el cuerpo. Van detrás de la mascota, así solo asoman por fuera. */}
+      <g className="sc-aura-ring">
+        {aura.map(([x, y, pushX, pushY, seconds, delay, tone]) => (
           <rect
-            key={i}
-            x={bit.x}
-            y={bit.y}
+            key={`${x}-${y}`}
+            x={x}
+            y={y}
             width="1"
             height="1"
-            className={`sc-bit sc-bit--${bit.tone}`}
-            style={{ "--dx": bit.dx, "--dy": bit.dy, animationDelay: bit.delay }}
+            className={`sc-aura sc-aura--${tone}`}
+            style={{ "--ox": pushX, "--oy": pushY, animationDuration: `${seconds}s`, animationDelay: `${delay}s` }}
           />
         ))}
       </g>
-    ))}
 
-    {/* Mascota, apoyada sobre el suelo */}
-    <g transform={`translate(${(WIDTH - CREATURE_COLS) / 2 + 1} ${FLOOR - CREATURE_ROWS + 1})`}>
-      <g className="creature-shadow">
-        {SHADOW_CELLS.map(({ x, y }) => (
-          <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className="px px-s" />
-        ))}
-      </g>
-      <g className="scene-bot">
-        <Creature face={face} />
-      </g>
-    </g>
+      {/* Destello del clic: cada clic tiene su propio grupo (clave = número de clic), así los anteriores
+          siguen su animación y los nuevos se acumulan en lugar de reiniciarse. */}
+      {Array.from({ length: Math.min(burst, MAX_FLARES) }, (_, k) => burst - k).map((clic) => (
+        <g key={clic} className="sc-flare">
+          {sparkle(clic, shape).map((bit, i) => (
+            <rect
+              key={i}
+              x={bit.x}
+              y={bit.y}
+              width="1"
+              height="1"
+              className={`sc-bit sc-bit--${bit.tone}`}
+              style={{ "--dx": bit.dx, "--dy": bit.dy, animationDelay: bit.delay }}
+            />
+          ))}
+        </g>
+      ))}
 
-    {/* Suelo */}
-    <Px x={0} y={FLOOR} w={WIDTH} h={1} className="sc-floor" />
-  </svg>
-);
+      {/* Mascota, apoyada sobre el suelo */}
+      <g transform={`translate(${(WIDTH - mascot.cols) / 2 + 1} ${FLOOR - mascot.rows + 1})`}>
+        <g className="creature-shadow">
+          {mascot.shadow.map(({ x, y }) => (
+            <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className="px px-s" />
+          ))}
+        </g>
+        <g className="scene-bot">
+          <Creature face={face} />
+        </g>
+      </g>
+
+      {/* Suelo */}
+      <Px x={0} y={FLOOR} w={WIDTH} h={1} className="sc-floor" />
+    </svg>
+  );
+};
 
 export default PixelScene;

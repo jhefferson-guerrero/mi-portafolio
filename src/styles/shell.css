@@ -425,6 +425,69 @@ p {
   color: var(--text-2);
 }
 
+.side-nav {
+  position: relative;
+  container-type: inline-size;
+}
+
+/* La mascota en miniatura marca la sección activa. La etiqueta más larga mide unos 128 px: si el menú es
+   angosto la mascota se achica y, si no cabe, se oculta. En móvil el menú es horizontal y tampoco se muestra. */
+.nav-bot {
+  position: absolute;
+  top: 0;
+  right: 14px;
+  width: var(--nav-bot-w, 26px);
+  pointer-events: none;
+}
+
+.nav-bot[data-hidden="true"] {
+  opacity: 0;
+}
+
+.nav-bot[data-ready="true"] {
+  transition: transform 0.35s cubic-bezier(0.22, 0.8, 0.3, 1), opacity 0.2s ease;
+}
+
+.nav-bot svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.nav-bot.is-hop svg {
+  animation: nav-hop 0.4s ease-out 1;
+}
+
+@keyframes nav-hop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  40% {
+    transform: translateY(-4px);
+  }
+}
+
+@container (max-width: 175px) {
+  .nav-bot {
+    right: 8px;
+    width: 22px;
+  }
+}
+
+@container (max-width: 163px) {
+  .nav-bot {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .nav-bot {
+    display: none;
+  }
+}
+
 .side-nav ul {
   display: grid;
   gap: clamp(2px, 0.7dvh, 6px);
@@ -1914,6 +1977,58 @@ p {
   fill: var(--px-eye);
 }
 
+/* El encapuchado tiene los ojos lila; el prompt de la consola, verde con el cursor lila. */
+.mascot--encapuchado .px-E {
+  fill: var(--accent);
+}
+
+.px-E.eye-ok {
+  fill: var(--ok);
+}
+
+.px-E.eye-acc {
+  fill: var(--accent);
+}
+
+/* Circuitos de la tela del encapuchado */
+.px-t {
+  fill: var(--px-frame);
+  fill-opacity: 0.7;
+}
+
+/* Fantasmas de la campana con glitch: una copia lila y otra verde que titilan. */
+.px-u,
+.px-v {
+  animation: ghost-flicker 3.2s steps(1) infinite;
+}
+
+.px-u {
+  fill: var(--accent);
+  fill-opacity: 0.3;
+}
+
+.px-v {
+  fill: var(--ok);
+  fill-opacity: 0.22;
+  animation-delay: -1.1s;
+}
+
+@keyframes ghost-flicker {
+  0%,
+  90%,
+  100% {
+    opacity: 1;
+  }
+
+  92% {
+    opacity: 0;
+  }
+
+  95% {
+    opacity: 0.5;
+  }
+}
+
 .px-m {
   fill: var(--px-edge);
 }
@@ -2041,8 +2156,8 @@ p {
 }
 
 /* Caras de la mascota: curiosa (ojos más abiertos al acercar el cursor), sorprendida (ojos grandes y un saltito),
-   contenta (ojos en arco), dormida (visor apagado y ojos en raya, sin moverse) y mareada (ojos en
-   equis y tambaleo). Con ojos de 4x4 solo hay un píxel de juego a cada lado. */
+   contenta (ojos en arco), dormida (visor apagado y ojos en raya, sin moverse) y mareada o enojada (ojos
+   en equis o en cuña, y tambaleo). Con ojos de 4x4 solo hay un píxel de juego a cada lado. */
 .face-surprised .creature-gaze {
   transform: translate(clamp(-1px, var(--gaze-x, 0) * 1px, 1px), clamp(-1px, var(--gaze-y, 0) * 1px, 1px));
 }
@@ -2059,6 +2174,11 @@ p {
   fill: var(--text-3);
 }
 
+.face-sleeping .mascot--encapuchado .px-t,
+.face-sleeping .mascot--encapuchado .px-a {
+  opacity: 0.45;
+}
+
 .face-sleeping .scene-bot,
 .face-sleeping .creature-eyes {
   animation: none;
@@ -2068,11 +2188,13 @@ p {
   transform: none;
 }
 
-.face-dizzy .scene-bot {
+.face-dizzy .scene-bot,
+.face-angry .scene-bot {
   animation: wobble 0.25s steps(2, end) infinite;
 }
 
-.face-dizzy .creature-look {
+.face-dizzy .creature-look,
+.face-angry .creature-look {
   animation: none;
 }
 
@@ -2537,6 +2659,7 @@ p {
   cursor: pointer;
 }
 
+/* El arranque se amplía igual que la interfaz (--ui-zoom): en un monitor grande no queda diminuto */
 .boot-screen {
   zoom: var(--ui-zoom);
   min-height: calc(100dvh / var(--ui-zoom));
@@ -2638,6 +2761,43 @@ p {
   min-height: 1.5em;
   font-size: 0.8rem;
   color: var(--text-2);
+}
+
+/* Selector de mascota durante el arranque (abajo a la derecha) */
+.boot-picker {
+  position: fixed;
+  right: clamp(16px, 3vw, 36px);
+  bottom: clamp(12px, 3dvh, 28px);
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  max-width: calc(100vw - 32px);
+  zoom: var(--ui-zoom);
+  font-size: 0.72rem;
+  color: var(--text-3);
+}
+
+.boot-picker-btn {
+  padding: 3px 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  background: var(--bg-elev);
+  font-size: inherit;
+  color: var(--text-2);
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.boot-picker-btn:hover {
+  color: var(--text);
+}
+
+.boot-picker-btn[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text);
 }
 
 .boot-bar {

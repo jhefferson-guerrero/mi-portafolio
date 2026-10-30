@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { CREATURE_COLS, CREATURE_ROWS, SHADOW_CELLS } from "../lib/creature";
+import { useMascot } from "../lib/mascot";
 import { Creature } from "./PixelScene";
 
 // La "z" necesita 5x5 píxeles y una diagonal de tres para leerse como Z: más angosta parece "I" o "2".
@@ -9,26 +9,27 @@ const Z_CELLS = [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [3, 1], [2, 2], [1, 3],
 const Z_SCALE = 0.6;
 const BOT_X = 9; // el mismo margen a cada lado deja a la mascota centrada; las "z" caben en el de la derecha
 const BOT_Y = 7; // deja sitio arriba para la segunda "z" y para que no se corte al subir
-const VIEW_W = CREATURE_COLS + BOT_X * 2;
-const VIEW_H = CREATURE_ROWS + BOT_Y;
 
 // La mascota sola, dormida: el espacio vacío se lee como "descansando", no como un error.
-const SleepingBot = () => (
+const SleepingBot = () => {
+  const { cols, rows, shadow } = useMascot();
+
+  return (
   <svg
     className="empty-bot face-sleeping"
-    viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+    viewBox={`0 0 ${cols + BOT_X * 2} ${rows + BOT_Y}`}
     shapeRendering="crispEdges"
     aria-hidden="true"
     focusable="false"
   >
     <g transform={`translate(${BOT_X} ${BOT_Y})`}>
-      {SHADOW_CELLS.map(({ x, y }) => (
+      {shadow.map(({ x, y }) => (
         <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className="px px-s" />
       ))}
       <Creature face="sleeping" />
     </g>
     {[0, 1].map((n) => (
-      <g key={n} transform={`translate(${BOT_X + CREATURE_COLS + 1 + n * 4} ${BOT_Y - n * 4.5}) scale(${Z_SCALE})`}>
+      <g key={n} transform={`translate(${BOT_X + cols + 1 + n * 4} ${BOT_Y - n * 4.5}) scale(${Z_SCALE})`}>
         <g className="empty-z" style={{ "--n": n }}>
           {Z_CELLS.map(([dx, dy]) => (
             <rect key={`${dx}-${dy}`} x={dx} y={dy} width="1" height="1" className="px px-E" />
@@ -37,7 +38,8 @@ const SleepingBot = () => (
       </g>
     ))}
   </svg>
-);
+  );
+};
 
 // Lo que se ve al cerrar una sección: el espacio queda vacío a propósito y avisa cómo volver.
 const Closed = ({ active }) => {

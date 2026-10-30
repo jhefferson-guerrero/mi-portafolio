@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import PixelScene from "./PixelScene";
+import { useMascot } from "../lib/mascot";
 
 // Lo que dice la mascota; cada clic pasa a la siguiente frase.
 const PHRASES = [
@@ -11,7 +12,7 @@ const PHRASES = [
 ];
 
 const SLEEP_AFTER = 25000; // sin actividad durante este tiempo (ms), se duerme
-const DIZZY_CLICKS = 5; // clics seguidos que la marean...
+const UPSET_CLICKS = 5; // clics seguidos que la alteran (se marea o se enoja, según la mascota)...
 const CLICK_WINDOW = 2400; // ...dentro de este margen (ms)
 const NEAR_DISTANCE = 150; // a esta distancia del cursor (px) abre más los ojos
 const ACTIVITY_EVENTS = ["pointermove", "pointerdown", "keydown", "wheel", "touchstart"];
@@ -22,7 +23,7 @@ const restFace = (m) => (m.asleep ? "sleeping" : m.hover ? "happy" : m.near ? "c
 // La mascota con su globo de texto, en el cuarto de servidores. Un aura de partículas la envuelve y da
 // un destello al clic. Su cara cambia:
 // abre más los ojos cuando el cursor se acerca, se alegra con Contactar y CV (los elementos con
-// data-mascot="happy"), se marea si la tocan sin parar y se duerme si nadie hace nada; al moverse el
+// data-mascot="happy"), se marea o se enoja si la tocan sin parar y se duerme si nadie hace nada; al moverse el
 // mouse despierta.
 const MascotCard = () => {
   const [phrase, setPhrase] = useState(0);
@@ -30,14 +31,15 @@ const MascotCard = () => {
   const [line, setLine] = useState(null);
   const [burst, setBurst] = useState(0);
   const [hop, setHop] = useState(false);
+  const mascot = useMascot();
   const buttonRef = useRef(null);
-  const mood = useRef({ asleep: false, busy: false, dizzy: false, hover: false, near: false, clicks: [], reactTimer: 0, sleepTimer: 0, hopTimer: 0 });
+  const mood = useRef({ asleep: false, busy: false, upset: false, hover: false, near: false, clicks: [], reactTimer: 0, sleepTimer: 0, hopTimer: 0 });
 
   // Vuelve a la cara de reposo: dormida, contenta (con el mouse sobre un botón) o normal.
   const settle = useCallback(() => {
     const m = mood.current;
     m.busy = false;
-    m.dizzy = false;
+    m.upset = false;
     setLine(null);
     setFace(restFace(m));
   }, []);
@@ -48,7 +50,7 @@ const MascotCard = () => {
       const m = mood.current;
       clearTimeout(m.reactTimer);
       m.busy = true;
-      m.dizzy = next === "dizzy";
+      m.upset = next === "angry" || next === "dizzy";
       setFace(next);
       setLine(text);
       m.reactTimer = setTimeout(settle, duration);
@@ -116,9 +118,15 @@ const MascotCard = () => {
 
     const onLeave = () => setNear(false);
 
+    // Al escribir un comando en la consola, la mascota muestra su cara de "consola" un momento.
+    const onCommand = () => {
+      if (!m.asleep) react("console", 1100);
+    };
+
     ACTIVITY_EVENTS.forEach((name) => window.addEventListener(name, onActivity, { passive: true }));
     window.addEventListener("pointerover", onOver, { passive: true });
     window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("jg:command", onCommand);
     document.documentElement.addEventListener("mouseleave", onLeave);
     arm();
 
@@ -130,6 +138,7 @@ const MascotCard = () => {
       ACTIVITY_EVENTS.forEach((name) => window.removeEventListener(name, onActivity));
       window.removeEventListener("pointerover", onOver);
       window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("jg:command", onCommand);
       document.documentElement.removeEventListener("mouseleave", onLeave);
     };
   }, [react]);
@@ -140,12 +149,12 @@ const MascotCard = () => {
     m.clicks = [...m.clicks.filter((time) => now - time < CLICK_WINDOW), now];
     setPhrase((current) => (current + 1) % PHRASES.length);
 
-    // Cada clic hace que el aura dé un destello; mareada, más clics solo alargan el mareo y, si no,
-    // cinco clics seguidos la marean. Un clic normal no cambia la cara: solo salta un poco.
+    // Cada clic hace que el aura dé un destello; alterada, más clics solo alargan la reacción y, si no,
+    // cinco clics seguidos la provocan. Un clic normal no cambia la cara: solo salta un poco.
     setBurst((current) => current + 1);
-    if (m.dizzy || m.clicks.length >= DIZZY_CLICKS) {
+    if (m.upset || m.clicks.length >= UPSET_CLICKS) {
       m.clicks = [];
-      react("dizzy", 1800, "¡ya, ya!");
+      react(mascot.reaction, 1800, "¡ya, ya!");
     } else {
       setHop(true);
       clearTimeout(m.hopTimer);
