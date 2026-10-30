@@ -51,7 +51,7 @@
   --gap: clamp(8px, 1.6dvh, 16px);
   --frame-y: clamp(6px, 1.7dvh, 18px);
   --frame-x: clamp(10px, 1.6vw, 28px);
-  --pad-x: clamp(16px, 2.4vw, 44px);
+  --pad-x: clamp(14px, 1.5vw, 28px);
   --ui-zoom: 1;
   --side-w: clamp(188px, 16.5vw, 236px);
 
