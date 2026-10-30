@@ -2538,14 +2538,15 @@ p {
 }
 
 .boot-screen {
-  min-height: 100dvh;
+  zoom: var(--ui-zoom);
+  min-height: calc(100dvh / var(--ui-zoom));
 }
 
 .bios {
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  min-height: calc(100dvh / var(--ui-zoom));
   padding: clamp(12px, 3dvh, 28px) clamp(16px, 3vw, 36px);
   font-size: clamp(0.72rem, 2.1dvh, 0.9rem);
   line-height: 1.5;
@@ -2615,7 +2616,7 @@ p {
   place-content: center;
   justify-items: center;
   gap: 10px;
-  min-height: 100dvh;
+  min-height: calc(100dvh / var(--ui-zoom));
   padding: 24px;
   text-align: center;
 }
