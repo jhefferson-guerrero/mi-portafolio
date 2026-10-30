@@ -4,9 +4,14 @@ import PixelScene from "./PixelScene";
 
 // Arranque tipo BIOS en tres pantallas. Todo se deriva del tiempo transcurrido (ms),
 // así que el orden y la duración se ajustan cambiando estas constantes.
+// No se puede saltar: dura como mínimo TOTAL y, si lo esencial (tipografías y foto) aún no llegó,
+// espera en la última pantalla hasta MAX_WAIT; pasado ese tiempo entra igual para no quedar colgado.
 const POST_END = 3400; // pantalla 1: prueba de memoria y detección de discos
 const INFO_END = 6000; // pantalla 2: ficha del sistema y módulos
 const TOTAL = 8500; // pantalla 3: carga final con la mascota
+const MAX_WAIT = 20000; // espera máxima real (ms) por los recursos esenciales
+// Con movimiento reducido no hay pantallas de texto: solo la carga final, lo justo para esperar lo esencial.
+const REDUCED_TOTAL = INFO_END + 900;
 
 const MEMORY_START = 800;
 const MEMORY_END = 1900;
@@ -93,7 +98,7 @@ const PostScreen = ({ t, stamp }) => {
       ))}
 
       <div className="bios-foot">
-        <p>Presiona cualquier tecla para saltar el arranque</p>
+        <p>Cargando tipografías e imágenes del portafolio</p>
         <p>{stamp}-JGSHELL-LIMA-00</p>
       </div>
     </div>
@@ -144,9 +149,18 @@ const InfoScreen = ({ t }) => (
   </div>
 );
 
-const LoadScreen = ({ t }) => {
-  const progress = clamp01((t - INFO_END) / (TOTAL - INFO_END));
-  const status = progress < 0.34 ? "Montando perfil" : progress < 0.67 ? "Cargando proyectos" : "Iniciando consola";
+const LoadScreen = ({ t, total, ready }) => {
+  const timed = clamp01((t - INFO_END) / (total - INFO_END));
+  // La barra no llega al 100 % mientras falten recursos esenciales.
+  const progress = ready ? timed : Math.min(timed, 0.99);
+  const waiting = !ready && timed >= 1;
+  const status = waiting
+    ? "Cargando recursos"
+    : progress < 0.34
+      ? "Montando perfil"
+      : progress < 0.67
+        ? "Cargando proyectos"
+        : "Iniciando consola";
 
   return (
     <div className="bios-load">
@@ -163,11 +177,17 @@ const LoadScreen = ({ t }) => {
   );
 };
 
-// Pantalla de arranque. Se puede saltar con cualquier tecla o con un clic.
-const LoadingScreen = ({ onComplete }) => {
-  const [elapsed, setElapsed] = useState(0);
+const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// Pantalla de arranque. `ready` indica que lo esencial ya se descargó (ver useBootAssets).
+const LoadingScreen = ({ onComplete, ready }) => {
+  const [reduced] = useState(prefersReducedMotion);
+  const startAt = reduced ? INFO_END : 0;
+  const total = reduced ? REDUCED_TOTAL : TOTAL;
+  const [elapsed, setElapsed] = useState(startAt);
   const [stamp] = useState(() => formatDate(new Date()));
   const finished = useRef(false);
+  const readyRef = useRef(ready);
 
   const finish = useCallback(() => {
     if (finished.current) return;
@@ -176,35 +196,30 @@ const LoadingScreen = ({ onComplete }) => {
   }, [onComplete]);
 
   useEffect(() => {
-    const start = performance.now();
+    readyRef.current = ready;
+  }, [ready]);
+
+  useEffect(() => {
+    const begin = performance.now();
     const timer = setInterval(() => {
-      const t = performance.now() - start;
-      setElapsed(t);
-      if (t >= TOTAL) {
+      const spent = performance.now() - begin;
+      setElapsed(startAt + spent);
+      if ((startAt + spent >= total && readyRef.current) || spent >= MAX_WAIT) {
         clearInterval(timer);
         finish();
       }
     }, 40);
     return () => clearInterval(timer);
-  }, [finish]);
-
-  useEffect(() => {
-    const onKeyDown = (event) => {
-      if (event.ctrlKey || event.metaKey || event.altKey) return;
-      finish();
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [finish]);
+  }, [finish, startAt, total]);
 
   return (
-    <div className="boot" role="status" onClick={finish}>
-      <p className="sr-only">Cargando el portafolio. Presiona cualquier tecla para saltar.</p>
+    <div className="boot" role="status">
+      <p className="sr-only">Cargando el portafolio.</p>
 
       <div className="boot-screen" aria-hidden="true">
         {elapsed < POST_END && <PostScreen t={elapsed} stamp={stamp} />}
         {elapsed >= POST_END && elapsed < INFO_END && <InfoScreen t={elapsed} />}
-        {elapsed >= INFO_END && <LoadScreen t={elapsed} />}
+        {elapsed >= INFO_END && <LoadScreen t={elapsed} total={total} ready={ready} />}
       </div>
     </div>
   );

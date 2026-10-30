@@ -8,6 +8,7 @@ export const content = {
     version: "v2026.10",
     studies: "UTP · Ing. de Software (egresado)",
     seeking: "Primera oportunidad como Desarrollador Frontend",
+    photo: "/assets/projects/perfil.webp",
   },
 
   // Orden de las secciones. id: ancla de la URL; cmd: nombre que se escribe en la consola;

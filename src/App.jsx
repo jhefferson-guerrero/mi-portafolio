@@ -12,16 +12,13 @@ import Contact from "./components/Contact";
 import Closed from "./components/Closed";
 import LoadingScreen from "./components/LoadingScreen";
 import { useConsole } from "./hooks/useConsole";
+import { useBootAssets } from "./hooks/useBootAssets";
 import { PaneCloseContext, CLOSED_VIEW } from "./lib/paneClose";
 import { content } from "./data/content";
 import "./styles/shell.css";
 
 const VIEW_IDS = content.nav.map((item) => item.id);
 const CV_NAME = "CV-Jhefferson-Guerrero.pdf";
-
-// El arranque se muestra en cada carga de la página; solo se omite si la persona
-// prefiere movimiento reducido.
-const shouldShowLoader = () => !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // Mientras se navega, la vista activa vive en el hash (#proyectos): los enlaces y el botón atrás funcionan.
 const readHash = () => {
@@ -35,8 +32,10 @@ const isTyping = (target) =>
   (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName));
 
 function App() {
-  const [showLoader] = useState(shouldShowLoader);
-  const [isLoading, setIsLoading] = useState(showLoader);
+  // El arranque se muestra en cada carga y no se puede saltar: mientras corre se descargan las tipografías
+  // y la foto del perfil, y después las capturas de los proyectos.
+  const assetsReady = useBootAssets();
+  const [isLoading, setIsLoading] = useState(true);
   // Cada carga empieza en inicio, aunque la URL traiga un hash.
   const [view, setView] = useState(VIEW_IDS[0]);
   const [project, setProject] = useState(0);
@@ -151,11 +150,9 @@ function App() {
 
   return (
     <>
-      {showLoader && (
-        <div className={`loader ${!isLoading ? "is-done" : ""}`}>
-          <LoadingScreen onComplete={handleLoadingComplete} />
-        </div>
-      )}
+      <div className={`loader ${!isLoading ? "is-done" : ""}`}>
+        <LoadingScreen onComplete={handleLoadingComplete} ready={assetsReady} />
+      </div>
 
       {!isLoading && (
         <div className="app">

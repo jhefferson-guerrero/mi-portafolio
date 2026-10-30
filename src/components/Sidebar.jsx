@@ -31,7 +31,7 @@ const Sidebar = ({ view }) => {
       <div className="profile">
         <div className="avatar">
           <img
-            src="/assets/projects/perfil.webp"
+            src={meta.photo}
             alt={`Retrato de ${meta.name}`}
             fetchPriority="high"
             decoding="async"
