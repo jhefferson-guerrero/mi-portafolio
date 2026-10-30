@@ -163,7 +163,7 @@ const LoadScreen = ({ t }) => {
   );
 };
 
-// Pantalla de arranque. Se puede saltar con cualquier tecla, con clic o con el botón.
+// Pantalla de arranque. Se puede saltar con cualquier tecla o con un clic.
 const LoadingScreen = ({ onComplete }) => {
   const [elapsed, setElapsed] = useState(0);
   const [stamp] = useState(() => formatDate(new Date()));
@@ -206,10 +206,6 @@ const LoadingScreen = ({ onComplete }) => {
         {elapsed >= POST_END && elapsed < INFO_END && <InfoScreen t={elapsed} />}
         {elapsed >= INFO_END && <LoadScreen t={elapsed} />}
       </div>
-
-      <button type="button" className="boot-skip" onClick={finish}>
-        saltar ›
-      </button>
     </div>
   );
 };
