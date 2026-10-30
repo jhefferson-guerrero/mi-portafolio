@@ -165,7 +165,6 @@ const MascotCard = () => {
       >
         <PixelScene face={face} burst={burst} hop={hop} />
       </button>
-      <figcaption className="mascot-hint" aria-hidden="true">haz clic en la mascota</figcaption>
     </figure>
   );
 };

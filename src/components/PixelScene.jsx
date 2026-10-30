@@ -6,8 +6,8 @@ import { CREATURE_CELLS, CREATURE_COLS, CREATURE_ROWS, EYES, SHADOW_CELLS } from
 const BASE_WIDTH = 60;
 const WIDTH = 70;
 const SHIFT = WIDTH - BASE_WIDTH;
-const HEIGHT = 30;
 const FLOOR = 26;
+const HEIGHT = FLOOR + 1; // la escena termina en la línea del suelo: así se puede alinear con otros elementos
 
 // Rectángulo con borde de 1 px alineado a la cuadrícula de píxeles.
 const Box = ({ x, y, w, h, className = "" }) => (
@@ -188,27 +188,22 @@ export const Creature = ({ face = "idle" }) => {
 // mood = "idle" (tranquila) o "busy" (el monitor trabaja más rápido).
 // face = la cara de la mascota: "idle", "curious", "surprised", "sleeping", "happy" o "dizzy".
 // burst = cuenta de clics: con cada clic aparecen píxeles al azar alrededor del cuerpo y se acumulan. hop = salta un poco.
-const PixelScene = ({ mood = "idle", face = "idle", burst = 0, hop = false, className = "" }) => (
-  <svg
-    className={`scene scene--${mood} face-${face}${hop ? " is-hop" : ""} ${className}`.trim()}
-    viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-    shapeRendering="crispEdges"
-    aria-hidden="true"
-    focusable="false"
-  >
-    {/* Ventanas de la pared, a la misma distancia (14) del centro de la mascota y sin tocar el rack ni el monitor */}
-    <Window x={CENTER_X - 18} stars={[[2, 3], [6, 5]]} />
-    <Window x={CENTER_X + 10} stars={[[3, 2], [7, 6]]} />
+const PixelScene = ({ mood = "idle", face = "idle", burst = 0, hop = false, className = "" }) => {
+  const mascot = useMascot();
+  const shape = shapeOf(mascot);
+  const aura = auraOf(mascot);
 
-    {/* Rack alto */}
-    <Box x={1} y={8} w={10} h={FLOOR - 8} />
-    {[11, 14, 17, 20, 23].map((y) => (
-      <Px key={y} x={3} y={y} w={4} className="sc-slot" />
-    ))}
-    <Px x={8} y={11} className="sc-led" />
-    <Px x={8} y={14} className="sc-led sc-led--b" />
-    <Px x={8} y={17} className="sc-led sc-led--ok" />
-    <Px x={8} y={20} className="sc-led sc-led--c" />
+  return (
+    <svg
+      className={`scene scene--${mood} face-${face}${hop ? " is-hop" : ""} ${className}`.trim()}
+      viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+      shapeRendering="crispEdges"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {/* Ventanas de la pared, a la misma distancia (14) del centro de la mascota y sin tocar el rack ni el monitor */}
+      <Window x={shape.cx - 18} stars={[[2, 3], [6, 5]]} />
+      <Window x={shape.cx + 10} stars={[[3, 2], [7, 6]]} />
 
     {/* Rack bajo */}
     <Box x={11} y={16} w={7} h={FLOOR - 16} />

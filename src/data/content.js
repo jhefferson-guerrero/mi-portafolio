@@ -29,7 +29,7 @@ export const content = {
     lastName: "Guerrero",
     role: "Frontend Developer",
     description:
-      "Egresado de Ingeniería de Software en Lima. Construyo interfaces rápidas y accesibles con React y TypeScript. Hoy practico en el área de TI de CBS y busco mi primera oportunidad como desarrollador frontend.",
+      "Egresado de Ingeniería de Software en Lima. Construyo interfaces rápidas y accesibles con React y TypeScript.",
     cvLink: "/assets/CV-Jhefferson-Guerrero.pdf",
   },
 

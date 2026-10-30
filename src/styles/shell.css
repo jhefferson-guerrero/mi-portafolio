@@ -910,7 +910,7 @@ p {
 .home {
   display: grid;
   grid-template-columns: minmax(0, 1fr) clamp(260px, 46%, 600px);
-  align-items: center;
+  align-items: end; /* el suelo del cuarto queda a la altura de la base de los botones */
   gap: clamp(16px, 3vw, 44px);
 }
 
@@ -942,12 +942,8 @@ p {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin-top: clamp(10px, 2.4dvh, 24px);
-  padding: clamp(4px, 0.9dvh, 8px) 14px;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-sm);
-  background: var(--bg-sunk);
-  font-size: clamp(0.9rem, 2dvh, 1.05rem);
+  margin-top: clamp(12px, 2.8dvh, 26px);
+  font-size: clamp(0.95rem, 2.2dvh, 1.15rem);
   font-weight: 500;
 }
 
@@ -1657,10 +1653,6 @@ p {
   justify-content: center;
   gap: clamp(8px, 2dvh, 18px);
   min-width: 0;
-  padding: clamp(10px, 2dvh, 24px);
-  background: var(--bg-sunk);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
 }
 
 .bubble {
@@ -1704,11 +1696,6 @@ p {
 
 .mascot-btn:hover .scene-bot {
   animation-duration: 0.8s;
-}
-
-.mascot-hint {
-  font-size: 0.68rem;
-  color: var(--text-3);
 }
 
 /* ==========================================================================
