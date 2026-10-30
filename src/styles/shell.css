@@ -1488,7 +1488,7 @@ p {
 
 .lang-name {
   font-family: var(--font-display);
-  font-size: clamp(1.1rem, 3dvh, 1.6rem);
+  font-size: clamp(1.05rem, 2.7dvh, 1.45rem);
   font-weight: 700;
   letter-spacing: -0.02em;
 }
@@ -1510,18 +1510,18 @@ p {
 .hobbies {
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(8px, 1.5dvh, 14px) clamp(8px, 0.75vw, 14px);
+  gap: clamp(8px, 1.4dvh, 12px) clamp(7px, 0.6vw, 12px);
 }
 
 .hobby {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: clamp(6px, 1.3dvh, 11px) clamp(10px, 1vw, 16px);
+  gap: 8px;
+  padding: clamp(5px, 1.1dvh, 9px) clamp(8px, 0.8vw, 14px);
   border: 1px solid var(--accent-line);
   border-radius: 3px;
   background: var(--accent-soft);
-  font-size: clamp(0.82rem, 1.85dvh, 1.05rem);
+  font-size: clamp(0.76rem, 1.7dvh, 0.98rem);
   color: var(--text);
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
