@@ -89,7 +89,6 @@ export const content = {
         { name: "TypeScript", level: 3, main: true },
         { name: "HTML5", level: 4 },
         { name: "CSS3", level: 4 },
-        { name: "PHP", level: 2 },
       ],
     },
     {
@@ -108,20 +107,15 @@ export const content = {
         { name: "Supabase", level: 3 },
         { name: "Firebase (Firestore, Auth)", level: 3 },
         { name: "MySQL", level: 3 },
-        { name: "SQL Server", level: 2 },
       ],
-    },
-    {
-      label: "Git y deploy",
-      items: [{ name: "Git", level: 3 }, { name: "GitHub", level: 3 }, { name: "Vercel", level: 3 }],
     },
     {
       label: "Herramientas",
       items: [
-        { name: "VS Code", level: 4 },
+        { name: "Git", level: 3 },
+        { name: "GitHub", level: 3 },
+        { name: "Vercel", level: 3 },
         { name: "Figma", level: 3 },
-        { name: "WordPress", level: 2 },
-        { name: "Scrum", level: 2 },
       ],
     },
   ],
