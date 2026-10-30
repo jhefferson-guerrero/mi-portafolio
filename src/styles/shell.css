@@ -1711,8 +1711,9 @@ p {
 
 .contact-title {
   max-width: 32ch;
-  font-size: clamp(1.25rem, 3.4dvh, 1.85rem);
+  font-size: clamp(1.25rem, 3.4dvh, 2.2rem);
   letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 
 .contact-lead {
@@ -1784,6 +1785,37 @@ p {
 
 .contact-card:hover .contact-value {
   color: var(--accent);
+}
+
+/* En pantallas altas las tarjetas se estiran: el contenido crece con ellas en vez de quedar chico y flotando */
+@media (min-width: 901px) {
+  .contact-card {
+    gap: clamp(14px, 2.2dvh, 24px);
+    padding: clamp(10px, 2.2dvh, 28px);
+  }
+
+  .contact-icon {
+    width: clamp(40px, 5.2dvh, 64px);
+    height: clamp(40px, 5.2dvh, 64px);
+  }
+
+  .contact-icon svg {
+    width: clamp(20px, 2.6dvh, 30px);
+    height: clamp(20px, 2.6dvh, 30px);
+  }
+
+  .contact-label {
+    margin-bottom: 2px;
+    font-size: clamp(0.7rem, 1.65dvh, 0.9rem);
+  }
+
+  .contact-value {
+    font-size: clamp(0.92rem, 2dvh, 1.1rem);
+  }
+
+  .contact-lead {
+    font-size: clamp(0.88rem, 1.9dvh, 1.1rem);
+  }
 }
 
 .contact-copy {
