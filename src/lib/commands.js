@@ -1,5 +1,6 @@
 import { content } from "../data/content";
 import { LEVEL_LABELS } from "./levels";
+import { CLOSED_VIEW } from "./paneClose";
 
 // Cada línea de salida: { kind, text, name?, href? }
 // kind: text | dim | ok | err | head | kv | link
@@ -63,7 +64,7 @@ const COMMANDS = [
       ...COMMANDS.filter((command) => !command.hidden).map((command) =>
         kv(command.usage ?? command.name, command.desc)
       ),
-      text("Atajos: / enfoca la consola · 1-7 cambian de sección · ↑ ↓ historial · Tab completa · Esc cierra", "dim"),
+      text("Atajos: / enfoca la consola · 1-7 cambian de sección · Esc cierra la sección · ↑ ↓ historial · Tab completa", "dim"),
     ],
   },
   {
@@ -84,6 +85,17 @@ const COMMANDS = [
       if (!id) return [text(`cd: no existe la sección "${target}". Prueba con "ls".`, "err")];
       ctx.navigate(id);
       return null;
+    },
+  },
+  {
+    name: "kill",
+    aliases: ["close", "cerrar"],
+    desc: "cierra la sección abierta",
+    run: (_args, ctx) => {
+      const section = SECTIONS.find((item) => item.id === ctx.view);
+      if (!section) return [text("kill: no hay ninguna sección abierta.", "dim")];
+      ctx.navigate(CLOSED_VIEW);
+      return [text(`Cerrando ${section.file} ...`, "dim"), text("listo", "ok")];
     },
   },
   {

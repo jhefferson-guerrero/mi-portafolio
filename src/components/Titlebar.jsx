@@ -19,7 +19,8 @@ const Titlebar = ({ view }) => {
     return () => clearInterval(timer);
   }, []);
 
-  const current = content.nav.find((item) => item.id === view) ?? content.nav[0];
+  // Sin sección abierta la ruta queda en ~/portafolio/
+  const current = content.nav.find((item) => item.id === view);
 
   return (
     <header className="titlebar">
@@ -31,7 +32,7 @@ const Titlebar = ({ view }) => {
         </span>
         <a href="#inicio" className="tb-brand" aria-label="Ir al inicio">jg-shell</a>
         <span className="tb-path">
-          <span className="tl">~</span>/portafolio/<strong>{current.cmd}</strong>
+          <span className="tl">~</span>/portafolio/{current && <strong>{current.cmd}</strong>}
         </span>
 
         <span className="tb-spacer" />

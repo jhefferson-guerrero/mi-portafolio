@@ -119,7 +119,7 @@ const clamp = (value) => Math.max(-1, Math.min(1, value));
 
 // La criatura: cuerpo fijo y ojos que parpadean y miran a los lados. Mientras el cursor está
 // en la ventana los ojos lo siguen de a un píxel; si sale, vuelven a mirar a los lados solos.
-const Creature = ({ face = "idle" }) => {
+export const Creature = ({ face = "idle" }) => {
   const bodyRef = useRef(null);
   const gazeRef = useRef(null);
 

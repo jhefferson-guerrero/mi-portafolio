@@ -9,8 +9,10 @@ import Projects from "./components/Projects";
 import Services from "./components/Services";
 import Interests from "./components/Interests";
 import Contact from "./components/Contact";
+import Closed from "./components/Closed";
 import LoadingScreen from "./components/LoadingScreen";
 import { useConsole } from "./hooks/useConsole";
+import { PaneCloseContext, CLOSED_VIEW } from "./lib/paneClose";
 import { content } from "./data/content";
 import "./styles/shell.css";
 
@@ -24,6 +26,7 @@ const shouldShowLoader = () => !window.matchMedia("(prefers-reduced-motion: redu
 // Mientras se navega, la vista activa vive en el hash (#proyectos): los enlaces y el botón atrás funcionan.
 const readHash = () => {
   const id = window.location.hash.slice(1);
+  if (id === CLOSED_VIEW) return CLOSED_VIEW;
   return VIEW_IDS.includes(id) ? id : VIEW_IDS[0];
 };
 
@@ -71,6 +74,7 @@ function App() {
 
   const consoleCtx = useMemo(
     () => ({
+      view,
       navigate,
       openProject,
       copyEmail: async () => {
@@ -89,7 +93,7 @@ function App() {
       },
       openUrl: (url) => window.open(url, "_blank", "noopener,noreferrer"),
     }),
-    [navigate, openProject]
+    [view, navigate, openProject]
   );
 
   const terminal = useConsole(consoleCtx);
@@ -100,6 +104,7 @@ function App() {
   useEffect(() => {
     if (loggedView.current === view) return;
     loggedView.current = view;
+    if (view === CLOSED_VIEW) return;
     const section = content.nav.find((item) => item.id === view);
     log(
       `cd ${section.cmd}`,
@@ -111,12 +116,20 @@ function App() {
     );
   }, [view, log]);
 
-  // Atajos: 1-6 cambian de vista y "/" enfoca la consola (si no se está escribiendo).
+  // Cierra el panel abierto con el mismo comando que escribiría la persona.
+  const closeView = useMemo(() => (view === CLOSED_VIEW ? null : () => run("kill")), [view, run]);
+
+  // Atajos: 1-7 cambian de vista, "/" enfoca la consola y Esc cierra el panel (si no se está escribiendo).
   useEffect(() => {
     if (isLoading) return;
 
     const onKeyDown = (event) => {
       if (event.ctrlKey || event.metaKey || event.altKey || isTyping(event.target)) return;
+
+      if (event.key === "Escape") {
+        closeView?.();
+        return;
+      }
 
       if (event.key === "/") {
         event.preventDefault();
@@ -130,7 +143,7 @@ function App() {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isLoading, navigate]);
+  }, [isLoading, navigate, closeView]);
 
   const handleLoadingComplete = useCallback(() => {
     setIsLoading(false);
@@ -153,6 +166,7 @@ function App() {
             <div className="shell">
               <Sidebar view={view} />
 
+              <PaneCloseContext.Provider value={closeView}>
               <main id="main" className="workspace">
                 <Console api={terminal} />
                 <Hero active={view === "inicio"} navigate={navigate} />
@@ -162,7 +176,9 @@ function App() {
                 <Services active={view === "servicios"} />
                 <Interests active={view === "extra"} />
                 <Contact active={view === "contacto"} onRun={run} />
+                <Closed active={view === CLOSED_VIEW} />
               </main>
+              </PaneCloseContext.Provider>
             </div>
           </div>
         </div>
