@@ -18,7 +18,8 @@ const NavMascot = ({ nav, view }) => {
     const place = () => {
       const link = root.querySelector('[aria-current="page"]');
       mark.dataset.hidden = link ? "false" : "true";
-      if (link) mark.style.transform = `translateY(${link.offsetTop + (link.offsetHeight - mark.offsetHeight) / 2}px)`;
+      // Redondeado: con medios píxeles el recorte del dibujo se ve distinto de una sección a otra.
+      if (link) mark.style.transform = `translateY(${Math.round(link.offsetTop + (link.offsetHeight - mark.offsetHeight) / 2)}px)`;
     };
 
     place();

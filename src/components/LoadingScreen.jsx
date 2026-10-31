@@ -3,13 +3,14 @@ import { content } from "../data/content";
 import PixelScene from "./PixelScene";
 import MascotPicker from "./MascotPicker";
 
-// Arranque tipo BIOS en tres pantallas. Todo se deriva del tiempo transcurrido (ms),
+// Arranque tipo BIOS en cuatro pantallas. Todo se deriva del tiempo transcurrido (ms),
 // así que el orden y la duración se ajustan cambiando estas constantes.
-// No se puede saltar: dura como mínimo TOTAL y, si lo esencial (tipografías y foto) aún no llegó,
-// espera en la última pantalla hasta MAX_WAIT; pasado ese tiempo entra igual para no quedar colgado.
+// No se puede saltar: tras la ficha del sistema espera a que la persona elija mascota (el reloj se detiene ahí)
+// y luego corre la carga final, que dura como mínimo hasta TOTAL. Si lo esencial (tipografías y foto) aún
+// no llegó, espera en la última pantalla hasta MAX_WAIT; pasado ese tiempo entra igual para no quedar colgado.
 const POST_END = 3400; // pantalla 1: prueba de memoria y detección de discos
-const INFO_END = 6000; // pantalla 2: ficha del sistema y módulos
-const TOTAL = 8500; // pantalla 3: carga final con la mascota
+const INFO_END = 6000; // pantalla 2: ficha del sistema y módulos; después, elección de mascota
+const TOTAL = 8500; // pantalla 3: carga final con la mascota elegida
 const MAX_WAIT = 20000; // espera máxima real (ms) por los recursos esenciales
 // Con movimiento reducido no hay pantallas de texto: solo la carga final, lo justo para esperar lo esencial.
 const REDUCED_TOTAL = INFO_END + 900;
@@ -186,9 +187,11 @@ const LoadingScreen = ({ onComplete, ready }) => {
   const startAt = reduced ? INFO_END : 0;
   const total = reduced ? REDUCED_TOTAL : TOTAL;
   const [elapsed, setElapsed] = useState(startAt);
+  const [picked, setPicked] = useState(false);
   const [stamp] = useState(() => formatDate(new Date()));
   const finished = useRef(false);
   const readyRef = useRef(ready);
+  const pickedRef = useRef(false);
 
   const finish = useCallback(() => {
     if (finished.current) return;
@@ -196,22 +199,35 @@ const LoadingScreen = ({ onComplete, ready }) => {
     onComplete();
   }, [onComplete]);
 
+  const handlePick = useCallback(() => {
+    pickedRef.current = true;
+    setPicked(true);
+  }, []);
+
   useEffect(() => {
     readyRef.current = ready;
   }, [ready]);
 
+  // El reloj se detiene al llegar a la elección de mascota y sigue cuando la persona elige: así la barra de
+  // carga empieza después y el tiempo de espera de la elección no cuenta para MAX_WAIT.
   useEffect(() => {
-    const begin = performance.now();
+    let last = performance.now();
+    let clock = startAt;
     const timer = setInterval(() => {
-      const spent = performance.now() - begin;
-      setElapsed(startAt + spent);
-      if ((startAt + spent >= total && readyRef.current) || spent >= MAX_WAIT) {
+      const now = performance.now();
+      clock += now - last;
+      last = now;
+      if (!pickedRef.current) clock = Math.min(clock, INFO_END);
+      setElapsed(clock);
+      if ((clock >= total && readyRef.current) || clock - startAt >= MAX_WAIT) {
         clearInterval(timer);
         finish();
       }
     }, 40);
     return () => clearInterval(timer);
   }, [finish, startAt, total]);
+
+  const choosing = elapsed >= INFO_END && !picked;
 
   return (
     <div className="boot" role="status">
@@ -220,10 +236,10 @@ const LoadingScreen = ({ onComplete, ready }) => {
       <div className="boot-screen" aria-hidden="true">
         {elapsed < POST_END && <PostScreen t={elapsed} stamp={stamp} />}
         {elapsed >= POST_END && elapsed < INFO_END && <InfoScreen t={elapsed} />}
-        {elapsed >= INFO_END && <LoadScreen t={elapsed} total={total} ready={ready} />}
+        {elapsed >= INFO_END && picked && <LoadScreen t={elapsed} total={total} ready={ready} />}
       </div>
 
-      <MascotPicker />
+      {choosing && <MascotPicker onPick={handlePick} />}
     </div>
   );
 };

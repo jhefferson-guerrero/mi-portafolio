@@ -179,7 +179,7 @@ export const Creature = ({ face = "idle" }) => {
   return (
     <g ref={bodyRef} className={`mascot--${mascot.name}`}>
       {/* Bajo los ojos hay visor: así no quedan huecos cuando los ojos cambian de forma o de sitio */}
-      {mascot.cells.filter(({ char }) => char !== "s").map(({ char, x, y }) => (
+      {(mascot.faceCells[face] ?? mascot.cells).filter(({ char }) => char !== "s").map(({ char, x, y }) => (
         <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-${char === "E" ? "k" : char}`} />
       ))}
       <g className="creature-gaze" ref={gazeRef}>
@@ -191,6 +191,10 @@ export const Creature = ({ face = "idle" }) => {
           </g>
         </g>
       </g>
+      {/* Líneas de exploración: una fila tenue de cada tres, sobre el cuerpo y los ojos (sin la sombra) */}
+      {mascot.scan && Array.from({ length: mascot.rows - 1 }, (_, y) => y).filter((y) => y % 3 === 2).map((y) => (
+        <rect key={y} x="0" y={y} width={mascot.cols} height="1" className="px-scan" />
+      ))}
     </g>
   );
 };

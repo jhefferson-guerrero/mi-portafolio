@@ -1,7 +1,8 @@
 import { content } from "../data/content";
 import { LEVEL_LABELS } from "./levels";
 import { CLOSED_VIEW } from "./paneClose";
-import { getMascotName, mascotNames, setMascot } from "./mascot";
+import { MASCOTS } from "./creature";
+import { findMascot, getMascotName, mascotNames, setMascot } from "./mascot";
 
 // Cada línea de salida: { kind, text, name?, href? }
 // kind: text | dim | ok | err | head | kv | link
@@ -122,14 +123,14 @@ const COMMANDS = [
     name: "mascota",
     aliases: ["mascot"],
     usage: "mascota [nombre]",
-    desc: "cambia la mascota: campana o encapuchado",
+    desc: "cambia la mascota: bit, nox o bug",
     run: ([target]) => {
       const names = mascotNames();
-      if (!target) return [kv("actual", getMascotName()), kv("opciones", names.join(", ")), text("mascota <nombre> para cambiarla", "dim")];
-      const name = names.find((entry) => entry.startsWith(normalize(target)));
+      if (!target) return [kv("actual", MASCOTS[getMascotName()].label), kv("opciones", names.join(", ")), text("mascota <nombre> para cambiarla", "dim")];
+      const name = findMascot(normalize(target));
       if (!name) return [text(`mascota: no existe "${target}". Opciones: ${names.join(", ")}.`, "err")];
       setMascot(name);
-      return [text(`Mascota: ${name}`, "ok")];
+      return [text(`Mascota: ${MASCOTS[name].label}`, "ok")];
     },
   },
   {

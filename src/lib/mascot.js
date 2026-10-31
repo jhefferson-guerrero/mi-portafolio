@@ -25,7 +25,13 @@ const subscribe = (listener) => {
   return () => listeners.delete(listener);
 };
 
-export const mascotNames = () => Object.keys(MASCOTS);
+// Lo que se muestra y se escribe es el nombre visible (label: bit, nox, bug); por dentro la mascota se
+// identifica por su clave (campana, encapuchado, glitch), que es la que se guarda y la que usan los estilos.
+export const mascotNames = () => Object.values(MASCOTS).map((mascot) => mascot.label);
+
+// Busca por el comienzo del nombre visible o de la clave (así "encapuchado" sigue funcionando en el comando).
+export const findMascot = (text) =>
+  Object.values(MASCOTS).find((mascot) => mascot.label.startsWith(text) || mascot.name.startsWith(text))?.name;
 
 export const getMascotName = () => current;
 
