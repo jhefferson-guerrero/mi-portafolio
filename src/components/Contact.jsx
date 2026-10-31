@@ -2,14 +2,13 @@ import { Download, Github, Linkedin, Mail } from "lucide-react";
 import { content } from "../data/content";
 import Pane from "./Pane";
 
-// Cuatro canales de contacto en tarjetas. La tarjeta entera es el enlace; el botón
-// de copiar ejecuta el comando "email" de la consola.
-const Contact = ({ active, onRun }) => {
+// Cuatro canales de contacto en tarjetas. La tarjeta entera es el enlace.
+const Contact = ({ active }) => {
   const { socials, hero } = content;
   const email = socials.email.replace("mailto:", "");
 
   const channels = [
-    { label: "Correo", value: email, href: socials.email, Icon: Mail, copy: true },
+    { label: "Correo", value: email, href: socials.email, Icon: Mail },
     { label: "GitHub", value: socials.githubLabel, href: socials.github, Icon: Github, external: true },
     { label: "LinkedIn", value: socials.linkedinLabel, href: socials.linkedin, Icon: Linkedin, external: true },
     { label: "CV", value: "CV-Jhefferson-Guerrero.pdf", href: hero.cvLink, Icon: Download, download: true },
@@ -27,7 +26,7 @@ const Contact = ({ active, onRun }) => {
 
         <ul className="contact-cards">
           {channels.map((channel) => {
-            const { label, value, href, copy, external, download } = channel;
+            const { label, value, href, external, download } = channel;
             const Icon = channel.Icon;
             return (
             <li key={label} className="contact-card">
@@ -46,11 +45,6 @@ const Contact = ({ active, onRun }) => {
                   {external && " ↗"}
                 </a>
               </div>
-              {copy && (
-                <button type="button" className="btn btn--small contact-copy" onClick={() => onRun("email")}>
-                  copiar
-                </button>
-              )}
             </li>
             );
           })}

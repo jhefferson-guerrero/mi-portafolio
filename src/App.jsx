@@ -172,7 +172,7 @@ function App() {
                 <Projects active={view === "proyectos"} selected={project} onSelect={setProject} />
                 <Services active={view === "servicios"} />
                 <Interests active={view === "extra"} />
-                <Contact active={view === "contacto"} onRun={run} />
+                <Contact active={view === "contacto"} />
                 <Closed active={view === CLOSED_VIEW} />
               </main>
               </PaneCloseContext.Provider>

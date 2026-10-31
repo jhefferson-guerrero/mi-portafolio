@@ -63,12 +63,6 @@ const ProjectDetail = ({ project, index, selected }) => {
           </ul>
         )}
 
-        {project.result && (
-          <p className="project-result">
-            <span className="result-label">resultado</span> {project.result}
-          </p>
-        )}
-
         <ul className="tag-row">
           {project.tags.map((tag) => (
             <li key={tag} className="tag">{tag}</li>
