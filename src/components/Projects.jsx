@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { content } from "../data/content";
 import Pane from "./Pane";
 
@@ -101,6 +101,18 @@ const ProjectDetail = ({ project, index, selected }) => {
 const Projects = ({ active, selected, onSelect }) => {
   const { projects } = content;
   const tabRefs = useRef([]);
+  const tabsRef = useRef(null);
+
+  // En el celular los proyectos cerrados son solo un número y el abierto muestra su nombre: si aun así no
+  // cabe todo, la pestaña abierta se centra para que no quede tapada por el borde.
+  useEffect(() => {
+    const list = tabsRef.current;
+    const tab = tabRefs.current[selected];
+    if (!list || !tab || list.scrollWidth <= list.clientWidth) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const offset = tab.getBoundingClientRect().left - list.getBoundingClientRect().left + list.scrollLeft;
+    list.scrollTo({ left: offset - (list.clientWidth - tab.offsetWidth) / 2, behavior: reduce ? "auto" : "smooth" });
+  }, [selected, active]);
 
   const select = (index) => {
     onSelect(index);
@@ -123,7 +135,7 @@ const Projects = ({ active, selected, onSelect }) => {
 
   return (
     <Pane id="proyectos" active={active} file="proyectos/" flush>
-      <div className="tabs" role="tablist" aria-label="Proyectos" onKeyDown={onKeyDown}>
+      <div ref={tabsRef} className="tabs" role="tablist" aria-label="Proyectos" onKeyDown={onKeyDown}>
         {projects.map((project, i) => (
           <button
             key={project.title}
@@ -138,7 +150,7 @@ const Projects = ({ active, selected, onSelect }) => {
             onClick={() => onSelect(i)}
           >
             <span className="tab-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
-            {project.short}
+            <span className="tab-label">{project.short}</span>
           </button>
         ))}
       </div>

@@ -3435,30 +3435,34 @@ p {
   }
 }
 
-/* Celular: las cinco pestañas de proyectos en una cuadrícula de dos columnas (la quinta ocupa toda la fila) */
+/* Celular: los cinco proyectos en una sola fila. Solo el abierto muestra su nombre; los demás son su número
+   (el nombre sigue en el DOM para los lectores de pantalla). */
 @media (max-width: 600px) {
   .tabs {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    padding: 10px 12px 0;
+    flex-wrap: nowrap;
+    padding: 10px 8px 0;
   }
 
   .tab {
     min-height: 44px;
-    padding: 0 14px;
+    padding-inline: 14px;
     border-right: 0;
   }
 
-  .tab:nth-child(odd):not(:last-child) {
-    border-right: 1px solid var(--line);
+  .tab:not([aria-selected='true']) {
+    gap: 0;
+    min-width: 40px;
+    justify-content: center;
+    padding-inline: 8px;
   }
 
-  .tab:nth-child(n + 3) {
-    border-top: 1px solid var(--line);
-  }
-
-  .tab:last-child:nth-child(odd) {
-    grid-column: 1 / -1;
+  .tab:not([aria-selected='true']) .tab-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
   }
 }
 
