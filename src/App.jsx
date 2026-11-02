@@ -71,11 +71,21 @@ function App() {
     [navigate]
   );
 
+  // Cuándo navegó un comando (cd, kill, open...): permite distinguir ese cambio de sección del que hace la persona
+  // con el menú o el teclado.
+  const commandNav = useRef(0);
+
   const consoleCtx = useMemo(
     () => ({
       view,
-      navigate,
-      openProject,
+      navigate: (id) => {
+        commandNav.current = Date.now();
+        navigate(id);
+      },
+      openProject: (index) => {
+        commandNav.current = Date.now();
+        openProject(index);
+      },
       copyEmail: async () => {
         try {
           await navigator.clipboard.writeText(content.socials.email.replace("mailto:", ""));
@@ -96,7 +106,7 @@ function App() {
   );
 
   const terminal = useConsole(consoleCtx);
-  const { run, log } = terminal;
+  const { run, log, dismiss } = terminal;
 
   // Cada vez que cambia la sección, la consola "abre" su archivo.
   const loggedView = useRef(null);
@@ -114,6 +124,12 @@ function App() {
       true
     );
   }, [view, log]);
+
+  // Si la persona cambia de sección por su cuenta, la salida del comando anterior ya no aplica y se retira.
+  // Si el cambio lo hizo el propio comando (cd, kill), la salida se queda unos segundos como confirmación.
+  useEffect(() => {
+    if (Date.now() - commandNav.current > 1000) dismiss();
+  }, [view, dismiss]);
 
   // Cierra el panel abierto con el mismo comando que escribiría la persona.
   const closeView = useMemo(() => (view === CLOSED_VIEW ? null : () => run("kill")), [view, run]);

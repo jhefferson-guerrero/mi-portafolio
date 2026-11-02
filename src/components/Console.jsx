@@ -11,6 +11,27 @@ const Console = ({ api }) => {
   const position = useRef(-1);
   const draft = useRef("");
   const logRef = useRef(null);
+  const [leaving, setLeaving] = useState(null); // la salida que se está desvaneciendo
+  const [held, setHeld] = useState(false); // la persona la está tocando o tiene el foco dentro: no se retira
+
+  // En móvil la salida flotante se retira sola: dura según su largo (un comando corto, unos 3 s; una lista, hasta 8 s)
+  // y se desvanece al final. Mientras se toca o se enfoca no corre el reloj.
+  useEffect(() => {
+    if (!output || held) return;
+    const life = Math.min(8000, 1800 + output.lines.length * 800);
+    const fade = setTimeout(() => setLeaving(output), life - 250);
+    const done = setTimeout(dismiss, life);
+    return () => {
+      clearTimeout(fade);
+      clearTimeout(done);
+    };
+  }, [output, held, dismiss]);
+
+  const hold = () => {
+    setHeld(true);
+    setLeaving(null);
+  };
+  const release = () => setHeld(false);
 
   // Cada entrada nueva se muestra desde su primera línea (el navegador limita el scroll al final).
   useEffect(() => {
@@ -79,7 +100,15 @@ const Console = ({ api }) => {
       </div>
 
       {output && (
-        <div className="console-out" role="log">
+        <div
+          className={`console-out${leaving === output ? " is-leaving" : ""}`}
+          role="log"
+          onTouchStart={hold}
+          onTouchEnd={release}
+          onTouchCancel={release}
+          onFocus={hold}
+          onBlur={release}
+        >
           <div className="console-out-head">
             <span>salida</span>
             <button type="button" className="icon-link" onClick={dismiss} aria-label="Cerrar salida">

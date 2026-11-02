@@ -28,6 +28,8 @@ npm run build && npm run preview
 - Se verifica con tamaños 1366×650, 1338×575, 1280×720, 1093×600, 1920×1080 y 2560×1440, y móvil 390×844 y 360×640.
 - **Alturas con `svh`, no `dvh`**: en el celular la barra de la URL de Chrome aparece y desaparece al hacer scroll y `dvh` cambia con ella, lo que movía todo el contenido. `svh` (altura con la barra visible) no cambia; en escritorio ambas son iguales.
 - **Tipografía en el celular** (`@media (max-width: 600px)` en `shell.css`): los tamaños de escritorio salen de la altura de la pantalla y en un móvil siempre llegan a su tope, así que ahí se fijan más chicos (texto de lectura ~12,5-13 px, h1 ~31 px). No bajar de ~12 px el texto de lectura.
+- **Menú en el celular** (`max-width: 600px`): cabe entero; solo la sección activa muestra su nombre y las demás son íconos (a ≤380 px van un poco más juntos). La activa se centra sola si hace falta deslizar.
+- **Salida de la consola en el celular**: el panel flotante se retira solo (de ~3,4 s a 8 s según su largo; se pausa al tocarlo) y desaparece al cambiar de sección con el menú; si el cambio lo hizo un comando (`cd`, `kill`) se queda unos segundos.
 - En el celular no se muestra el recuadro azul al tocar (`-webkit-tap-highlight-color`) y los botones usan `touch-action: manipulation` (los toques rápidos a la mascota no hacen zoom).
 
 ## Estado actual (lo hecho)

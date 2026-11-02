@@ -2563,6 +2563,17 @@ p {
   animation: rise 0.25s var(--ease) both;
 }
 
+.console-out.is-leaving {
+  animation: out-fade 0.25s var(--ease) forwards;
+}
+
+@keyframes out-fade {
+  to {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
 .console-out-head {
   display: flex;
   flex: none;
@@ -3411,6 +3422,77 @@ p {
 
   .pick-name {
     font-size: 0.95rem;
+  }
+}
+
+/* Celular: el menú cabe entero. Solo la sección activa muestra su nombre; las demás quedan como íconos
+   (el texto sigue en el DOM para los lectores de pantalla). */
+@media (max-width: 600px) {
+  .side-nav ul {
+    gap: 2px;
+    justify-content: space-between;
+  }
+
+  .side-link {
+    gap: 8px;
+    padding: 11px 9px;
+    font-size: 0.78rem;
+  }
+
+  .side-link[aria-current='page'] {
+    padding-inline: 12px;
+  }
+
+  .side-link:not([aria-current='page']) {
+    gap: 0;
+  }
+
+  .side-link:not([aria-current='page']) .side-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  /* Tecnologías respira como Intereses: más aire entre grupos y entre filas de etiquetas */
+  .legend-line {
+    justify-content: flex-start;
+    margin-bottom: 8px;
+  }
+
+  #view-skills .kv {
+    gap: 12px;
+    padding: 18px 0;
+  }
+
+  #view-skills .kv .tag-row {
+    gap: 10px 8px;
+  }
+
+  #view-skills .kv .tag {
+    padding: 7px 11px;
+  }
+}
+
+/* Móviles de 360 px: íconos un poco más juntos para que el menú quepa entero sin cortar el último */
+@media (max-width: 380px) {
+  .side-link:not([aria-current='page']) {
+    padding-inline: 7px;
+  }
+
+  .side-link[aria-current='page'] {
+    padding-inline: 10px;
+  }
+}
+
+/* Celular y tableta: el espacio vacío al cerrar una sección sigue centrado (el panel pasa a bloque en esta
+   anchura y la mascota quedaba pegada a la izquierda) */
+@media (max-width: 900px) {
+  .pane--empty:not([hidden]) {
+    display: flex;
+    min-height: 52svh;
   }
 }
 

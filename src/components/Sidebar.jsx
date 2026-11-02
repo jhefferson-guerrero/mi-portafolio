@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   Download,
   Gamepad2,
@@ -28,6 +28,16 @@ const ICONS = {
 const Sidebar = ({ view }) => {
   const { meta, hero, socials, nav } = content;
   const navRef = useRef(null);
+
+  // En el celular el menú se desliza: la sección activa se centra para que nunca quede tapada por el borde.
+  useEffect(() => {
+    const list = navRef.current?.querySelector("ul");
+    const link = list?.querySelector("[aria-current='page']");
+    if (!list || !link || list.scrollWidth <= list.clientWidth) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const offset = link.getBoundingClientRect().left - list.getBoundingClientRect().left + list.scrollLeft;
+    list.scrollTo({ left: offset - (list.clientWidth - link.offsetWidth) / 2, behavior: reduce ? "auto" : "smooth" });
+  }, [view]);
 
   return (
     <aside className="sidebar" aria-label="Perfil y navegación">
@@ -70,7 +80,7 @@ const Sidebar = ({ view }) => {
                 aria-current={view === item.id ? "page" : undefined}
               >
                 <Icon size={16} className="side-icon" aria-hidden="true" />
-                <span>{item.label}</span>
+                <span className="side-label">{item.label}</span>
               </a>
             </li>
             );
