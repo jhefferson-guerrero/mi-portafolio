@@ -1691,34 +1691,7 @@ p {
   border-color: var(--accent);
 }
 
-/* Con espacio de sobra los intereses van en filas por categoría; con poco espacio las etiquetas
-   fluyen juntas, sin títulos ni líneas divisorias, para que respiren. */
-@media (min-width: 901px) {
-  .extra-col .box:last-child {
-    container-type: size;
-  }
-}
-
-@container (max-height: 300px) {
-  .extra-col .box .kv-list {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-content: center;
-    align-items: flex-start;
-    gap: clamp(10px, 2svh, 18px) clamp(8px, 0.9vw, 14px);
-  }
-
-  .extra-col .box .kv,
-  .extra-col .box .kv dd,
-  .extra-col .box .hobbies {
-    display: contents;
-  }
-
-  .extra-col .box .kv dt {
-    display: none;
-  }
-}
-
+/* Los intereses van siempre en filas por categoría, también con poca altura. */
 /* Cada fila mide lo que miden sus etiquetas y reparte el espacio que sobra */
 .extra-col .kv-list {
   display: flex;
@@ -1783,10 +1756,6 @@ p {
   cursor: pointer;
   user-select: none;
   -webkit-touch-callout: none;
-}
-
-.mascot-btn:hover .scene-bot {
-  animation-duration: 0.8s;
 }
 
 /* ==========================================================================
@@ -2172,19 +2141,6 @@ p {
   }
 }
 
-@keyframes drift {
-  0%,
-  100% {
-    transform: translate(0, 0);
-    opacity: 0.15;
-  }
-
-  50% {
-    transform: translate(1px, -2px);
-    opacity: 0.7;
-  }
-}
-
 @keyframes type {
   0% {
     transform: scaleX(0.15);
@@ -2198,6 +2154,12 @@ p {
 
 .creature-gaze {
   transform: translate(calc(var(--gaze-x, 0) * 1px), calc(var(--gaze-y, 0) * 1px));
+}
+
+/* El prompt de la campana al escribir un comando es texto: no se corre con el cursor (el visor es angosto y el
+   texto pisaría el marco). */
+.face-console .mascot--campana .creature-gaze {
+  transform: none;
 }
 
 .creature-look {
@@ -2223,6 +2185,82 @@ p {
 
 .scene-bot {
   animation: bob 2.4s steps(2, end) infinite;
+}
+
+/* Reposo de cada mascota, para que se distingan sin hacer clic. Van antes de las caras (dormida, mareada, sorprendida) y
+   de los clics, que son más específicos o vienen después y mandan sobre estas.
+   bit, la tierna: el vaivén de siempre y, al acercar el cursor o pasar por encima, un saltito alegre más rápido. */
+.bot-campana.face-curious .scene-bot,
+.bot-campana.face-happy .scene-bot {
+  animation: bob-happy 1.2s steps(2, end) infinite;
+}
+
+/* nox, el sigiloso: casi quieto, respira muy lento y no se acelera con el cursor (solo lo siguen los ojos). */
+.bot-encapuchado .scene-bot {
+  animation: bob 5.2s steps(2, end) infinite;
+}
+
+/* bug, el glitch: sin ritmo. Está quieto y, de golpe, un temblor de un píxel; al acercar el cursor los temblores se
+   repiten más seguido. */
+.bot-glitch .scene-bot {
+  animation: glitch-idle 7s steps(1, end) infinite;
+}
+
+.bot-glitch.face-curious .scene-bot,
+.bot-glitch.face-happy .scene-bot {
+  animation-duration: 2.6s;
+}
+
+@keyframes bob-happy {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes glitch-idle {
+  0%,
+  31%,
+  35%,
+  64%,
+  66%,
+  91%,
+  95%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  32% {
+    transform: translate(1px, 0);
+  }
+
+  33% {
+    transform: translate(-1px, 0);
+  }
+
+  34% {
+    transform: translate(1px, -1px);
+  }
+
+  65% {
+    transform: translate(-1px, 0);
+  }
+
+  92% {
+    transform: translate(1px, 0);
+  }
+
+  93% {
+    transform: translate(-1px, -1px);
+  }
+
+  94% {
+    transform: translate(-1px, 0);
+  }
 }
 
 /* Caras de la mascota: curiosa (ojos más abiertos al acercar el cursor), sorprendida (ojos grandes y un saltito),
@@ -2302,23 +2340,30 @@ p {
   fill: var(--line-strong);
 }
 
-/* Ventanas: vidrios con un tono de cielo nocturno, estrellas que titilan y un reflejo. */
-.sc-pane {
-  fill: var(--accent-soft);
+/* Decoración de la pared de cada mascota: dibujos quietos de un solo color por letra (ver WALL en creature.js). */
+.sc-art--a {
+  fill: var(--accent);
 }
 
-.sc-star {
+.sc-art--e {
   fill: var(--px-eye);
-  animation: led 4s steps(2) infinite;
 }
 
-.sc-star--b {
-  animation-delay: -2s;
+.sc-art--g {
+  fill: var(--px-rim-hi);
 }
 
-.sc-glint {
-  fill: var(--text-3);
-  opacity: 0.7;
+.sc-art--o {
+  fill: var(--px-frame);
+}
+
+.sc-art--k {
+  fill: var(--ok);
+  fill-opacity: 0.85;
+}
+
+.sc-art--m {
+  fill: var(--px-edge);
 }
 
 .sc-screen {
@@ -2374,20 +2419,6 @@ p {
   animation: blink 1s steps(1) infinite;
 }
 
-.sc-dust {
-  fill: var(--accent);
-  transform-box: fill-box;
-  animation: drift 6s steps(6) infinite;
-}
-
-.sc-dust--b {
-  animation-delay: -2s;
-}
-
-.sc-dust--c {
-  animation-delay: -4s;
-}
-
 /* Aura: partículas que titilan alrededor del cuerpo, en pasos de píxel; se apagan cuando duerme. */
 .sc-aura {
   opacity: 0.2;
@@ -2410,6 +2441,146 @@ p {
   display: none;
 }
 
+/* Cenizas del encapuchado: píxeles que se desprenden del borde del cuerpo, se van hacia fuera y hacia arriba y se
+   apagan. Cada uno tiene su propio origen, duración y retardo, así no van al mismo compás. */
+.sc-ash {
+  opacity: 0;
+  animation: ash 4s steps(8, end) infinite;
+}
+
+.sc-ash--m {
+  fill: var(--px-rim-hi);
+}
+
+.sc-ash--b {
+  fill: var(--px-edge);
+}
+
+.sc-ash--acc {
+  fill: var(--accent);
+}
+
+@keyframes ash {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+
+  12% {
+    opacity: 0.95;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--ax) * 1px), calc(var(--ay) * 1px));
+  }
+}
+
+/* Brillos de la campana: una estrellita por sitio que aparece directamente como cruz, se encoge a un punto y se apaga, a saltos,
+   y se queda un rato apagada (el punto suelto dura poco: de lo contrario se lee como ruido). Cada una tiene su duración y su retardo (--secs, --delay), así nunca van al mismo compás.
+   */
+.sc-shine,
+.sc-shine-arm {
+  opacity: 0;
+  animation-duration: var(--secs);
+  animation-delay: var(--delay);
+  animation-iteration-count: infinite;
+  animation-timing-function: steps(1);
+}
+
+.sc-shine {
+  animation-name: shine;
+}
+
+.sc-shine-arm {
+  animation-name: shine-arm;
+}
+
+.sc-shine--b rect {
+  fill: var(--px-eye);
+}
+
+.sc-shine--a rect {
+  fill: var(--accent);
+}
+
+@keyframes shine {
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 1;
+  }
+
+  46% {
+    opacity: 0.5;
+  }
+
+  54% {
+    opacity: 0;
+  }
+}
+
+@keyframes shine-arm {
+  0%,
+  12% {
+    opacity: 0;
+  }
+
+  12.1%,
+  40% {
+    opacity: 0.9;
+  }
+
+  40.1%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Estática del glitch: píxeles que titilan en su sitio alrededor del cuerpo. Cada uno se enciende dos veces por
+   ciclo, a saltos, y su ciclo dura distinto; juntos se ven como ruido de televisor. */
+.sc-noise {
+  opacity: 0;
+  animation: noise 2.4s steps(1) infinite;
+}
+
+.sc-noise--ok {
+  fill: var(--ok);
+}
+
+.sc-noise--a {
+  fill: var(--accent);
+}
+
+.sc-noise--b {
+  fill: var(--px-eye);
+}
+
+@keyframes noise {
+  0%,
+  28% {
+    opacity: var(--o);
+  }
+
+  28.1%,
+  52% {
+    opacity: 0;
+  }
+
+  52.1%,
+  66% {
+    opacity: calc(var(--o) * 0.6);
+  }
+
+  66.1%,
+  100% {
+    opacity: 0;
+  }
+}
+
 /* Destello del clic: píxeles al azar junto al cuerpo que titilan y se apagan. */
 .sc-bit {
   animation: twinkle 0.9s steps(5, end) both;
@@ -2423,8 +2594,13 @@ p {
   fill: var(--px-eye);
 }
 
-.sc-bit--c {
+.sc-bit--c,
+.sc-bit--m {
   fill: var(--px-rim-hi);
+}
+
+.sc-bit--ok {
+  fill: var(--ok);
 }
 
 .is-hop .scene-bot {
@@ -2440,6 +2616,225 @@ p {
 .is-hop .creature-shadow,
 .face-surprised .creature-shadow {
   animation: shadow-hop 0.45s steps(3, end) 1;
+}
+
+/* Campanada: al hacer clic, la campana no salta, se balancea de lado a lado colgada de su parte de arriba. Va por pasos
+   (un giro continuo deja el pixel art irregular) y de poca amplitud (±3°: con más, los píxeles se ven girados) y dura lo mismo que el salto de las demás (0,45 s). El giro es de
+   la propia mascota, no de la escena, para que el pivote sea su parte de arriba y no el aura. */
+.bot-campana.is-hop .scene-bot,
+.bot-campana.is-hop .creature-shadow {
+  animation: none;
+}
+
+.bot-campana.is-hop .mascot--campana {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: ring 0.45s steps(1, end) 1;
+}
+
+@keyframes ring {
+  0% {
+    transform: rotate(-3deg);
+  }
+
+  20% {
+    transform: rotate(3deg);
+  }
+
+  40% {
+    transform: rotate(-2deg);
+  }
+
+  60% {
+    transform: rotate(1deg);
+  }
+
+  80%,
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* Desliz del encapuchado: al hacer clic se corre 3 píxeles a un lado (a la izquierda o a la derecha, alternando; el lado
+   llega en --dash) y vuelve por pasos, y deja en su sitio una copia tenue que se apaga. La sombra lo acompaña. Todo en
+   píxeles enteros. La copia es un <use> del cuerpo, fuera del grupo que se mueve. */
+.sc-ghost {
+  display: none;
+}
+
+.bot-encapuchado.is-hop .scene-bot {
+  animation: none;
+}
+
+.bot-encapuchado.is-hop .sc-dash,
+.bot-encapuchado.is-hop .creature-shadow {
+  animation: dash 0.45s steps(1, end) 1;
+}
+
+.bot-encapuchado.is-hop .sc-ghost {
+  display: inline;
+  animation: dash-ghost 0.45s steps(1, end) 1;
+}
+
+@keyframes dash {
+  0% {
+    transform: translateX(calc(var(--dash, 1) * 3px));
+  }
+
+  30% {
+    transform: translateX(calc(var(--dash, 1) * 2px));
+  }
+
+  55% {
+    transform: translateX(calc(var(--dash, 1) * 1px));
+  }
+
+  80%,
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes dash-ghost {
+  0% {
+    opacity: 0.4;
+  }
+
+  30% {
+    opacity: 0.25;
+  }
+
+  55% {
+    opacity: 0.12;
+  }
+
+  80%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Falla del glitch: al hacer clic el cuerpo se parte en tres franjas (cabeza, visor con los ojos y falda) que se
+   corren a lados distintos, vuelven por pasos y titilan un instante. Mientras dura, el cuerpo de siempre se oculta y se
+   ven tres copias recortadas por franjas (cubren todo el cuerpo, así con "movimiento reducido" no falta nada). */
+.sc-tear {
+  display: none;
+}
+
+.bot-glitch.is-hop .scene-bot,
+.bot-glitch.is-hop .creature-shadow {
+  animation: none;
+}
+
+.bot-glitch.is-hop .sc-dash {
+  visibility: hidden;
+  animation: tear-show 0.45s steps(1, end) 1;
+}
+
+.bot-glitch.is-hop .sc-tear {
+  display: inline;
+  animation: tear-flicker 0.45s steps(1, end) 1;
+}
+
+/* Van dentro de .is-hop: así su animación arranca con cada clic (si estuvieran declaradas siempre, no se reinician
+   cuando su contenedor pasa de oculto a visible). */
+.bot-glitch.is-hop .sc-tear-band--0 {
+  animation: tear-0 0.45s steps(1, end) 1;
+}
+
+.bot-glitch.is-hop .sc-tear-band--1 {
+  animation: tear-1 0.45s steps(1, end) 1;
+}
+
+.bot-glitch.is-hop .sc-tear-band--2 {
+  animation: tear-2 0.45s steps(1, end) 1;
+}
+
+@keyframes tear-0 {
+  0% {
+    transform: translateX(3px);
+  }
+
+  20% {
+    transform: translateX(-2px);
+  }
+
+  40% {
+    transform: translateX(1px);
+  }
+
+  60%,
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes tear-1 {
+  0% {
+    transform: translateX(-3px);
+  }
+
+  20% {
+    transform: translateX(3px);
+  }
+
+  40% {
+    transform: translateX(-1px);
+  }
+
+  60%,
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes tear-2 {
+  0% {
+    transform: translateX(2px);
+  }
+
+  20% {
+    transform: translateX(-1px);
+  }
+
+  40% {
+    transform: translateX(1px);
+  }
+
+  60%,
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Cuando las franjas vuelven a su sitio (60 %), se devuelve el cuerpo entero y las copias se ocultan: así la unión
+   entre franjas, que deja una línea fina, no se ve nunca con el cuerpo quieto. */
+@keyframes tear-flicker {
+  0% {
+    opacity: 1;
+  }
+
+  40% {
+    opacity: 0.55;
+  }
+
+  60%,
+  100% {
+    opacity: 1;
+    visibility: hidden;
+  }
+}
+
+@keyframes tear-show {
+  0%,
+  59.9% {
+    visibility: hidden;
+  }
+
+  60%,
+  100% {
+    visibility: visible;
+  }
 }
 
 @keyframes shadow-hop {
@@ -2485,6 +2880,9 @@ p {
 
 @media (prefers-reduced-motion: reduce) {
   .sc-aura,
+  .sc-ash,
+  .sc-noise,
+  .sc-shine,
   .sc-bit {
     display: none;
   }
@@ -2864,6 +3262,11 @@ p {
   font-weight: 700;
   letter-spacing: -0.03em;
   color: var(--text);
+}
+
+/* El cursor del título de la elección de mascota es más angosto que el bloque normal */
+.pick-title .cursor {
+  width: 0.35em;
 }
 
 .pick-hint {

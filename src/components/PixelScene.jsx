@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 import { useMascot } from "../lib/mascot";
 
 // El cuarto se dibujó primero con 60 de ancho; se ensanchó para dejar aire entre la mascota y los muebles.
@@ -61,6 +61,146 @@ const auraOf = (mascot) => {
   return auraCache.get(mascot.name);
 };
 
+// Aura de cenizas (la del encapuchado): píxeles que se desprenden del borde del propio cuerpo y se van flotando
+// hacia fuera y hacia arriba mientras se apagan. Cada uno nace en una celda del borde, con el color de esa celda.
+// Los bordes salen del sprite: dx y dy indican hacia dónde da la cara libre de la celda.
+const edgeCache = new Map();
+const edgeOf = (mascot) => {
+  if (!edgeCache.has(mascot.name)) {
+    const body = new Set(mascot.cells.filter(({ char }) => char !== "s").map(({ x, y }) => `${x},${y}`));
+    const has = (x, y) => body.has(`${x},${y}`);
+    edgeCache.set(
+      mascot.name,
+      mascot.cells
+        .filter(({ char, x, y }) => char !== "s" && (!has(x - 1, y) || !has(x + 1, y) || !has(x, y - 1)))
+        .map(({ char, x, y }) => ({ char, x, y, dx: has(x + 1, y) ? (has(x - 1, y) ? 0 : -1) : 1, dy: has(x, y - 1) ? 0 : -1 }))
+    );
+  }
+  return edgeCache.get(mascot.name);
+};
+
+const ASH_COUNT = 14;
+const ashCache = new Map();
+const ashOf = (mascot) => {
+  if (!ashCache.has(mascot.name)) {
+    const next = seeded(4711);
+    const edge = [...edgeOf(mascot)];
+    const picks = Array.from({ length: Math.min(ASH_COUNT, edge.length) }, () => edge.splice(Math.floor(next() * edge.length), 1)[0]);
+    ashCache.set(
+      mascot.name,
+      picks.map((cell) => {
+        const seconds = 3.2 + next() * 2.2;
+        const tone = next() < 0.3 || "at".includes(cell.char) ? "acc" : cell.char === "m" ? "m" : "b";
+        return {
+          x: cell.x,
+          y: cell.y,
+          ax: Math.round(cell.dx * (4 + next() * 3) + (cell.dx === 0 ? (next() - 0.5) * 4 : 0)),
+          ay: Math.round(cell.dy * (2 + next() * 2) - (2 + next() * 3)),
+          tone,
+          seconds,
+          delay: -(next() * seconds),
+        };
+      })
+    );
+  }
+  return ashCache.get(mascot.name);
+};
+
+// Aura de estática (la del glitch): píxeles que titilan en su sitio en una franja de 1 a 5 píxeles alrededor del
+// cuerpo, como ruido de televisor. Son muchos y cada uno se enciende por ratos distintos, así que siempre hay
+// unos cuantos visibles y cambian de sitio a cada instante.
+const NOISE_COUNT = 28;
+const haloCache = new Map();
+const haloOf = (mascot) => {
+  if (!haloCache.has(mascot.name)) {
+    const body = new Set(mascot.cells.filter(({ char }) => char !== "s").map(({ x, y }) => `${x},${y}`));
+    const near = (x, y) => {
+      for (let dy = -5; dy <= 5; dy++) for (let dx = -5; dx <= 5; dx++) if (body.has(`${x + dx},${y + dy}`)) return true;
+      return false;
+    };
+    const cells = [];
+    for (let y = -6; y <= mascot.rows - 2; y++) {
+      for (let x = -5; x < mascot.cols + 5; x++) if (!body.has(`${x},${y}`) && near(x, y)) cells.push([x, y]);
+    }
+    haloCache.set(mascot.name, cells);
+  }
+  return haloCache.get(mascot.name);
+};
+
+const noiseCache = new Map();
+const noiseOf = (mascot) => {
+  if (!noiseCache.has(mascot.name)) {
+    const next = seeded(2024);
+    const halo = [...haloOf(mascot)];
+    const picks = Array.from({ length: Math.min(NOISE_COUNT, halo.length) }, () => halo.splice(Math.floor(next() * halo.length), 1)[0]);
+    noiseCache.set(
+      mascot.name,
+      picks.map(([x, y]) => {
+        const seconds = 1.2 + next() * 2.4;
+        const tone = next();
+        return { x, y, tone: tone < 0.45 ? "ok" : tone < 0.8 ? "a" : "b", level: 0.35 + next() * 0.5, seconds, delay: -(next() * seconds) };
+      })
+    );
+  }
+  return noiseCache.get(mascot.name);
+};
+
+// Aura de brillos (la de la campana): estrellitas en cruz de 3×3 que aparecen como un punto, crecen hasta la cruz,
+// titilan y se apagan, en sitios repartidos a 2 a 5 píxeles de la cabeza y los hombros (nunca sobre el cuerpo ni
+// cerca de la cadera). Cada una tiene su propia duración y retardo, así siempre hay algunas brillando.
+const GLINT_COUNT = 6;
+const GLINT_ARMS = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+const glintHaloCache = new Map();
+const glintHaloOf = (mascot) => {
+  if (!glintHaloCache.has(mascot.name)) {
+    const body = new Set(mascot.cells.filter(({ char }) => char !== "s").map(({ x, y }) => `${x},${y}`));
+    const distance = (x, y) => {
+      let best = 9;
+      for (let dy = -5; dy <= 5; dy++) {
+        for (let dx = -5; dx <= 5; dx++) if (body.has(`${x + dx},${y + dy}`)) best = Math.min(best, Math.max(Math.abs(dx), Math.abs(dy)));
+      }
+      return best;
+    };
+    const cells = [];
+    for (let y = -6; y <= mascot.rows - 6; y++) {
+      for (let x = -6; x < mascot.cols + 6; x++) {
+        const d = body.has(`${x},${y}`) ? 0 : distance(x, y);
+        if (d >= 2 && d <= 5) cells.push([x, y]);
+      }
+    }
+    glintHaloCache.set(mascot.name, cells);
+  }
+  return glintHaloCache.get(mascot.name);
+};
+
+const glintCache = new Map();
+const glintsOf = (mascot) => {
+  if (!glintCache.has(mascot.name)) {
+    const next = seeded(909);
+    const halo = glintHaloOf(mascot);
+    const picks = [];
+    for (let attempt = 0; attempt < 400 && picks.length < GLINT_COUNT; attempt++) {
+      const cell = halo[Math.floor(next() * halo.length)];
+      if (picks.every(([x, y]) => Math.max(Math.abs(x - cell[0]), Math.abs(y - cell[1])) >= 4)) picks.push(cell);
+    }
+    glintCache.set(
+      mascot.name,
+      picks.map(([x, y]) => {
+        const seconds = 3.2 + next() * 2.8;
+        return { x, y, tone: next() < 0.6 ? "b" : "a", seconds, delay: -(next() * seconds) };
+      })
+    );
+  }
+  return glintCache.get(mascot.name);
+};
+
+// Franjas de la falla (la del glitch): [arriba, abajo] de cada una, a partir de las filas de corte; la primera y la
+// última se extienden de sobra para cubrir toda la mascota.
+const tearBands = (mascot) => {
+  const edges = [-12, ...mascot.tear, mascot.rows + 12];
+  return edges.slice(0, -1).map((top, i) => [top, edges[i + 1]]);
+};
+
 // Destello del clic: unos pocos píxeles aparecen al azar sobre el arco o en los costados, titilan y se
 // apagan. La semilla es el número de clic: cada clic dibuja un destello distinto pero estable.
 const seeded = (seed) => () => {
@@ -70,8 +210,48 @@ const seeded = (seed) => () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 };
 
-const sparkle = (seed, shape) => {
+const sparkle = (seed, shape, mascot) => {
   const next = seeded(seed * 97 + 13);
+
+  if (mascot.aura.glint) {
+    // tres brillos en cruz a la vez, en sitios al azar de la misma franja
+    const halo = glintHaloOf(mascot);
+    const originX = (WIDTH - mascot.cols) / 2 + 1;
+    const originY = FLOOR - mascot.rows + 1;
+    return Array.from({ length: 3 }, () => {
+      const [x, y] = halo[Math.floor(next() * halo.length)];
+      const tone = next() < 0.6 ? "b" : "a";
+      const delay = `${(next() * 0.45).toFixed(2)}s`;
+      return [[0, 0], ...GLINT_ARMS].map(([dx, dy]) => ({ x: originX + x + dx, y: originY + y + dy, dx: 0, dy: 0, tone, delay }));
+    }).flat();
+  }
+
+  if (mascot.aura.noise) {
+    // ráfaga de nieve: píxeles que titilan en su sitio dentro de la franja de estática
+    const halo = haloOf(mascot);
+    const originX = (WIDTH - mascot.cols) / 2 + 1;
+    const originY = FLOOR - mascot.rows + 1;
+    return Array.from({ length: 10 }, () => {
+      const [x, y] = halo[Math.floor(next() * halo.length)];
+      const tone = next();
+      const delay = `${(next() * 0.45).toFixed(2)}s`;
+      return { x: originX + x, y: originY + y, dx: 0, dy: 0, tone: tone < 0.45 ? "ok" : tone < 0.8 ? "a" : "b", delay };
+    });
+  }
+
+  if (mascot.aura.ash) {
+    // se desprenden más píxeles del borde del cuerpo, con más empuje hacia fuera
+    const edge = edgeOf(mascot);
+    const originX = (WIDTH - mascot.cols) / 2 + 1;
+    const originY = FLOOR - mascot.rows + 1;
+    return Array.from({ length: 7 }, () => {
+      const cell = edge[Math.floor(next() * edge.length)];
+      const tone = next() < 0.35 ? "a" : "m";
+      const delay = `${(next() * 0.45).toFixed(2)}s`;
+      const dx = cell.dx === 0 ? Math.round((next() - 0.5) * 3) : Math.round(cell.dx * (2 + next() * 2));
+      return { x: originX + cell.x, y: originY + cell.y, dx, dy: Math.round(cell.dy * 2 - 1 - next() * 2), tone, delay };
+    });
+  }
   return Array.from({ length: 5 }, () => {
     const tone = ["a", "b", "c"][Math.floor(next() * 3)];
     const delay = `${(next() * 0.45).toFixed(2)}s`;
@@ -97,27 +277,21 @@ const sparkle = (seed, shape) => {
   });
 };
 
-// Cuántos clics seguidos pueden tener su destello a la vez; los más viejos ya se apagaron.
-const MAX_FLARES = 6;
-
-// Ventana de la pared (9 de ancho por 7 de alto, desde y=1): marco, cruz de cuatro vidrios con tono de
-// cielo nocturno, un par de estrellas que titilan y un reflejo en diagonal.
-const WINDOW_PANES = [[0, 0], [4, 0], [0, 3], [4, 3]];
-const Window = ({ x, stars }) => (
-  <g>
-    <Box x={x} y={1} w={9} h={7} />
-    {WINDOW_PANES.map(([dx, dy]) => (
-      <Px key={`${dx}-${dy}`} x={x + 1 + dx} y={2 + dy} w={3} h={2} className="sc-pane" />
-    ))}
-    <Px x={x + 4} y={2} w={1} h={5} className="sc-slot" />
-    <Px x={x + 1} y={4} w={7} h={1} className="sc-slot" />
-    {stars.map(([dx, dy], i) => (
-      <Px key={`s${i}`} x={x + dx} y={dy} className={i ? "sc-star sc-star--b" : "sc-star"} />
-    ))}
-    <Px x={x + 7} y={2} className="sc-glint" />
-    <Px x={x + 6} y={3} className="sc-glint" />
-  </g>
-);
+// Decoración de la pared: una pieza de la mascota (mascot.wall, ver creature.js) en un hueco de 9×7 píxeles desde y=1,
+// con marco o sin él. Cada letra del dibujo es un color (clase sc-art--<letra> en shell.css).
+const WallArt = ({ x, piece }) => {
+  const inset = piece.frame ? 1 : 0;
+  return (
+    <g>
+      {piece.frame && <Box x={x} y={1} w={9} h={7} />}
+      {piece.rows.flatMap((row, dy) =>
+        [...row].map((char, dx) =>
+          char === "." ? null : <Px key={`${dx}-${dy}`} x={x + inset + dx} y={1 + inset + dy} className={`sc-art sc-art--${char}`} />
+        )
+      )}
+    </g>
+  );
+};
 
 // Cuánto se pueden mover los ojos dentro del visor, en píxeles del dibujo, y a qué distancia
 // del cursor (en píxeles de pantalla) llegan al máximo.
@@ -129,7 +303,7 @@ const clamp = (value) => Math.max(-1, Math.min(1, value));
 
 // La criatura: cuerpo fijo y ojos que parpadean y miran a los lados. Mientras el cursor está
 // en la ventana los ojos lo siguen de a un píxel; si sale, vuelven a mirar a los lados solos.
-export const Creature = ({ face = "idle" }) => {
+export const Creature = ({ face = "idle", id }) => {
   const mascot = useMascot();
   const bodyRef = useRef(null);
   const gazeRef = useRef(null);
@@ -177,7 +351,7 @@ export const Creature = ({ face = "idle" }) => {
   }, []);
 
   return (
-    <g ref={bodyRef} className={`mascot--${mascot.name}`}>
+    <g id={id} ref={bodyRef} className={`mascot--${mascot.name}`}>
       {/* Bajo los ojos hay visor: así no quedan huecos cuando los ojos cambian de forma o de sitio */}
       {(mascot.faceCells[face] ?? mascot.cells).filter(({ char }) => char !== "s").map(({ char, x, y }) => (
         <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-${char === "E" ? "k" : char}`} />
@@ -202,23 +376,28 @@ export const Creature = ({ face = "idle" }) => {
 // Escena: sala de servidores con racks, un escritorio con monitor y la mascota en medio.
 // mood = "idle" (tranquila) o "busy" (el monitor trabaja más rápido).
 // face = la cara de la mascota: "idle", "curious", "surprised", "sleeping", "happy", "dizzy", "angry" o "console".
-// burst = cuenta de clics: con cada clic aparecen píxeles al azar alrededor del cuerpo y se acumulan. hop = salta un poco.
-const PixelScene = ({ mood = "idle", face = "idle", burst = 0, hop = false, className = "" }) => {
+// flares = números de los clics cuyo destello sigue en marcha (el más nuevo al final): con cada clic aparecen píxeles
+// al azar alrededor del cuerpo y se acumulan. Quien la usa los retira cuando terminan: un destello que se queda
+// dibujado vuelve a animarse cada vez que el panel se oculta y se muestra. hop = hace su animación del clic (1 o -1: hacia
+// qué lado se corre, si la mascota se desliza).
+const PixelScene = ({ mood = "idle", face = "idle", flares = [], hop = false, className = "" }) => {
   const mascot = useMascot();
+  const botId = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const shape = shapeOf(mascot);
   const aura = auraOf(mascot);
 
   return (
     <svg
-      className={`scene scene--${mood} face-${face}${hop ? " is-hop" : ""} ${className}`.trim()}
+      className={`scene scene--${mood} face-${face} bot-${mascot.name}${hop ? " is-hop" : ""} ${className}`.trim()}
+      style={hop ? { "--dash": hop } : undefined}
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       shapeRendering="crispEdges"
       aria-hidden="true"
       focusable="false"
     >
-      {/* Ventanas de la pared, a la misma distancia (14) del centro de la mascota y sin tocar el rack ni el monitor */}
-      <Window x={shape.cx - 18} stars={[[2, 3], [6, 5]]} />
-      <Window x={shape.cx + 10} stars={[[3, 2], [7, 6]]} />
+      {/* Decoración de la pared (de cada mascota), a la misma distancia (14) del centro y sin tocar el rack ni el monitor */}
+      <WallArt x={shape.cx - 18} piece={mascot.wall[0]} />
+      <WallArt x={shape.cx + 10} piece={mascot.wall[1]} />
 
       {/* Rack alto */}
       <Box x={1} y={8} w={10} h={FLOOR - 8} />
@@ -253,31 +432,28 @@ const PixelScene = ({ mood = "idle", face = "idle", burst = 0, hop = false, clas
         <Px x={58} y={23} w={1} h={FLOOR - 23} className="sc-desk" />
       </g>
 
-      {/* Polvo flotando */}
-      <Px x={24} y={6} className="sc-dust" />
-      <Px x={40} y={8} className="sc-dust sc-dust--b" />
-      <Px x={19} y={12} className="sc-dust sc-dust--c" />
-
       {/* Aura: partículas que envuelven el cuerpo. Van detrás de la mascota, así solo asoman por fuera. */}
-      <g className="sc-aura-ring">
-        {aura.map(([x, y, pushX, pushY, seconds, delay, tone]) => (
-          <rect
-            key={`${x}-${y}`}
-            x={x}
-            y={y}
-            width="1"
-            height="1"
-            className={`sc-aura sc-aura--${tone}`}
-            style={{ "--ox": pushX, "--oy": pushY, animationDuration: `${seconds}s`, animationDelay: `${delay}s` }}
-          />
-        ))}
-      </g>
+      {!(mascot.aura.ash || mascot.aura.noise || mascot.aura.glint) && (
+        <g className="sc-aura-ring">
+          {aura.map(([x, y, pushX, pushY, seconds, delay, tone]) => (
+            <rect
+              key={`${x}-${y}`}
+              x={x}
+              y={y}
+              width="1"
+              height="1"
+              className={`sc-aura sc-aura--${tone}`}
+              style={{ "--ox": pushX, "--oy": pushY, animationDuration: `${seconds}s`, animationDelay: `${delay}s` }}
+            />
+          ))}
+        </g>
+      )}
 
       {/* Destello del clic: cada clic tiene su propio grupo (clave = número de clic), así los anteriores
           siguen su animación y los nuevos se acumulan en lugar de reiniciarse. */}
-      {Array.from({ length: Math.min(burst, MAX_FLARES) }, (_, k) => burst - k).map((clic) => (
+      {flares.map((clic) => (
         <g key={clic} className="sc-flare">
-          {sparkle(clic, shape).map((bit, i) => (
+          {sparkle(clic, shape, mascot).map((bit, i) => (
             <rect
               key={i}
               x={bit.x}
@@ -299,7 +475,73 @@ const PixelScene = ({ mood = "idle", face = "idle", burst = 0, hop = false, clas
           ))}
         </g>
         <g className="scene-bot">
-          <Creature face={face} />
+          {mascot.aura.ash && (
+            <g className="sc-aura-ring">
+              {ashOf(mascot).map(({ x, y, ax, ay, tone, seconds, delay }) => (
+                <rect
+                  key={`${x}-${y}`}
+                  x={x}
+                  y={y}
+                  width="1"
+                  height="1"
+                  className={`sc-ash sc-ash--${tone}`}
+                  style={{ "--ax": ax, "--ay": ay, animationDuration: `${seconds}s`, animationDelay: `${delay}s` }}
+                />
+              ))}
+            </g>
+          )}
+          {mascot.aura.glint && (
+            <g className="sc-aura-ring">
+              {glintsOf(mascot).map(({ x, y, tone, seconds, delay }) => (
+                <g
+                  key={`${x}-${y}`}
+                  className={`sc-shine sc-shine--${tone}`}
+                  style={{ "--secs": `${seconds}s`, "--delay": `${delay}s` }}
+                >
+                  <rect x={x} y={y} width="1" height="1" />
+                  {GLINT_ARMS.map(([dx, dy]) => (
+                    <rect key={`${dx}${dy}`} x={x + dx} y={y + dy} width="1" height="1" className="sc-shine-arm" />
+                  ))}
+                </g>
+              ))}
+            </g>
+          )}
+          {mascot.aura.noise && (
+            <g className="sc-aura-ring">
+              {noiseOf(mascot).map(({ x, y, tone, level, seconds, delay }) => (
+                <rect
+                  key={`${x}-${y}`}
+                  x={x}
+                  y={y}
+                  width="1"
+                  height="1"
+                  className={`sc-noise sc-noise--${tone}`}
+                  style={{ "--o": level, animationDuration: `${seconds}s`, animationDelay: `${delay}s` }}
+                />
+              ))}
+            </g>
+          )}
+          {mascot.trail && <use href={`#${botId}`} className="sc-ghost" />}
+          <g className="sc-dash">
+            <Creature face={face} id={botId} />
+          </g>
+          {mascot.tear && (
+            <>
+              {/* Falla: tres copias del cuerpo, cada una recortada a una franja, que solo se ven mientras dura el clic */}
+              <defs>
+                {tearBands(mascot).map(([top, bottom], i) => (
+                  <clipPath key={i} id={`${botId}-tear${i}`}>
+                    <rect x={-12} y={top} width={mascot.cols + 24} height={bottom - top} />
+                  </clipPath>
+                ))}
+              </defs>
+              {tearBands(mascot).map((_, i) => (
+                <g key={i} className="sc-tear" clipPath={`url(#${botId}-tear${i})`}>
+                  <use href={`#${botId}`} className={`sc-tear-band sc-tear-band--${i}`} />
+                </g>
+              ))}
+            </>
+          )}
         </g>
       </g>
 

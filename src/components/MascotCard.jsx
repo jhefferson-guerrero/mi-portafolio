@@ -2,18 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import PixelScene from "./PixelScene";
 import { useMascot } from "../lib/mascot";
 
-// Lo que dice la mascota; cada clic pasa a la siguiente frase.
-const PHRASES = [
-  "hola, bienvenido",
-  "no todo es código",
-  "¿echamos una partida?",
-  "primero café, luego commit",
-  "gym, series y un buen refactor",
-];
-
 const SLEEP_AFTER = 25000; // sin actividad durante este tiempo (ms), se duerme
 const UPSET_CLICKS = 5; // clics seguidos que la alteran (se marea o se enoja, según la mascota)...
 const CLICK_WINDOW = 2400; // ...dentro de este margen (ms)
+const FLARE_LIFE = 1800; // lo que dura el destello de un clic (ms): su animación y su retardo caben de sobra
+const MAX_FLARES = 6; // clics seguidos que pueden tener su destello a la vez
 const NEAR_DISTANCE = 150; // a esta distancia del cursor (px) abre más los ojos
 const ACTIVITY_EVENTS = ["pointermove", "pointerdown", "keydown", "wheel", "touchstart"];
 
@@ -26,12 +19,20 @@ const restFace = (m) => (m.asleep ? "sleeping" : m.hover ? "happy" : m.near ? "c
 // data-mascot="happy"), se marea o se enoja si la tocan sin parar y se duerme si nadie hace nada; al moverse el
 // mouse despierta.
 const MascotCard = () => {
-  const [phrase, setPhrase] = useState(0);
+  const [spoken, setSpoken] = useState({ name: "", index: 0 }); // última frase dicha y de qué mascota
   const [face, setFace] = useState("idle");
   const [line, setLine] = useState(null);
-  const [burst, setBurst] = useState(0);
+  const [flares, setFlares] = useState([]);
+  const clickCount = useRef(0);
   const [hop, setHop] = useState(false);
   const mascot = useMascot();
+  // Cada mascota empieza por su saludo: si cambió la mascota, la cuenta de frases vuelve a cero
+  const phrase = spoken.name === mascot.name ? spoken.index : 0;
+  // Lo que dice cada mascota (mascot.lines, ver creature.js): los manejadores del efecto leen siempre la actual
+  const mascotRef = useRef(mascot);
+  useEffect(() => {
+    mascotRef.current = mascot;
+  });
   const buttonRef = useRef(null);
   const mood = useRef({ asleep: false, busy: false, upset: false, hover: false, near: false, clicks: [], reactTimer: 0, sleepTimer: 0, hopTimer: 0 });
 
@@ -67,7 +68,7 @@ const MascotCard = () => {
       m.asleep = true;
       m.busy = false;
       setFace("sleeping");
-      setLine("zzz…");
+      setLine(mascotRef.current.lines.sleep);
     };
 
     const arm = () => {
@@ -78,7 +79,7 @@ const MascotCard = () => {
     const onActivity = () => {
       if (m.asleep) {
         m.asleep = false;
-        react("surprised", 1100, "¡ay! me quedé dormido");
+        react("surprised", 1100, mascotRef.current.lines.wake);
       }
       arm();
     };
@@ -147,16 +148,19 @@ const MascotCard = () => {
     const m = mood.current;
     const now = Date.now();
     m.clicks = [...m.clicks.filter((time) => now - time < CLICK_WINDOW), now];
-    setPhrase((current) => (current + 1) % PHRASES.length);
+    setSpoken({ name: mascot.name, index: (phrase + 1) % mascot.lines.say.length });
 
-    // Cada clic hace que el aura dé un destello; alterada, más clics solo alargan la reacción y, si no,
-    // cinco clics seguidos la provocan. Un clic normal no cambia la cara: solo salta un poco.
-    setBurst((current) => current + 1);
+    // Cada clic hace que el aura dé un destello, que se retira al terminar (si se quedara dibujado, volvería a
+    // animarse al volver a esta sección); alterada, más clics solo alargan la reacción y, si no, cinco clics seguidos
+    // la provocan. Un clic normal no cambia la cara: solo salta un poco.
+    const flare = ++clickCount.current;
+    setFlares((current) => [...current, flare].slice(-MAX_FLARES));
+    setTimeout(() => setFlares((current) => current.filter((id) => id !== flare)), FLARE_LIFE);
     if (m.upset || m.clicks.length >= UPSET_CLICKS) {
       m.clicks = [];
-      react(mascot.reaction, 1800, "¡ya, ya!");
+      react(mascot.reaction, 1800, mascot.lines.upset);
     } else {
-      setHop(true);
+      setHop(flare % 2 ? 1 : -1); // alterna el lado hacia el que se corre (la mascota que se desliza)
       clearTimeout(m.hopTimer);
       m.hopTimer = setTimeout(() => setHop(false), 450);
     }
@@ -164,7 +168,7 @@ const MascotCard = () => {
 
   return (
     <figure className="mascot-card">
-      <p className="bubble" role="status">{line ?? PHRASES[phrase]}</p>
+      <p className="bubble" role="status">{line ?? mascot.lines.say[phrase]}</p>
       <button
         ref={buttonRef}
         type="button"
@@ -172,7 +176,7 @@ const MascotCard = () => {
         onClick={onClick}
         aria-label="Hacer que la mascota diga otra frase"
       >
-        <PixelScene face={face} burst={burst} hop={hop} />
+        <PixelScene face={face} flares={flares} hop={hop} />
       </button>
     </figure>
   );

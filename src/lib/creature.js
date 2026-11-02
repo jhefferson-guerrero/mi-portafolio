@@ -29,17 +29,19 @@ const BELL_SPRITE = [
 ];
 
 // Ojos de cada cara, como [x, y] sobre la cuadrícula del sprite (el visor ocupa x 5-16, y 4-9).
-// idle: los del sprite; curious: cuadrados de 3x3 (el cursor está cerca); surprised: cuadrados grandes de 4x4;
-// sleeping: rayas; happy: arcos; dizzy: equis (la reacción a muchos clics seguidos).
+// idle: los del sprite; curious: rectángulos de 3x4, más altos que anchos (el cursor está cerca); surprised: cuadrados grandes de 4x4;
+// sleeping: rayas; happy: arcos; dizzy: equis (la reacción a muchos clics seguidos); console: el prompt de una
+// terminal (un > y un guion bajo en verde, con el cursor lila), al escribir un comando ([x, y, tono]).
 const BELL_EYES = {
-  curious: [...block(7, 5, 3, 3), ...block(12, 5, 3, 3)],
+  curious: [...block(7, 5, 3, 4), ...block(12, 5, 3, 4)],
   surprised: [...block(6, 5, 4, 4), ...block(12, 5, 4, 4)],
   sleeping: [[7, 7], [8, 7], [9, 7], [12, 7], [13, 7], [14, 7]],
   happy: [[7, 7], [8, 6], [9, 7], [12, 7], [13, 6], [14, 7]],
   dizzy: [[7, 5], [9, 5], [8, 6], [7, 7], [9, 7], [12, 5], [14, 5], [13, 6], [12, 7], [14, 7]],
+  console: [[7, 5, "ok"], [8, 6, "ok"], [7, 7, "ok"], [10, 7, "ok"], [11, 7, "ok"], [12, 7, "ok"], [14, 5, "acc"], [14, 6, "acc"], [14, 7, "acc"]],
 };
 
-// ---------- Campana con glitch (la propuesta C de design/mascotas/hacker.mjs): la campana con el marco del visor
+// ---------- Campana con glitch (salió de una propuesta de "hacker de terminal"): la campana con el marco del visor
 // duplicado a un píxel de cada lado (lila a la izquierda, verde a la derecha; titilan), tres filas desplazadas como
 // si la imagen se rasgara, ojos verdes en escalón, un prompt verde en el pecho y líneas de exploración tenues.
 // El lienzo es más ancho para que quepan los fantasmas y los desplazamientos.
@@ -170,36 +172,89 @@ const HOOD_EYES = {
 };
 
 // Cada mascota: nombre visible (label), sprite, ojos, la cara con la que reacciona a muchos clics seguidos (reaction), el recorte del
-// rostro para el menú y la forma del aura de partículas. Opcionales: scan (líneas de exploración sobre el cuerpo)
+// rostro para el menú y la forma del aura de partículas (ash: en vez de un arco de puntos, píxeles que se desprenden del borde del propio cuerpo; noise: estática, píxeles que titilan en una franja alrededor del cuerpo; glint: estrellitas en cruz que aparecen y titilan en sitios al azar alrededor de la cabeza). Opcionales: scan (líneas de exploración sobre el cuerpo)
 // y faceSprites (un sprite distinto para ciertas caras).
 const BELL_IDLE = BELL_SPRITE.flatMap((row, y) => [...row].map((char, x) => (char === "E" ? [x, y] : null)).filter(Boolean));
+// Decoración de la pared de cada mascota: dos piezas, una a cada lado de la mascota, en un hueco de 9×7 píxeles.
+// frame: true dibuja un marco y el dibujo mide 7×5 por dentro; sin marco, el dibujo ocupa los 9×7. Cada letra es un
+// color (a acento, e claro, g gris, o lila oscuro, k verde, m borde); "." deja la pared vacía.
+// Son piezas quietas a propósito: lo único que se mueve en la escena es la mascota y su aura.
+const WALL = {
+  // bit, la tierna: una taza de café en una repisa y un póster de un mando de videojuego
+  campana: [
+    { rows: ["...e.....", "....e....", "..aaaa...", "..ooooo..", "..oooo.o.", "..ooooo..", "ggggggggg"] },
+    { frame: true, rows: [".......", ".ooooo.", "oeoooeo", "oo...oo", "......."] },
+  ],
+  // nox, el sigiloso: un cartel con el prompt de la terminal y un candado
+  encapuchado: [
+    { frame: true, rows: [".......", ".a.....", "..a....", ".a.aaa.", "......."] },
+    { rows: ["...ggg...", "..g...g..", "..g...g..", ".ooooooo.", ".ooo.ooo.", ".ooo.ooo.", ".ooooooo."] },
+  ],
+  // bug, el glitch: un bicho (su nombre) y una carita triste, como la de una pantalla de error
+  glitch: [
+    { rows: ["..k...k..", "...k.k...", "k..kkk..k", ".kkkgkkk.", "k.kkgkk.k", ".kkkgkkk.", "...kkk..."] },
+    { frame: true, rows: [".......", ".a...a.", ".......", "..aaa..", ".a...a."] },
+  ],
+};
+
+// Lo que dice cada mascota. say: frases del globo (cada clic pasa a la siguiente; la primera es el saludo); upset: al
+// tocarla sin parar; wake: al despertarla; sleep: mientras duerme. Mantenerlas en unos 30 caracteres: el globo es chico.
+const LINES = {
+  campana: {
+    say: ["Hola, bienvenido", "No todo es código", "¿Echamos una partida?", "Primero café, luego commit", "Gym, series y un buen refactor"],
+    upset: "¡Ya, ya!",
+    wake: "¡Ay! Me quedé dormido",
+    sleep: "Zzz…",
+  },
+  encapuchado: {
+    say: ["bienvenido… no toques nada", "compila hasta que alguien mira", "nunca despliego los viernes", "el modo oscuro no es opcional", "te vi llegar… con calma"],
+    upset: "…basta",
+    wake: "no dormía… observaba",
+    sleep: "…zzz",
+  },
+  glitch: {
+    say: ["hola, bienv3nido", "no es un bug, es una función", "funciona en mi máquina", "undefined… ¿o era null?", "error 404: frase no encontrada"],
+    upset: "¡ERR0R! ¡ya!",
+    wake: "reiniciando… ¡ay!",
+    sleep: "zzz.exe",
+  },
+};
+
 const DEFINITIONS = {
   campana: {
     label: "bit",
+    wall: WALL.campana,
+    lines: LINES.campana,
     sprite: BELL_SPRITE,
     eyes: { idle: BELL_IDLE, ...BELL_EYES },
     reaction: "dizzy",
     nav: { box: [2, 0, 18, 11], width: 26 },
-    aura: { cy: 17, rx: 13, ry: 9.5 },
+    aura: { cy: 17, rx: 13, ry: 9.5, glint: true },
   },
   encapuchado: {
     label: "nox",
+    wall: WALL.encapuchado,
+    lines: LINES.encapuchado,
     sprite: HOOD_TRACES,
     eyes: HOOD_EYES,
     faceSprites: { console: HOOD_CONSOLE_SPRITE },
     reaction: "angry",
+    trail: true, // al hacer clic se desliza y deja una copia tenue en su sitio (ver .sc-ghost en shell.css)
     nav: { box: [2, 0, 18, 11], width: 26 },
-    aura: { cy: 17, rx: 13, ry: 10 },
+    aura: { cy: 17, rx: 13, ry: 10, ash: true },
   },
   glitch: {
     label: "bug",
+    wall: WALL.glitch,
+    lines: LINES.glitch,
     sprite: GLITCH_SPRITE,
     eyes: GLITCH_EYES,
     faceSprites: GLITCH_FACE_SPRITES,
     reaction: "dizzy",
     scan: true,
+    tear: [6, 10], // al hacer clic se parte en franjas por estas filas (cabeza | visor con los ojos | falda) que se corren a lados distintos
     nav: { box: [3, 0, 21, 11], width: 30 },
-    aura: { cy: 17, rx: 15, ry: 9.5 },
+    aura: { cy: 17, rx: 15, ry: 9.5, noise: true },
   },
 };
 
