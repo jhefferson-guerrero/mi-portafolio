@@ -3883,6 +3883,12 @@ p {
   html {
     font-size: calc(100% + 1px);
   }
+
+  /* Las pantallas de texto del arranque (la consola tipo BIOS) llevan 1 px menos, o sea que no reciben el aumento.
+     La elección de mascota y la carga final conservan el aumento. */
+  .bios {
+    font-size: clamp(calc(0.72rem - 1px), 2.1svh, calc(0.9rem - 1px));
+  }
 }
 
 /* Tipografía en el celular: con pantallas de ~390 px un monospace de 14-15 px deja pocos caracteres por línea.

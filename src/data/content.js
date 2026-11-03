@@ -6,7 +6,9 @@ export const content = {
     location: "Lima, Perú",
     availability: "Abierto a oportunidades",
     version: "v2026.10",
-    studies: "UTP · Ing. de Software (egresado)",
+    // "Bachiller" se puso por adelantado: el 03/11/2026 el grado seguía en trámite (prácticas y requisitos cumplidos). Los estudios se
+    // nombran en cuatro sitios: aquí, hero.description, about.bio y la nota de la línea de tiempo.
+    studies: "UTP · Bachiller en Ing. de Software",
     seeking: "Primera oportunidad como Desarrollador Frontend",
     photo: "/assets/projects/perfil.webp",    // Mascota con la que empieza el sitio: la clave de una mascota de creature.js ("campana", "encapuchado" o "glitch"). Quien visita puede cambiarla con
     // el comando "mascota" y su elección se recuerda en su navegador.
@@ -31,7 +33,7 @@ export const content = {
     lastName: "Guerrero",
     role: "Frontend Developer",
     description:
-      "Egresado de Ingeniería de Software en Lima. Construyo interfaces rápidas y accesibles con React y TypeScript.",
+      "Bachiller en Ingeniería de Software en Lima. Construyo interfaces rápidas y accesibles con React y TypeScript.",
     cvLink: "/assets/CV-Jhefferson-Guerrero.pdf",
   },
 
@@ -40,9 +42,9 @@ export const content = {
       [
         { text: "Soy " },
         { text: "Jhefferson Guerrero", strong: true },
-        { text: ", egresado de Ingeniería de Software de la UTP y desarrollador " },
+        { text: ", bachiller en Ingeniería de Software de la UTP y desarrollador " },
         { text: "front-end", strong: true },
-        { text: " en Lima. Trabajo con React, TypeScript y Tailwind CSS, y hago mis prácticas en el área de TI de CBS, donde desarrollé su sitio web corporativo. Busco mi " },
+        { text: " en Lima. Trabajo con React, TypeScript y Tailwind CSS, e hice mis prácticas en el área de TI de CBS, donde desarrollé su sitio web corporativo. Busco mi " },
         { text: "primera oportunidad como Desarrollador Frontend", strong: true },
         { text: "." },
       ],
@@ -78,7 +80,7 @@ export const content = {
         kind: "educación",
         title: "Ingeniería de Software",
         org: "Universidad Tecnológica del Perú (UTP)",
-        note: "Egresado",
+        note: "Bachiller",
       },
     ],
   },
