@@ -303,6 +303,9 @@ const clamp = (value) => Math.max(-1, Math.min(1, value));
 
 // La criatura: cuerpo fijo y ojos que parpadean y miran a los lados. Mientras el cursor está
 // en la ventana los ojos lo siguen de a un píxel; si sale, vuelven a mirar a los lados solos.
+// Orden al azar (de 0 a 1, siempre el mismo para cada píxel) en que se enciende cada píxel en la entrada de Inicio
+const dissolveOf = (x, y) => (((x * 73856093) ^ (y * 19349663)) >>> 0) % 1000 / 1000;
+
 export const Creature = ({ face = "idle", id }) => {
   const mascot = useMascot();
   const bodyRef = useRef(null);
@@ -354,13 +357,13 @@ export const Creature = ({ face = "idle", id }) => {
     <g id={id} ref={bodyRef} className={`mascot--${mascot.name}`}>
       {/* Bajo los ojos hay visor: así no quedan huecos cuando los ojos cambian de forma o de sitio */}
       {(mascot.faceCells[face] ?? mascot.cells).filter(({ char }) => char !== "s").map(({ char, x, y }) => (
-        <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-${char === "E" ? "k" : char}`} />
+        <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-${char === "E" ? "k" : char}`} style={{ "--pd": dissolveOf(x, y) }} />
       ))}
       <g className="creature-gaze" ref={gazeRef}>
         <g className="creature-look">
           <g className="creature-eyes">
             {(mascot.eyes[face] ?? mascot.eyes.idle).map(([x, y, tone]) => (
-              <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-E${tone ? ` eye-${tone}` : ""}`} />
+              <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-E${tone ? ` eye-${tone}` : ""}`} style={{ "--pd": dissolveOf(x, y) }} />
             ))}
           </g>
         </g>

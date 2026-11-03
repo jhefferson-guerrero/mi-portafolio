@@ -42,7 +42,7 @@ const Sidebar = ({ view }) => {
   return (
     <aside className="sidebar" aria-label="Perfil y navegación">
       <div className="profile">
-        {/* La foto en negro y lila; al pasar el mouse recupera su color. */}
+        {/* La foto en blanco y negro; al pasar el mouse recupera su color. */}
         <div className="avatar">
           <img
             className="avatar-photo"
@@ -52,12 +52,12 @@ const Sidebar = ({ view }) => {
             decoding="async"
           />
           <svg className="avatar-defs" width="0" height="0" aria-hidden="true" focusable="false">
-            <filter id="duotone-lilac" colorInterpolationFilters="sRGB">
+            <filter id="photo-gray" colorInterpolationFilters="sRGB">
               <feColorMatrix type="saturate" values="0" />
               <feComponentTransfer>
-                <feFuncR type="table" tableValues="0.039 0.737" />
-                <feFuncG type="table" tableValues="0.035 0.651" />
-                <feFuncB type="table" tableValues="0.078 1" />
+                <feFuncR type="table" tableValues="0.04 0.84" />
+                <feFuncG type="table" tableValues="0.04 0.84" />
+                <feFuncB type="table" tableValues="0.04 0.84" />
               </feComponentTransfer>
             </filter>
           </svg>

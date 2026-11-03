@@ -22,7 +22,7 @@ const TypewriterText = ({ fullText }) => {
         setText(fullText.slice(0, index));
         if (index >= fullText.length) clearInterval(typeWriter);
       }, 70);
-    }, 700);
+    }, 1000);
 
     return () => {
       clearTimeout(startTyping);
@@ -41,10 +41,16 @@ const TypewriterText = ({ fullText }) => {
 // Vista de inicio. `navigate` cambia de vista.
 const Hero = ({ active, navigate }) => {
   const { hero, socials } = content;
+  // La entrada animada de la mascota solo se ve la primera vez; después Inicio aparece con el fundido de siempre
+  const [intro, setIntro] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setIntro(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <Pane id="inicio" active={active} file="inicio.md" home>
-      <div className="home">
+      <div className={intro ? "home is-intro" : "home"}>
         <div className="home-main">
           <p className="eyebrow">{hero.eyebrow} · {content.meta.location.toLowerCase()}</p>
 
