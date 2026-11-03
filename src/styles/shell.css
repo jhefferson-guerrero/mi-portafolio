@@ -3760,6 +3760,14 @@ p {
   }
 }
 
+/* En el celular todo el texto sube 1 px: casi todos los tamaños están en rem, así que basta subir la base (16 → 17 px;
+   con calc(100% + 1px) se respeta el tamaño de letra que el usuario tenga en su navegador). */
+@media (max-width: 600px) {
+  html {
+    font-size: calc(100% + 1px);
+  }
+}
+
 /* Tipografía en el celular: con pantallas de ~390 px un monospace de 14-15 px deja pocos caracteres por línea.
    Los tamaños de escritorio salen de la altura de la pantalla y en un móvil (muy alto) siempre llegan a su tope,
    así que aquí se fijan más chicos. Botones, pestañas y menú no se tocan. */
@@ -3928,6 +3936,18 @@ p {
 
   .side-link[aria-current='page'] {
     padding-inline: 10px;
+  }
+}
+
+/* Móviles de 320 px (con la letra 1 px más grande el nombre de la sección activa ocupa más) */
+@media (max-width: 340px) {
+  .side-link:not([aria-current='page']) {
+    padding-inline: 4px;
+  }
+
+  .side-link[aria-current='page'] {
+    gap: 6px;
+    padding-inline: 7px;
   }
 }
 
