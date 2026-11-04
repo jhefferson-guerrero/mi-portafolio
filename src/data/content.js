@@ -215,6 +215,7 @@ export const content = {
       link: "https://mesa-de-partes-5c6c2.web.app/",
       code: "https://github.com/jhefferson-guerrero/mesa-de-partes-ccjn",
       image: "/assets/projects/mesa-partes.webp",
+      ratio: 1.78,
     },
     {
       title: "Pastelia Bakery — Landing page",
