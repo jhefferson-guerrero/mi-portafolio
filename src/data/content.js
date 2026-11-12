@@ -189,6 +189,7 @@ export const content = {
       link: "https://cbs-web-tan.vercel.app/",
       code: "https://github.com/jhefferson-guerrero/cbs-web",
       image: "/assets/projects/cbs.webp",
+      ratio: 1.79,
     },
     {
       title: "Sitio web Academia Fertex",
