@@ -120,17 +120,17 @@ const COMMANDS = [
     },
   },
   {
-    name: "mascota",
-    aliases: ["mascot"],
-    usage: "mascota [nombre]",
-    desc: "cambia la mascota: bit, nox o bug",
+    name: "compañero",
+    aliases: ["companero", "mascota", "mascot"],
+    usage: "compañero [nombre]",
+    desc: "cambia el compañero: bit, nox o bug",
     run: ([target]) => {
       const names = mascotNames();
-      if (!target) return [kv("actual", MASCOTS[getMascotName()].label), kv("opciones", names.join(", ")), text("mascota <nombre> para cambiarla", "dim")];
+      if (!target) return [kv("actual", MASCOTS[getMascotName()].label), kv("opciones", names.join(", ")), text("compañero <nombre> para cambiarlo", "dim")];
       const name = findMascot(normalize(target));
-      if (!name) return [text(`mascota: no existe "${target}". Opciones: ${names.join(", ")}.`, "err")];
+      if (!name) return [text(`compañero: no existe "${target}". Opciones: ${names.join(", ")}.`, "err")];
       setMascot(name);
-      return [text(`Mascota: ${MASCOTS[name].label}`, "ok")];
+      return [text(`Compañero: ${MASCOTS[name].label}`, "ok")];
     },
   },
   {
@@ -281,7 +281,7 @@ const COMMANDS = [
 ];
 
 const LOOKUP = new Map(
-  COMMANDS.flatMap((command) => [command.name, ...(command.aliases ?? [])].map((name) => [name, command]))
+  COMMANDS.flatMap((command) => [command.name, ...(command.aliases ?? [])].map((name) => [normalize(name), command]))
 );
 
 // Ejecuta una línea. Devuelve las líneas de salida, o null si no hay nada que mostrar.
@@ -323,7 +323,7 @@ export const complete = (value) => {
     ];
   } else if (["cd", "open"].includes(parts[0])) {
     pool = [...SECTIONS.map((section) => section.cmd), ...PROJECTS.map((project) => project.short)];
-  } else if (["mascota", "mascot"].includes(parts[0])) {
+  } else if (["companero", "mascota", "mascot"].includes(normalize(parts[0]))) {
     pool = mascotNames();
   } else {
     return value;

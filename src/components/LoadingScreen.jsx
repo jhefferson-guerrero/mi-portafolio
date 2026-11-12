@@ -48,7 +48,7 @@ const MODULES = [
   ["01", "Perfil", "Lateral"],
   ["02", "Paneles", "Interfaz"],
   ["03", "Consola", "Terminal"],
-  ["04", "Mascota", "Gráficos"],
+  ["04", "Compañero", "Gráficos"],
 ];
 
 const clamp01 = (value) => Math.min(1, Math.max(0, value));

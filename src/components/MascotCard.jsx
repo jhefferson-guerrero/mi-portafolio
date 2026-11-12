@@ -174,7 +174,7 @@ const MascotCard = () => {
         type="button"
         className="mascot-btn"
         onClick={onClick}
-        aria-label="Hacer que la mascota diga otra frase"
+        aria-label="Hacer que el compañero diga otra frase"
       >
         <PixelScene face={face} flares={flares} hop={hop} />
       </button>

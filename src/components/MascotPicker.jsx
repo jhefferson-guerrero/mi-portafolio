@@ -54,8 +54,8 @@ const MascotPicker = ({ onPick }) => {
   });
 
   return (
-    <div className="bios-pick" role="group" aria-label="Elige la mascota">
-      <p className="pick-title">Elige tu mascota<span className="cursor" aria-hidden="true" /></p>
+    <div className="bios-pick" role="group" aria-label="Elige tu compañero">
+      <p className="pick-title">Elige tu compañero<span className="cursor" aria-hidden="true" /></p>
       <p className="pick-hint">Te acompañará mientras recorres el portafolio</p>
 
       <div className="pick-list">
