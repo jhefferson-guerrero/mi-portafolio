@@ -1,13 +1,19 @@
 import { useEffect } from "react";
 import { MASCOTS } from "../lib/creature";
 import { setMascot } from "../lib/mascot";
+import { CreatureAura } from "./PixelScene";
 
-// Retrato de una mascota (cuerpo y ojos en reposo), independiente de la que esté en uso en el sitio.
+// Margen que se deja en el dibujo para el aura (en píxeles del sprite): a los lados y arriba, porque abajo está el suelo.
+const AURA_SIDE = 5;
+const AURA_TOP = 6;
+
+// Retrato de una mascota (cuerpo, ojos en reposo y su aura), independiente de la que esté en uso en el sitio.
+// `--grow` es cuánto crece el dibujo por el margen del aura: así el sprite conserva su tamaño (ver .pick-art en shell.css).
 const Portrait = ({ mascot }) => (
   <svg
     className={`pick-art mascot--${mascot.name}`}
-    viewBox={`0 0 ${mascot.cols} ${mascot.rows}`}
-    style={{ aspectRatio: `${mascot.cols} / ${mascot.rows}` }}
+    viewBox={`${-AURA_SIDE} ${-AURA_TOP} ${mascot.cols + AURA_SIDE * 2} ${mascot.rows + AURA_TOP}`}
+    style={{ aspectRatio: `${mascot.cols + AURA_SIDE * 2} / ${mascot.rows + AURA_TOP}`, "--grow": (mascot.rows + AURA_TOP) / mascot.rows }}
     shapeRendering="crispEdges"
     aria-hidden="true"
     focusable="false"
@@ -18,6 +24,7 @@ const Portrait = ({ mascot }) => (
       ))}
     </g>
     <g className="pick-bot">
+      <CreatureAura mascot={mascot} />
       {mascot.cells.filter(({ char }) => char !== "s").map(({ char, x, y }) => (
         <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-${char === "E" ? "k" : char}`} />
       ))}

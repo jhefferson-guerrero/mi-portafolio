@@ -376,6 +376,60 @@ export const Creature = ({ face = "idle", id }) => {
   );
 };
 
+// El aura propia de una criatura (cenizas, brillos o estática, según su `aura` en creature.js), en las coordenadas de su
+// cuerpo: va dentro del grupo que la mueve. La usan la escena y la elección de mascota del arranque.
+export const CreatureAura = ({ mascot }) => {
+  if (mascot.aura.ash) {
+    return (
+      <g className="sc-aura-ring">
+        {ashOf(mascot).map(({ x, y, ax, ay, tone, seconds, delay }) => (
+          <rect
+            key={`${x}-${y}`}
+            x={x}
+            y={y}
+            width="1"
+            height="1"
+            className={`sc-ash sc-ash--${tone}`}
+            style={{ "--ax": ax, "--ay": ay, animationDuration: `${seconds}s`, animationDelay: `${delay}s` }}
+          />
+        ))}
+      </g>
+    );
+  }
+  if (mascot.aura.glint) {
+    return (
+      <g className="sc-aura-ring">
+        {glintsOf(mascot).map(({ x, y, tone, seconds, delay }) => (
+          <g key={`${x}-${y}`} className={`sc-shine sc-shine--${tone}`} style={{ "--secs": `${seconds}s`, "--delay": `${delay}s` }}>
+            <rect x={x} y={y} width="1" height="1" />
+            {GLINT_ARMS.map(([dx, dy]) => (
+              <rect key={`${dx}${dy}`} x={x + dx} y={y + dy} width="1" height="1" className="sc-shine-arm" />
+            ))}
+          </g>
+        ))}
+      </g>
+    );
+  }
+  if (mascot.aura.noise) {
+    return (
+      <g className="sc-aura-ring">
+        {noiseOf(mascot).map(({ x, y, tone, level, seconds, delay }) => (
+          <rect
+            key={`${x}-${y}`}
+            x={x}
+            y={y}
+            width="1"
+            height="1"
+            className={`sc-noise sc-noise--${tone}`}
+            style={{ "--o": level, animationDuration: `${seconds}s`, animationDelay: `${delay}s` }}
+          />
+        ))}
+      </g>
+    );
+  }
+  return null;
+};
+
 // Escena: sala de servidores con racks, un escritorio con monitor y la mascota en medio.
 // mood = "idle" (tranquila) o "busy" (el monitor trabaja más rápido).
 // face = la cara de la mascota: "idle", "curious", "surprised", "sleeping", "happy", "dizzy", "angry" o "console".
@@ -478,52 +532,7 @@ const PixelScene = ({ mood = "idle", face = "idle", flares = [], hop = false, cl
           ))}
         </g>
         <g className="scene-bot">
-          {mascot.aura.ash && (
-            <g className="sc-aura-ring">
-              {ashOf(mascot).map(({ x, y, ax, ay, tone, seconds, delay }) => (
-                <rect
-                  key={`${x}-${y}`}
-                  x={x}
-                  y={y}
-                  width="1"
-                  height="1"
-                  className={`sc-ash sc-ash--${tone}`}
-                  style={{ "--ax": ax, "--ay": ay, animationDuration: `${seconds}s`, animationDelay: `${delay}s` }}
-                />
-              ))}
-            </g>
-          )}
-          {mascot.aura.glint && (
-            <g className="sc-aura-ring">
-              {glintsOf(mascot).map(({ x, y, tone, seconds, delay }) => (
-                <g
-                  key={`${x}-${y}`}
-                  className={`sc-shine sc-shine--${tone}`}
-                  style={{ "--secs": `${seconds}s`, "--delay": `${delay}s` }}
-                >
-                  <rect x={x} y={y} width="1" height="1" />
-                  {GLINT_ARMS.map(([dx, dy]) => (
-                    <rect key={`${dx}${dy}`} x={x + dx} y={y + dy} width="1" height="1" className="sc-shine-arm" />
-                  ))}
-                </g>
-              ))}
-            </g>
-          )}
-          {mascot.aura.noise && (
-            <g className="sc-aura-ring">
-              {noiseOf(mascot).map(({ x, y, tone, level, seconds, delay }) => (
-                <rect
-                  key={`${x}-${y}`}
-                  x={x}
-                  y={y}
-                  width="1"
-                  height="1"
-                  className={`sc-noise sc-noise--${tone}`}
-                  style={{ "--o": level, animationDuration: `${seconds}s`, animationDelay: `${delay}s` }}
-                />
-              ))}
-            </g>
-          )}
+          <CreatureAura mascot={mascot} />
           {mascot.trail && <use href={`#${botId}`} className="sc-ghost" />}
           <g className="sc-dash">
             <Creature face={face} id={botId} />

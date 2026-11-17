@@ -3422,7 +3422,19 @@ p {
 .pick-art {
   display: block;
   align-self: end;
-  height: clamp(76px, 18svh, 150px);
+  height: calc(clamp(76px, 18svh, 150px) * var(--grow, 1)); /* el dibujo incluye el margen del aura: el sprite no se achica */
+  overflow: visible;
+}
+
+/* El aura de cada compañero se ve tenue en reposo y se aviva al apuntarlo o enfocarlo. */
+.pick-card .sc-aura-ring {
+  opacity: 0.55;
+  transition: opacity 0.3s ease;
+}
+
+.pick-card:hover .sc-aura-ring,
+.pick-card:focus-visible .sc-aura-ring {
+  opacity: 1;
 }
 
 .pick-card:hover .pick-bot,
