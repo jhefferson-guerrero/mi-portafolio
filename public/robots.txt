@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://jhefferson-guerrero.vercel.app/sitemap.xml
+Sitemap: https://www.jhefferson-guerrero.site/sitemap.xml

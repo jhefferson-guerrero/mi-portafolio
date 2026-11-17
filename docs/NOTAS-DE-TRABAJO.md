@@ -7,7 +7,7 @@ Resumen del estado del proyecto y de lo que se hizo, para retomarlo desde otro e
 ## Qué es
 
 Portafolio de **Jhefferson Guerrero** (Lima; bachiller en Ingeniería de Software de la UTP (en el sitio ya figura como bachiller; el 03/11/2026 el grado seguía en trámite, ver el comentario de `studies` en `content.js`); practicante de TI en CBS hasta nov 2026; busca su
-primer empleo como desarrollador frontend). Sitio en producción: https://jhefferson-guerrero.vercel.app/ — repositorio `jhefferson-guerrero/mi-portafolio`, rama única `main`.
+primer empleo como desarrollador frontend). Sitio en producción: https://www.jhefferson-guerrero.site/ — repositorio `jhefferson-guerrero/mi-portafolio`, rama única `main`.
 
 Interfaz tipo **shell/terminal**: barra lateral con menú, paneles por sección, una consola arriba donde se escriben comandos y un arranque tipo BIOS.
 React 19 + Vite 7, `lucide-react`, un solo CSS (`src/styles/shell.css`). Tipografías propias (`@fontsource`): Space Grotesk y IBM Plex Mono.

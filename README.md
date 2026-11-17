@@ -4,7 +4,7 @@ Portafolio personal hecho con React 19 y Vite, con forma de pequeña "app" de un
 (`jg-shell`): perfil y navegación a la izquierda, un panel por sección y una consola donde se pueden
 escribir comandos. Tema negro con un único acento lila.
 
-Producción: https://jhefferson-guerrero.vercel.app/
+Producción: https://www.jhefferson-guerrero.site/
 
 ## Stack
 

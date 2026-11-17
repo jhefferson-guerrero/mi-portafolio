@@ -182,8 +182,8 @@ export const content = {
       short: "cbs",
       desc: "Sitio institucional para una constructora de obras de saneamiento en Perú y Brasil.",
       highlights: [
-        "Multipágina: empresa, certificaciones, clientes y una página por proyecto.",
-        "Contenido editable desde un solo archivo, con SEO y prerenderizado propio.",
+        "Multipágina con una página por proyecto y otra para su empresa hermana, Limp City.",
+        "SEO con prerenderizado propio, formulario de contacto y cabeceras de seguridad.",
       ],
       tags: ["React 19", "TypeScript", "Vite", "Tailwind CSS 4"],
       link: "https://cbs-web-tan.vercel.app/",
