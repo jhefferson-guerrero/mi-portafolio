@@ -7,38 +7,52 @@ import { CreatureAura } from "./PixelScene";
 const AURA_SIDE = 5;
 const AURA_TOP = 6;
 
+// Los tres retratos miden lo mismo (y con ellos las tres tarjetas) aunque los sprites no: cada uno se pinta a la escala que
+// le da a todos la misma altura (la de REF_ROWS filas, la del más bajo) y se centra, apoyado en el suelo, en una caja común.
+// La caja se mide en "píxeles de referencia": los de un sprite de REF_ROWS filas.
+const ALL = Object.values(MASCOTS);
+const REF_ROWS = Math.min(...ALL.map(({ rows }) => rows));
+const BOX_W = Math.max(...ALL.map(({ cols, rows }) => (cols * REF_ROWS) / rows)) + AURA_SIDE * 2;
+const BOX_H = REF_ROWS + AURA_TOP;
+
 // Retrato de una mascota (cuerpo, ojos en reposo y su aura), independiente de la que esté en uso en el sitio.
 // `--grow` es cuánto crece el dibujo por el margen del aura: así el sprite conserva su tamaño (ver .pick-art en shell.css).
-const Portrait = ({ mascot }) => (
-  <svg
-    className={`pick-art mascot--${mascot.name}`}
-    viewBox={`${-AURA_SIDE} ${-AURA_TOP} ${mascot.cols + AURA_SIDE * 2} ${mascot.rows + AURA_TOP}`}
-    style={{ aspectRatio: `${mascot.cols + AURA_SIDE * 2} / ${mascot.rows + AURA_TOP}`, "--grow": (mascot.rows + AURA_TOP) / mascot.rows }}
-    shapeRendering="crispEdges"
-    aria-hidden="true"
-    focusable="false"
-  >
-    <g className="creature-shadow">
-      {mascot.shadow.map(({ x, y }) => (
-        <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className="px px-s" />
-      ))}
-    </g>
-    <g className="pick-bot">
-      <CreatureAura mascot={mascot} />
-      {mascot.cells.filter(({ char }) => char !== "s").map(({ char, x, y }) => (
-        <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-${char === "E" ? "k" : char}`} />
-      ))}
-      <g className="creature-eyes">
-        {mascot.eyes.idle.map(([x, y, tone]) => (
-          <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-E${tone ? ` eye-${tone}` : ""}`} />
+const Portrait = ({ mascot }) => {
+  const scale = REF_ROWS / mascot.rows; // píxeles de referencia por píxel del sprite
+  const width = BOX_W / scale;
+  const height = BOX_H / scale;
+
+  return (
+    <svg
+      className={`pick-art mascot--${mascot.name}`}
+      viewBox={`${-(width - mascot.cols) / 2} ${-(height - mascot.rows)} ${width} ${height}`}
+      style={{ aspectRatio: `${BOX_W} / ${BOX_H}`, "--grow": BOX_H / REF_ROWS }}
+      shapeRendering="crispEdges"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <g className="creature-shadow">
+        {mascot.shadow.map(({ x, y }) => (
+          <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className="px px-s" />
         ))}
       </g>
-      {mascot.scan && Array.from({ length: mascot.rows - 1 }, (_, y) => y).filter((y) => y % 3 === 2).map((y) => (
-        <rect key={y} x="0" y={y} width={mascot.cols} height="1" className="px-scan" />
-      ))}
-    </g>
-  </svg>
-);
+      <g className="pick-bot">
+        <CreatureAura mascot={mascot} />
+        {mascot.cells.filter(({ char }) => char !== "s").map(({ char, x, y }) => (
+          <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-${char === "E" ? "k" : char}`} />
+        ))}
+        <g className="creature-eyes">
+          {mascot.eyes.idle.map(([x, y, tone]) => (
+            <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" className={`px px-E${tone ? ` eye-${tone}` : ""}`} />
+          ))}
+        </g>
+        {mascot.scan && Array.from({ length: mascot.rows - 1 }, (_, y) => y).filter((y) => y % 3 === 2).map((y) => (
+          <rect key={y} x="0" y={y} width={mascot.cols} height="1" className="px-scan" />
+        ))}
+      </g>
+    </svg>
+  );
+};
 
 // Pantalla de elección de mascota del arranque. El arranque no sigue hasta que la persona elige una
 // (con un clic o con la tecla 1, 2, 3...). La elección se recuerda para el resto del sitio.
