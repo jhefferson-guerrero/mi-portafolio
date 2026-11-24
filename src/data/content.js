@@ -209,8 +209,8 @@ export const content = {
       short: "mesa-de-partes",
       desc: "Plataforma para digitalizar trámites administrativos.",
       highlights: [
-        "Cuentas de usuario, historial de trámites y validación de documentos.",
-        "Avisos por correo y datos en tiempo real: automatizó el 100 % de la recepción.",
+        "Trámites con adjuntos, seguimiento por estados y bandeja para el funcionario.",
+        "Cloud Functions que validan y envían correos, con reglas por usuario y 48 pruebas.",
       ],
       tags: ["JavaScript", "Firebase"],
       link: "https://mesa-de-partes-5c6c2.web.app/",
