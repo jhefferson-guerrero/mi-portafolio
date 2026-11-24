@@ -399,14 +399,14 @@ p {
   transition: opacity 0.4s ease;
 }
 
-/* La foto en blanco y negro (filtro #photo-gray de Sidebar.jsx). */
+/* La foto ya viene en blanco y negro en el archivo. Sin eventos de puntero, el clic derecho cae en el contenedor y no ofrece
+   "abrir imagen en una pestaña" ni "guardar imagen como", y no se puede arrastrar ni seleccionar. Frena al curioso casual,
+   pero no protege la imagen: la dirección del archivo es pública (la vista previa de LinkedIn y WhatsApp la necesita). */
 .avatar-photo {
   object-position: center 20%;
-  filter: url(#photo-gray);
-}
-
-.avatar-defs {
-  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 /* Marcas de esquina, como un visor técnico */

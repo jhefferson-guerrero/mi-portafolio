@@ -42,7 +42,7 @@ const Sidebar = ({ view }) => {
   return (
     <aside className="sidebar" aria-label="Perfil y navegación">
       <div className="profile">
-        {/* La foto en blanco y negro; al pasar el mouse recupera su color. */}
+        {/* La foto ya es en blanco y negro (el archivo mismo, no un filtro); al pasar el mouse sube un poco de brillo. */}
         <div className="avatar">
           <img
             className="avatar-photo"
@@ -50,17 +50,8 @@ const Sidebar = ({ view }) => {
             alt={`Retrato de ${meta.name}`}
             fetchPriority="high"
             decoding="async"
+            draggable={false}
           />
-          <svg className="avatar-defs" width="0" height="0" aria-hidden="true" focusable="false">
-            <filter id="photo-gray" colorInterpolationFilters="sRGB">
-              <feColorMatrix type="saturate" values="0" />
-              <feComponentTransfer>
-                <feFuncR type="table" tableValues="0.04 0.84" />
-                <feFuncG type="table" tableValues="0.04 0.84" />
-                <feFuncB type="table" tableValues="0.04 0.84" />
-              </feComponentTransfer>
-            </filter>
-          </svg>
         </div>
         <span className="chip chip--ok">
           <span className="status-dot" aria-hidden="true" />
